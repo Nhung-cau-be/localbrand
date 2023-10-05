@@ -10,9 +10,12 @@ import com.localbrand.dtos.response.CategoryDto;
 
 @Mapper
 public interface ICategoryDtoMapper {
+	
 	ICategoryDtoMapper INSTANCE = Mappers.getMapper(ICategoryDtoMapper.class);
 	
+	Category toCategory(CategoryDto categoryDto);
 	CategoryDto toCategoryDto(Category category);
-	
+
 	List<CategoryDto> toCategoryDtos(List<Category> categories);
+	
 }
