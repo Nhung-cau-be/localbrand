@@ -1,9 +1,15 @@
 package com.localbrand.dtos.response;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
-public class CategoryDto {
+public class CategoryFullDto {
+	
 	private String id;
+	
 	private String name;
+	
+	private List<ProductGroupDto> productGroups;
 }
