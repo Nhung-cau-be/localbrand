@@ -74,6 +74,9 @@ public class ProviderController {
 	@PutMapping("")
 	public ResponseEntity<?> edit(@RequestBody ProviderDto providerDto) {
 		try {
+			if (providerService.usedCode(providerDto.getCode())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Mã code đã được sử dụng"), 400, null));
+			}
 			if (providerDto.getName().isBlank() || providerDto.getAddress().isBlank() || providerDto.getCode().isBlank()) {
 	            return ResponseEntity.ok(new ResponseDto(List.of("Không được để trống thông tin provider" ), 400, null));
 			}
