@@ -1,10 +1,10 @@
 package com.localbrand.service;
 
-import java.util.UUID;
 import java.util.List;
 
-import com.localbrand.dal.entity.Category;
 import com.localbrand.dtos.response.CategoryDto;
+import com.localbrand.dtos.response.CategoryFullDto;
+import com.localbrand.dtos.response.ProductGroupDto;
 
 public interface ICategoryService {
 	
@@ -16,5 +16,11 @@ public interface ICategoryService {
 	
 	Boolean deleteById(String id);
 	
-	CategoryDto editById(CategoryDto categoryDto);
+	CategoryDto update(CategoryDto categoryDto);
+	
+	CategoryFullDto getFull(String id);
+	
+	Boolean isUsing(String id);
+	
+	Boolean usedName(String name);
 }

@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface ICategoryRepository extends JpaRepository<Category, String>{
-
+	
+	long countByName(String name);
 }
