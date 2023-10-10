@@ -10,11 +10,9 @@ import lombok.Data;
 @Table(name = "category")
 @Data
 public class Category {
-	
 	@Id
 	@Column(updatable = false, nullable = false)
 	private String id;
-	
 	@Column
 	private String name;
 }
