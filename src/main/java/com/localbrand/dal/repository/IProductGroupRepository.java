@@ -15,7 +15,7 @@ public interface IProductGroupRepository extends JpaRepository<ProductGroup, Str
 	@Query(value = "SELECT * FROM PRODUCT_GROUP WHERE CATEGORY_ID = ?1", nativeQuery = true)
 	List<ProductGroup> findByCategoryId(String id);
 
-	long countByCategoryId(String id);
+	int countByCategoryId(String id);
 	
-	long countByName(String name);
+	int countByName(String name);
 }

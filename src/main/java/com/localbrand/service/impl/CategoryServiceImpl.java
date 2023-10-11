@@ -119,7 +119,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	@Override
 	public Boolean isUsing(String id) {
 		try {
-			long count = productGroupRepository.countByCategoryId(id);
+			int count = productGroupRepository.countByCategoryId(id);
 			
 			if(count != 0)
 			{
@@ -136,7 +136,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	@Override
 	public Boolean usedName(String name) {
 		try {
-			long count = categoryRepository.countByName(name);
+			int count = categoryRepository.countByName(name);
 			if(count != 0)
 			{
 				return true;

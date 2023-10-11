@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.localbrand.dtos.response.CategoryDto;
@@ -40,10 +41,6 @@ public class ProductGroupController {
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable String id) {
 		try {
-			if(id.isBlank())
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Nhóm sản phẩm không thể để trống"), HttpStatus.OK.value(), null));
-			}
 			ProductGroupDto result = productGroupService.getById(id);
 			if(result != null) {
 				return ResponseEntity.ok(new ResponseDto(List.of("Nhóm sản phẩm có ID là " + id), HttpStatus.OK.value(), result));
@@ -54,11 +51,11 @@ public class ProductGroupController {
 		}
 	}
 	
-	@PostMapping("")
-	public ResponseEntity<?> add(@RequestBody ProductGroupDto productGroupDto){
+	@PostMapping("/insert")
+	public ResponseEntity<?> insert(@RequestBody ProductGroupDto productGroupDto){
 		try {
-			if (productGroupService.usedName(productGroupDto.getName())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
+			if (productGroupService.isUsingName(productGroupDto.getName())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
 			if (productGroupDto.getName().isBlank()) {
 				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
@@ -74,8 +71,8 @@ public class ProductGroupController {
 		}
 	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteById(@PathVariable String id) {
+	@DeleteMapping("delete")
+	public ResponseEntity<?> deleteById(@RequestParam String id) {
 		try {
 			boolean result = productGroupService.deleteById(id);
 			
@@ -89,9 +86,12 @@ public class ProductGroupController {
 		}
 	}
 	
-	@PutMapping("")
-	public ResponseEntity<?> edit(@RequestBody ProductGroupDto productGroupDto) {
+	@PutMapping("/update")
+	public ResponseEntity<?> update(@RequestBody ProductGroupDto productGroupDto) {
 		try {
+			if (productGroupService.isUsingName(productGroupDto.getName())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
+			}
 			ProductGroupDto result = productGroupService.edit(productGroupDto);
 			
 			return ResponseEntity.ok(new ResponseDto(List.of("Sửa nhóm sản phẩm thành công"), HttpStatus.OK.value(), result));

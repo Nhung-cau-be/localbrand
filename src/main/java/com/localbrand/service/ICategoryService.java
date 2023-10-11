@@ -22,5 +22,5 @@ public interface ICategoryService {
 	
 	Boolean isUsing(String id);
 	
-	Boolean usedName(String name);
+	Boolean isUsingName(String name);
 }

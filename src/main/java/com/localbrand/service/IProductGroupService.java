@@ -16,5 +16,5 @@ public interface IProductGroupService {
 	
 	ProductGroupDto edit(ProductGroupDto productGroupDto);
 	
-	Boolean usedName(String name);
+	Boolean isUsingName(String name);
 }

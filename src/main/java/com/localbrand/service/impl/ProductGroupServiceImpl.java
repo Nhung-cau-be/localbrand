@@ -101,9 +101,9 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 	}
 	
 	@Override
-	public Boolean usedName(String name) {
+	public Boolean isUsingName(String name) {
 		try {
-			long count = productGroupRepository.countByName(name);
+			int count = productGroupRepository.countByName(name);
 			if(count != 0)
 			{
 				return true;

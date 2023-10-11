@@ -40,10 +40,6 @@ public class CategoryController {
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable String id) {
 		try {
-			if(id.isBlank())
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Danh mục không thể để trống"), HttpStatus.OK.value(), null));
-			}
 			CategoryDto result = categoryService.getById(id);
 			if (result != null) {
 				return ResponseEntity.ok(new ResponseDto(List.of("Danh mục có ID là: " + id), HttpStatus.OK.value(), result));
@@ -65,14 +61,10 @@ public class CategoryController {
 		}
 	}
 
-	@PostMapping("")
-	public ResponseEntity<?> add(@RequestBody CategoryDto categoryDto) {
+	@PostMapping("/insert")
+	public ResponseEntity<?> insert(@RequestBody CategoryDto categoryDto) {
 		try {
-			if(categoryDto.getName().isBlank())
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (categoryService.usedName(categoryDto.getName())) {
+			if (categoryService.isUsingName(categoryDto.getName())) {
 				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
 			CategoryDto result = categoryService.add(categoryDto);
@@ -83,7 +75,7 @@ public class CategoryController {
 		}
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("delete")
 	public ResponseEntity<?> deleteById(@PathVariable String id) {
 		try {
 			if(categoryService.isUsing(id))
@@ -99,9 +91,12 @@ public class CategoryController {
 		}
 	}
 
-	@PutMapping("")
-	public ResponseEntity<?> edit(@RequestBody CategoryDto categoryDto) {
+	@PutMapping("/update")
+	public ResponseEntity<?> update(@RequestBody CategoryDto categoryDto) {
 		try {
+			if (categoryService.isUsingName(categoryDto.getName())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
+			}
 			CategoryDto result = categoryService.update(categoryDto);
 			
 			return ResponseEntity.ok(new ResponseDto(List.of("Sửa danh mục thành công"), HttpStatus.OK.value(), result));
