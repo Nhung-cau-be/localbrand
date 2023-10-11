@@ -10,8 +10,8 @@ import com.localbrand.dtos.response.ProviderDto;
 public interface IProviderService {
 	List<ProviderDto> getAll();
 	ProviderDto getById(String id);
-	ProviderDto add(ProviderDto providerDto);
-	ProviderDto edit(ProviderDto providerDto);
+	ProviderDto insert(ProviderDto providerDto);
+	ProviderDto update(ProviderDto providerDto);
 	Boolean  deleteById(String id);
-	Boolean usedCode(String code);
+	Boolean isUsingCode(String code);
 }

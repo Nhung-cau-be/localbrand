@@ -36,14 +36,14 @@ public class ProviderServiceImpl implements IProviderService {
 		return null;
 	}
 	@Override
-	public ProviderDto add(ProviderDto providerDto){
+	public ProviderDto insert(ProviderDto providerDto){
 		try {
-		Provider provider = IProviderDtoMapper.INSTANCE.toProvider(providerDto);
-		provider.setId(UUID.randomUUID().toString());
-		Provider create = providerRepository.save(provider);
-		ProviderDto newproviderDto = IProviderDtoMapper.INSTANCE.toProviderDto(create);
-		
-		return newproviderDto;
+			Provider provider = IProviderDtoMapper.INSTANCE.toProvider(providerDto);
+			provider.setId(UUID.randomUUID().toString());
+			Provider create = providerRepository.save(provider);
+			ProviderDto newproviderDto = IProviderDtoMapper.INSTANCE.toProviderDto(create);
+			
+			return newproviderDto;
 		}catch (Exception e) {
 			
 			return null;
@@ -51,7 +51,7 @@ public class ProviderServiceImpl implements IProviderService {
 		
 	}
 	@Override
-	public ProviderDto edit(ProviderDto providerDto ) {
+	public ProviderDto update(ProviderDto providerDto ) {
 		Provider newProvider = IProviderDtoMapper.INSTANCE.toProvider(providerDto);
 		String id = providerDto.getId();
 		Provider provider = providerRepository.findById(id).orElse(null);
@@ -61,35 +61,41 @@ public class ProviderServiceImpl implements IProviderService {
 			provider.setCode(newProvider.getCode());
 			Provider create = providerRepository.save(provider);
 			ProviderDto newproviderDto = IProviderDtoMapper.INSTANCE.toProviderDto(create);
+			
 			return newproviderDto;
         }
+		
         return null;
 	}
 	@Override
 	public Boolean deleteById(String id) {
 		try {
-		Provider provider = providerRepository.findById(id).orElse(null);
-		if (provider != null) {
-			providerRepository.deleteById(id);
-			return true;
-		}
-		return false;
+			Provider provider = providerRepository.findById(id).orElse(null);
+			if (provider != null) {
+				providerRepository.deleteById(id);
+				
+				return true;
+			}
+			return false;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-		return null;
+			
+			return null;
 		}
 	}
 	@Override
-	public Boolean usedCode(String code) {
+	public Boolean isUsingCode(String code) {
 		try {
 			long count = providerRepository.countByCode(code);
 			if(count != 0)
 			{
 				return true;
 			}
+			
 			return false;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+			
 			return null;
 		}
 	}

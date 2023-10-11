@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface IProviderRepository extends JpaRepository<Provider, String>{
-	long countByCode(String code);
+	int countByCode(String code);
 }
