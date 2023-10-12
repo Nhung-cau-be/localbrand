@@ -1,6 +1,6 @@
 package com.localbrand.controller;
 
-import java.util.Arrays;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.localbrand.dal.entity.Category;
+
 import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.dtos.response.ResponseDto;
 import com.localbrand.service.ICategoryService;
