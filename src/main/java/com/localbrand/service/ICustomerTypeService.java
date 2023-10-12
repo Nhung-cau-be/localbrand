@@ -15,4 +15,5 @@ public interface ICustomerTypeService {
 	Boolean deleteById(String id);
 	
 	Boolean isUsingName(String name);
+	
 }

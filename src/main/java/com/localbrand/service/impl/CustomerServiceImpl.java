@@ -104,4 +104,39 @@ public class CustomerServiceImpl implements ICustomerService {
 		 
 		 return customerDtos;
 	}
+	
+	@Override
+	public Boolean isUsingPhoneNumber(String sdt) {
+		try {
+			int count = customerRepository.countByPhoneNumber(sdt);
+			if(count != 0)
+			{
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
+	public Boolean isUsingEmail(String email) {
+		try {
+			int count = customerRepository.countByEmail(email);
+			if(count != 0)
+			{
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			
+			return null;
+		}
+	}
+	
+	
+	
+	
 }

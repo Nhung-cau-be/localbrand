@@ -15,4 +15,10 @@ public interface ICustomerRepository extends JpaRepository<Customer, String>{
 
 	@Query("SELECT c FROM Customer c WHERE c.sdt LIKE %:sdt%")
 	List<Customer> findByPhoneNumber(String sdt);
+	
+	@Query("SELECT COUNT(c) FROM Customer c WHERE c.sdt LIKE %:sdt%")
+	int countByPhoneNumber(String sdt);
+	
+	@Query("SELECT COUNT(c) FROM Customer c WHERE c.email LIKE %:email%")
+	int countByEmail(String email);
 }

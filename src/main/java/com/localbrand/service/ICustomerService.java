@@ -15,4 +15,8 @@ public interface ICustomerService {
 	List<CustomerDto> searchByName(String name);
 	
 	List<CustomerDto> searchByPhoneNumber(String sdt);
+	
+	Boolean isUsingPhoneNumber(String sdt);
+	
+	Boolean isUsingEmail(String email);
 }

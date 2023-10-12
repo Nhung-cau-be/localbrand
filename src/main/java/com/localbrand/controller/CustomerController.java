@@ -60,11 +60,11 @@ public class CustomerController {
 			{
 				return ResponseEntity.ok(new ResponseDto(List.of("Account khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
 			}
-			if (!Validate.checkPhoneNumber(customerDto.getSdt())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Sdt sai định dạng"), HttpStatus.BAD_REQUEST.value(), null));
+			if (!Validate.checkPhoneNumber(customerDto.getSdt()) || customerService.isUsingPhoneNumber(customerDto.getSdt())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Sdt sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
-			if (!Validate.checkEmail(customerDto.getEmail())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Email sai định dạng"), HttpStatus.BAD_REQUEST.value(), null));
+			if (!Validate.checkEmail(customerDto.getEmail()) || customerService.isUsingEmail(customerDto.getEmail())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Email sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
 			CustomerDto result = customerService.insert(customerDto);
 			return ResponseEntity.ok(new ResponseDto(List.of("Thêm khách hàng thành công"), HttpStatus.OK.value(), result));
@@ -90,11 +90,11 @@ public class CustomerController {
 			{
 				return ResponseEntity.ok(new ResponseDto(List.of("Account khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
 			}
-			if (!Validate.checkPhoneNumber(customerDto.getSdt())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Sdt sai định dạng"), HttpStatus.BAD_REQUEST.value(), null));
+			if (!Validate.checkPhoneNumber(customerDto.getSdt()) || customerService.isUsingPhoneNumber(customerDto.getSdt())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Sdt sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
-			if (!Validate.checkEmail(customerDto.getEmail())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Email sai định dạng"), HttpStatus.BAD_REQUEST.value(), null));
+			if (!Validate.checkEmail(customerDto.getEmail()) || customerService.isUsingEmail(customerDto.getEmail())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Email sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
 
 			CustomerDto result = customerService.update(customerDto);
