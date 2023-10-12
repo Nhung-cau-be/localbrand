@@ -46,7 +46,7 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 	}
 	
 	@Override
-	public ProductGroupDto add(ProductGroupDto productGroupDto) {
+	public ProductGroupDto insert(ProductGroupDto productGroupDto) {
 		
 		try {
 			

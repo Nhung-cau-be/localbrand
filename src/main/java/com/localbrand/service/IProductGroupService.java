@@ -10,7 +10,7 @@ public interface IProductGroupService {
 	
 	ProductGroupDto getById(String id);
 	
-	ProductGroupDto add(ProductGroupDto productGroupDto);
+	ProductGroupDto insert(ProductGroupDto productGroupDto);
 	
 	Boolean deleteById(String id);
 	

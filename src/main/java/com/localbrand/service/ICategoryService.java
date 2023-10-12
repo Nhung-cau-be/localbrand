@@ -12,7 +12,7 @@ public interface ICategoryService {
 	
 	CategoryDto getById(String id);
 	
-	CategoryDto add(CategoryDto categoryDto);
+	CategoryDto insert(CategoryDto categoryDto);
 	
 	Boolean deleteById(String id);
 	

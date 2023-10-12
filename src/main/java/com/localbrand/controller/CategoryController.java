@@ -67,7 +67,7 @@ public class CategoryController {
 			if (categoryService.isUsingName(categoryDto.getName())) {
 				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
-			CategoryDto result = categoryService.add(categoryDto);
+			CategoryDto result = categoryService.insert(categoryDto);
 			
 			return ResponseEntity.ok(new ResponseDto(List.of("Thêm danh mục thành công"), HttpStatus.OK.value(), result));
 		} catch (Exception e) {

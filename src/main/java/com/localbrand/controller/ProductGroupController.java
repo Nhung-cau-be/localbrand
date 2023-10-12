@@ -64,7 +64,7 @@ public class ProductGroupController {
 			{
 				return ResponseEntity.ok(new ResponseDto(List.of("Danh mục không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
 			}
-			ProductGroupDto result = productGroupService.add(productGroupDto);
+			ProductGroupDto result = productGroupService.insert(productGroupDto);
 			return ResponseEntity.ok(new ResponseDto(List.of("Thêm nhóm sản phẩm thành công"), HttpStatus.OK.value(), result));
 		} catch (Exception e) {
 			return ResponseEntity.ok(new ResponseDto(List.of("Thêm nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));

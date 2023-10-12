@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	}
 
 	@Override
-	public CategoryDto add(CategoryDto categoryDto) {
+	public CategoryDto insert(CategoryDto categoryDto) {
 		try {
 			Category category = ICategoryDtoMapper.INSTANCE.toCategory(categoryDto);
 
@@ -134,7 +134,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	}
 	
 	@Override
-	public Boolean usedName(String name) {
+	public Boolean isUsingName(String name) {
 		try {
 			int count = categoryRepository.countByName(name);
 			if(count != 0)
