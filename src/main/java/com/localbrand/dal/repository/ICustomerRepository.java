@@ -10,9 +10,9 @@ import com.localbrand.dal.entity.Customer;
 
 @Repository
 public interface ICustomerRepository extends JpaRepository<Customer, String>{
-	@Query(value = "SELECT * FROM CUSTOMER WHERE NAME LIKE :name", nativeQuery = true)
+	@Query(value = "SELECT c FROM Customer c WHERE c.name LIKE %:name%")
 	List<Customer> findByName(String name);
 
-	@Query(value = "SELECT * FROM CUSTOMER WHERE SDT LIKE  :sdt", nativeQuery = true)
-	List<Customer> findBySdt( String sdt);
+	@Query("SELECT c FROM Customer c WHERE c.sdt LIKE %:sdt%")
+	List<Customer> findByPhoneNumber(String sdt);
 }

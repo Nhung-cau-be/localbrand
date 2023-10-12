@@ -98,8 +98,8 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 
 	@Override
-	public List<CustomerDto> searchBySdt(String sdt) {
-		List<Customer> customers = customerRepository.findBySdt(sdt);
+	public List<CustomerDto> searchByPhoneNumber(String sdt) {
+		List<Customer> customers = customerRepository.findByPhoneNumber(sdt);
 		 List<CustomerDto> customerDtos = ICustomerDtoMapper.INSTANCE.toCustomerDtos(customers);
 		 
 		 return customerDtos;

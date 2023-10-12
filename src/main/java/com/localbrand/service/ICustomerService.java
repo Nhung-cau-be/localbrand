@@ -14,5 +14,5 @@ public interface ICustomerService {
 	
 	List<CustomerDto> searchByName(String name);
 	
-	List<CustomerDto> searchBySdt(String sdt);
+	List<CustomerDto> searchByPhoneNumber(String sdt);
 }
