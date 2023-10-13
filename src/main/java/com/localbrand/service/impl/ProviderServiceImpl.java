@@ -86,7 +86,7 @@ public class ProviderServiceImpl implements IProviderService {
 	@Override
 	public Boolean isUsingCode(String code) {
 		try {
-			long count = providerRepository.countByCode(code);
+			int count = providerRepository.countByCode(code);
 			if(count != 0)
 			{
 				return true;

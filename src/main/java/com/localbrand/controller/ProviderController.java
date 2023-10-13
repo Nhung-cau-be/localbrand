@@ -97,7 +97,7 @@ public class ProviderController {
     }
 	
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteById(@RequestBody String id) {
+	public ResponseEntity<?> deleteById(@PathVariable String id) {
 		try {
 	        boolean result = providerService.deleteById(id);
 	        
