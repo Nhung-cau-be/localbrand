@@ -22,48 +22,50 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 
 	@Override
 	public List<ProductGroupDto> getAll() {
-		
 		List<ProductGroup> productGroups = productGroupRepository.findAll();
-		
 		List<ProductGroupDto> productGroupDtos = IProductGroupDtoMapper.INSTANCE.toProductGroupDtos(productGroups);
-
 		return productGroupDtos;
 	}
 
 	@Override
 	public ProductGroupDto getById(String id) {
-		
 		ProductGroup productGroup = productGroupRepository.findById(id).orElse(null);
-		
 		if (productGroup != null) {
-			
 			ProductGroupDto productGroupDto = IProductGroupDtoMapper.INSTANCE.toProductGroupDto(productGroup);
 			
 			return productGroupDto;
 		}
-		
 		return null;
 	}
 	
 	@Override
 	public ProductGroupDto insert(ProductGroupDto productGroupDto) {
-		
 		try {
-			
 			ProductGroup productGroup = IProductGroupDtoMapper.INSTANCE.toProductGroup(productGroupDto);
-			
 			productGroup.setId(UUID.randomUUID().toString());
 			
 			ProductGroup newProductGroup = productGroupRepository.save(productGroup);
-			
 			ProductGroupDto newProductGroupDto = IProductGroupDtoMapper.INSTANCE.toProductGroupDto(newProductGroup);
 			
 			return newProductGroupDto;
-			
 		} catch (Exception e) {
-			
 			return null;
 		}
+	}
+	
+	@Override
+	public ProductGroupDto update(ProductGroupDto productGroupDto) {
+		String id = productGroupDto.getId();
+		ProductGroup newProductGroup = IProductGroupDtoMapper.INSTANCE.toProductGroup(productGroupDto);
+		ProductGroup productGroup = productGroupRepository.findById(id).orElse(null);
+		if(productGroup != null) {
+			productGroup.setName(newProductGroup.getName());
+			productGroup.setCategory(newProductGroup.getCategory());
+			
+			productGroupRepository.save(productGroup);
+			return IProductGroupDtoMapper.INSTANCE.toProductGroupDto(productGroup);
+		}
+		return null;
 	}
 	
 	@Override
@@ -76,28 +78,6 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 			System.out.println(e.getMessage());
 			return null;
 		}
-	}
-	
-	@Override
-	public ProductGroupDto edit(ProductGroupDto productGroupDto) {
-		
-		ProductGroup newProductGroup = IProductGroupDtoMapper.INSTANCE.toProductGroup(productGroupDto);
-		
-		String id = productGroupDto.getId();
-		
-		ProductGroup productGroup = productGroupRepository.findById(id).orElse(null);
-		
-		if(productGroup != null) {
-			
-			productGroup.setName(newProductGroup.getName());
-			
-			productGroup.setCategory(newProductGroup.getCategory());
-			
-			productGroupRepository.save(productGroup);
-			
-			return IProductGroupDtoMapper.INSTANCE.toProductGroupDto(productGroup);
-		}
-		return null;
 	}
 	
 	@Override

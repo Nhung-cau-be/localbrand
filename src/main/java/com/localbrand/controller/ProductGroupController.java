@@ -31,7 +31,6 @@ public class ProductGroupController {
 	public ResponseEntity<?> getAll() {
 		try {
 			List<ProductGroupDto> result = productGroupService.getAll();
-			
 			return ResponseEntity.ok(new ResponseDto(List.of("Danh sách nhóm sản phẩm"), HttpStatus.OK.value(), result));
 		} catch (Exception e) {
 			return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy danh sách nhóm sản phẩm"), HttpStatus.BAD_REQUEST.value(), null));
@@ -71,7 +70,21 @@ public class ProductGroupController {
 		}
 	}
 	
-	@DeleteMapping("delete")
+	@PutMapping("/update")
+	public ResponseEntity<?> update(@RequestBody ProductGroupDto productGroupDto) {
+		try {
+			if (productGroupService.isUsingName(productGroupDto.getName())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
+			}
+			ProductGroupDto result = productGroupService.update(productGroupDto);
+			
+			return ResponseEntity.ok(new ResponseDto(List.of("Sửa nhóm sản phẩm thành công"), HttpStatus.OK.value(), result));
+		} catch (Exception e) {
+			return ResponseEntity.ok(new ResponseDto(List.of("Sửa nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+		}
+	}
+	
+	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteById(@RequestParam String id) {
 		try {
 			boolean result = productGroupService.deleteById(id);
@@ -85,18 +98,5 @@ public class ProductGroupController {
 			return ResponseEntity.ok(new ResponseDto(List.of("Xóa nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
 		}
 	}
-	
-	@PutMapping("/update")
-	public ResponseEntity<?> update(@RequestBody ProductGroupDto productGroupDto) {
-		try {
-			if (productGroupService.isUsingName(productGroupDto.getName())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			ProductGroupDto result = productGroupService.edit(productGroupDto);
-			
-			return ResponseEntity.ok(new ResponseDto(List.of("Sửa nhóm sản phẩm thành công"), HttpStatus.OK.value(), result));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Sửa nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
-	}
+
 }

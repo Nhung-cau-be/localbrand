@@ -12,9 +12,9 @@ public interface IProductGroupService {
 	
 	ProductGroupDto insert(ProductGroupDto productGroupDto);
 	
+	ProductGroupDto update(ProductGroupDto productGroupDto);
+	
 	Boolean deleteById(String id);
-	
-	ProductGroupDto edit(ProductGroupDto productGroupDto);
-	
+
 	Boolean isUsingName(String name);
 }

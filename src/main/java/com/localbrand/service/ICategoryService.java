@@ -11,14 +11,14 @@ public interface ICategoryService {
 	List<CategoryDto> getAll();
 	
 	CategoryDto getById(String id);
+
+	CategoryFullDto getFull(String id);
 	
 	CategoryDto insert(CategoryDto categoryDto);
-	
-	Boolean deleteById(String id);
-	
+
 	CategoryDto update(CategoryDto categoryDto);
 	
-	CategoryFullDto getFull(String id);
+	Boolean deleteById(String id);
 	
 	Boolean isUsing(String id);
 	

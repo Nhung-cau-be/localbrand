@@ -14,6 +14,7 @@ public interface IProductGroupDtoMapper {
 	IProductGroupDtoMapper INSTANCE = Mappers.getMapper(IProductGroupDtoMapper.class);
 	
 	ProductGroup toProductGroup(ProductGroupDto productGroupDto);
+	
 	ProductGroupDto toProductGroupDto(ProductGroup productGroup);
 	
 	List<ProductGroupDto> toProductGroupDtos(List<ProductGroup> producGroups);

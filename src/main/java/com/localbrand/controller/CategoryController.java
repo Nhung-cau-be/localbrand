@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.localbrand.dtos.response.CategoryDto;
@@ -30,7 +31,6 @@ public class CategoryController {
 	public ResponseEntity<?> getAll() {
 		try {
 			List<CategoryDto> result = categoryService.getAll();
-			
 			return ResponseEntity.ok(new ResponseDto(List.of("Danh sách danh mục"), HttpStatus.OK.value(), result));
 		} catch (Exception e) {
 			return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy danh sách danh mục"), HttpStatus.BAD_REQUEST.value(), null));
@@ -54,7 +54,6 @@ public class CategoryController {
 	public ResponseEntity<?> getFullById(@PathVariable String id) {
 		try {
 			CategoryFullDto result = categoryService.getFull(id);
-			
 			return ResponseEntity.ok(new ResponseDto(List.of("Danh mục có ID là " + id), HttpStatus.OK.value(), result));
 		} catch (Exception e) {
 			return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy danh mục " + id), HttpStatus.BAD_REQUEST.value(), null));
@@ -68,15 +67,27 @@ public class CategoryController {
 				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
 			CategoryDto result = categoryService.insert(categoryDto);
-			
 			return ResponseEntity.ok(new ResponseDto(List.of("Thêm danh mục thành công"), HttpStatus.OK.value(), result));
 		} catch (Exception e) {
 			return ResponseEntity.ok(new ResponseDto(List.of("Thêm danh mục thất bại"), HttpStatus.BAD_REQUEST.value(), null));
 		}
 	}
 
-	@DeleteMapping("delete")
-	public ResponseEntity<?> deleteById(@PathVariable String id) {
+	@PutMapping("/update")
+	public ResponseEntity<?> update(@RequestBody CategoryDto categoryDto) {
+		try {
+			if (categoryService.isUsingName(categoryDto.getName())) {
+				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
+			}
+			CategoryDto result = categoryService.update(categoryDto);
+			return ResponseEntity.ok(new ResponseDto(List.of("Sửa danh mục thành công"), HttpStatus.OK.value(), result));
+		} catch (Exception e) {
+			return ResponseEntity.ok(new ResponseDto(List.of("Sửa danh mục thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+		}
+	}
+	
+	@DeleteMapping("/delete")
+	public ResponseEntity<?> deleteById(@RequestParam String id) {
 		try {
 			if(categoryService.isUsing(id))
 			{
@@ -88,20 +99,6 @@ public class CategoryController {
 			}
 		} catch (Exception e) {
 			return ResponseEntity.ok(new ResponseDto(List.of("Xóa danh mục thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
-	}
-
-	@PutMapping("/update")
-	public ResponseEntity<?> update(@RequestBody CategoryDto categoryDto) {
-		try {
-			if (categoryService.isUsingName(categoryDto.getName())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên danh mục đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			CategoryDto result = categoryService.update(categoryDto);
-			
-			return ResponseEntity.ok(new ResponseDto(List.of("Sửa danh mục thành công"), HttpStatus.OK.value(), result));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Sửa danh mục thất bại"), HttpStatus.BAD_REQUEST.value(), null));
 		}
 	}
 }

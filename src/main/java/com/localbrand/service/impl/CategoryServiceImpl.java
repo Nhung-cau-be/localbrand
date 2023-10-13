@@ -26,25 +26,17 @@ public class CategoryServiceImpl implements ICategoryService {
 
 	@Override
 	public List<CategoryDto> getAll() {
-		try {
-			List<Category> categories = categoryRepository.findAll();
-			List<CategoryDto> categoryDtos = ICategoryDtoMapper.INSTANCE.toCategoryDtos(categories);
-
-			return categoryDtos;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
+		List<Category> categories = categoryRepository.findAll();
+		List<CategoryDto> categoryDtos = ICategoryDtoMapper.INSTANCE.toCategoryDtos(categories);
+		return categoryDtos;
 	}
 
 	@Override
 	public CategoryDto getById(String id) {
 		try {
 			Category category = categoryRepository.findById(id).orElse(null);
-
 			if (category != null) {
 				CategoryDto categoryDto = ICategoryDtoMapper.INSTANCE.toCategoryDto(category);
-
 				return categoryDto;
 			}
 			return null;
@@ -58,13 +50,9 @@ public class CategoryServiceImpl implements ICategoryService {
 	public CategoryDto insert(CategoryDto categoryDto) {
 		try {
 			Category category = ICategoryDtoMapper.INSTANCE.toCategory(categoryDto);
-
 			category.setId(UUID.randomUUID().toString());
-
 			Category newCategory = categoryRepository.save(category);
-
 			CategoryDto newCategoryDto = ICategoryDtoMapper.INSTANCE.toCategoryDto(newCategory);
-
 			return newCategoryDto;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -76,7 +64,6 @@ public class CategoryServiceImpl implements ICategoryService {
 	public Boolean deleteById(String id) {
 		try {
 			categoryRepository.deleteById(id);
-
 			return true;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -88,9 +75,7 @@ public class CategoryServiceImpl implements ICategoryService {
 	public CategoryDto update(CategoryDto categoryDto) {
 		try {
 			Category category = ICategoryDtoMapper.INSTANCE.toCategory(categoryDto);
-
 			categoryRepository.save(category);
-
 			return ICategoryDtoMapper.INSTANCE.toCategoryDto(category);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -120,7 +105,6 @@ public class CategoryServiceImpl implements ICategoryService {
 	public Boolean isUsing(String id) {
 		try {
 			int count = productGroupRepository.countByCategoryId(id);
-			
 			if(count != 0)
 			{
 				return true;
