@@ -4,8 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class CategoryDto {
+public class ProductGroupDto {
 	private String id;
-	@NotBlank(message = "Vui lòng nhập tên danh mục")
+	private CategoryDto category;
+	@NotBlank(message = "Vui lòng nhập tên nhóm sản phẩm")
 	private String name;
 }
