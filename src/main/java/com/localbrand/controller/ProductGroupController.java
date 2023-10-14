@@ -1,5 +1,7 @@
 package com.localbrand.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ import com.localbrand.dtos.response.ResponseDto;
 import com.localbrand.service.IProductGroupService;
 
 @RestController
-@RequestMapping("/productgroup")
+@RequestMapping("/product-group")
 public class ProductGroupController {
 	
 	@Autowired
@@ -29,74 +31,84 @@ public class ProductGroupController {
 	
 	@GetMapping("")
 	public ResponseEntity<?> getAll() {
-		try {
-			List<ProductGroupDto> result = productGroupService.getAll();
-			return ResponseEntity.ok(new ResponseDto(List.of("Danh sách nhóm sản phẩm"), HttpStatus.OK.value(), result));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy danh sách nhóm sản phẩm"), HttpStatus.BAD_REQUEST.value(), null));
-		}
+		List<ProductGroupDto> result = productGroupService.getAll();
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable String id) {
-		try {
-			ProductGroupDto result = productGroupService.getById(id);
-			if(result != null) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Nhóm sản phẩm có ID là " + id), HttpStatus.OK.value(), result));
-			}
-			return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy nhóm sản phẩm có ID là: " + id), HttpStatus.BAD_REQUEST.value(), result));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy nhóm sản phẩm "), HttpStatus.BAD_REQUEST.value(), null));
-		}
+		ProductGroupDto result = productGroupService.getById(id);		
+
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Nhóm sản phẩm không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+		return res;
 	}
 	
 	@PostMapping("/insert")
 	public ResponseEntity<?> insert(@RequestBody ProductGroupDto productGroupDto){
-		try {
-			if (productGroupService.isUsingName(productGroupDto.getName())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (productGroupDto.getName().isBlank()) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (productGroupDto.getCategory() == null)
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Danh mục không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			ProductGroupDto result = productGroupService.insert(productGroupDto);
-			return ResponseEntity.ok(new ResponseDto(List.of("Thêm nhóm sản phẩm thành công"), HttpStatus.OK.value(), result));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Thêm nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
+        List<String> msg = insertValidation(productGroupDto);
+        if (msg.size() > 0) {
+            return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
+        }
+        
+		ProductGroupDto result = productGroupService.insert(productGroupDto);
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Thêm nhóm sản phẩm thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Thêm nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		return res;
 	}
 	
 	@PutMapping("/update")
 	public ResponseEntity<?> update(@RequestBody ProductGroupDto productGroupDto) {
-		try {
-			if (productGroupService.isUsingName(productGroupDto.getName())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên nhóm sản phẩm đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			ProductGroupDto result = productGroupService.update(productGroupDto);
-			
-			return ResponseEntity.ok(new ResponseDto(List.of("Sửa nhóm sản phẩm thành công"), HttpStatus.OK.value(), result));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Sửa nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
+        List<String> msg = insertValidation(productGroupDto);
+        if (msg.size() > 0) {
+            return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
+        }
+		
+        ProductGroupDto result = productGroupService.update(productGroupDto);
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật nhóm sản phẩm thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		return res;
 	}
 	
 	@DeleteMapping("/delete")
 	public ResponseEntity<?> deleteById(@RequestParam String id) {
-		try {
-			boolean result = productGroupService.deleteById(id);
-			
-			if(result == true)
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Xóa nhóm sản phẩm thành công"), HttpStatus.OK.value(), result));
-			}
-			return ResponseEntity.ok(new ResponseDto(List.of("Xóa nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Xóa nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
+		boolean result = productGroupService.deleteById(id);			
+
+		ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa nhóm sản phẩm thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa nhóm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		return res;
 	}
+	
+    private List<String> insertValidation(ProductGroupDto productGroupDto) {
+        List<String> result = new ArrayList<>();
+
+        if (productGroupService.isExistName(productGroupDto.getName())) {
+            result.add("Tên đã tồn tại");
+        }
+
+        if (productGroupDto.getCategory() == null || productGroupDto.getCategory().getId().isBlank()) {
+            result.add("Vui lòng chọn nhóm sản phẩm");
+        }
+
+        return result;
+    }
+	
+    private List<String> updateValidation(ProductGroupDto productGroupDto) {
+        List<String> result = new ArrayList<>();
+
+        if (productGroupDto.getId().isBlank()) {
+            result.add("Vui lòng nhập id nhóm sản phẩm");
+        }
+
+        if (productGroupService.isExistNameIgnore(productGroupDto.getName(), productGroupDto.getId())) {
+            result.add("Tên đã tồn tại");
+        }
+
+        if (productGroupDto.getCategory() == null || productGroupDto.getCategory().getId().isBlank()) {
+            result.add("Vui lòng chọn nhóm sản phẩm");
+        }
+
+        return result;
+    }
 
 }

@@ -20,7 +20,9 @@ public interface ICategoryService {
 	
 	Boolean deleteById(String id);
 	
-	Boolean isUsing(String id);
+	boolean isUsing(String id);
 	
-	Boolean isUsingName(String name);
+	boolean isExistName(String name);
+	
+	boolean isExistNameIgnore(String name, String categoryId);
 }

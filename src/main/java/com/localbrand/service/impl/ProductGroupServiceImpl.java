@@ -30,24 +30,18 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 	@Override
 	public ProductGroupDto getById(String id) {
 		ProductGroup productGroup = productGroupRepository.findById(id).orElse(null);
-		if (productGroup != null) {
-			ProductGroupDto productGroupDto = IProductGroupDtoMapper.INSTANCE.toProductGroupDto(productGroup);
-			
-			return productGroupDto;
-		}
-		return null;
+		return IProductGroupDtoMapper.INSTANCE.toProductGroupDto(productGroup);
 	}
 	
 	@Override
 	public ProductGroupDto insert(ProductGroupDto productGroupDto) {
 		try {
+			productGroupDto.setId(UUID.randomUUID().toString());
 			ProductGroup productGroup = IProductGroupDtoMapper.INSTANCE.toProductGroup(productGroupDto);
-			productGroup.setId(UUID.randomUUID().toString());
 			
-			ProductGroup newProductGroup = productGroupRepository.save(productGroup);
-			ProductGroupDto newProductGroupDto = IProductGroupDtoMapper.INSTANCE.toProductGroupDto(newProductGroup);
+			productGroupRepository.save(productGroup);			
 			
-			return newProductGroupDto;
+			return productGroupDto;
 		} catch (Exception e) {
 			return null;
 		}
@@ -55,43 +49,36 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 	
 	@Override
 	public ProductGroupDto update(ProductGroupDto productGroupDto) {
-		String id = productGroupDto.getId();
-		ProductGroup newProductGroup = IProductGroupDtoMapper.INSTANCE.toProductGroup(productGroupDto);
-		ProductGroup productGroup = productGroupRepository.findById(id).orElse(null);
-		if(productGroup != null) {
-			productGroup.setName(newProductGroup.getName());
-			productGroup.setCategory(newProductGroup.getCategory());
+		try {
+			ProductGroup productGroup = IProductGroupDtoMapper.INSTANCE.toProductGroup(productGroupDto);
 			
-			productGroupRepository.save(productGroup);
-			return IProductGroupDtoMapper.INSTANCE.toProductGroupDto(productGroup);
+			productGroupRepository.save(productGroup);			
+			
+			return productGroupDto;
+		} catch (Exception e) {
+			return null;
 		}
-		return null;
 	}
 	
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 		try {
 			productGroupRepository.deleteById(id);
 			
 			return true;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			return null;
+			return false;
 		}
 	}
 	
 	@Override
-	public Boolean isUsingName(String name) {
-		try {
-			int count = productGroupRepository.countByName(name);
-			if(count != 0)
-			{
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
+	public boolean isExistName(String name) {
+		return productGroupRepository.countByName(name) > 0;
+	}
+	
+	@Override
+	public boolean isExistNameIgnore(String name, String productGroupId) {
+		return productGroupRepository.countByNameIgnore(name, productGroupId) > 0;
 	}
 }

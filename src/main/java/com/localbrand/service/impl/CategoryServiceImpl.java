@@ -33,65 +33,20 @@ public class CategoryServiceImpl implements ICategoryService {
 
 	@Override
 	public CategoryDto getById(String id) {
-		try {
-			Category category = categoryRepository.findById(id).orElse(null);
-			if (category != null) {
-				CategoryDto categoryDto = ICategoryDtoMapper.INSTANCE.toCategoryDto(category);
-				return categoryDto;
-			}
-			return null;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
-	}
-
-	@Override
-	public CategoryDto insert(CategoryDto categoryDto) {
-		try {
-			Category category = ICategoryDtoMapper.INSTANCE.toCategory(categoryDto);
-			category.setId(UUID.randomUUID().toString());
-			Category newCategory = categoryRepository.save(category);
-			CategoryDto newCategoryDto = ICategoryDtoMapper.INSTANCE.toCategoryDto(newCategory);
-			return newCategoryDto;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
-	}
-
-	@Override
-	public Boolean deleteById(String id) {
-		try {
-			categoryRepository.deleteById(id);
-			return true;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return false;
-		}
-	}
-
-	@Override
-	public CategoryDto update(CategoryDto categoryDto) {
-		try {
-			Category category = ICategoryDtoMapper.INSTANCE.toCategory(categoryDto);
-			categoryRepository.save(category);
-			return ICategoryDtoMapper.INSTANCE.toCategoryDto(category);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
+		Category category = categoryRepository.findById(id).orElse(null);
+		return ICategoryDtoMapper.INSTANCE.toCategoryDto(category);
 	}
 
 	@Override
 	public CategoryFullDto getFull(String id) {
 		try {
-			CategoryFullDto categoryFullDto = new CategoryFullDto();
-			CategoryDto categoryDto = getById(id);
-			List<ProductGroupDto> productGroupDto = IProductGroupDtoMapper.INSTANCE.toProductGroupDtos(productGroupRepository.findByCategoryId(id));
+			Category category = categoryRepository.findById(id).orElse(null);
+			if(category == null)
+				return null;
 			
-			categoryFullDto.setId(categoryDto.getId());
-			categoryFullDto.setName(categoryDto.getName());
+			CategoryFullDto categoryFullDto = ICategoryDtoMapper.INSTANCE.toCategoryFullDto(null);
+			
+			List<ProductGroupDto> productGroupDto = IProductGroupDtoMapper.INSTANCE.toProductGroupDtos(productGroupRepository.findByCategoryId(id));
 			categoryFullDto.setProductGroups(productGroupDto);
 			
 			return categoryFullDto;
@@ -102,33 +57,56 @@ public class CategoryServiceImpl implements ICategoryService {
 	}
 
 	@Override
-	public Boolean isUsing(String id) {
+	public CategoryDto insert(CategoryDto categoryDto) {
 		try {
-			int count = productGroupRepository.countByCategoryId(id);
-			if(count != 0)
-			{
-				return true;
-			}
-			return false;
+			categoryDto.setId(UUID.randomUUID().toString());
+			Category category = ICategoryDtoMapper.INSTANCE.toCategory(categoryDto);
+			categoryRepository.save(category);
+			
+			return categoryDto;
 		} catch (Exception e) {
-
 			System.out.println(e.getMessage());
 			return null;
 		}
 	}
-	
+
 	@Override
-	public Boolean isUsingName(String name) {
+	public CategoryDto update(CategoryDto categoryDto) {
 		try {
-			int count = categoryRepository.countByName(name);
-			if(count != 0)
-			{
-				return true;
-			}
-			return false;
+			Category category = ICategoryDtoMapper.INSTANCE.toCategory(categoryDto);
+			categoryRepository.save(category);
+			
+			return categoryDto;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
+	}
+
+	@Override
+	public Boolean deleteById(String id) {
+		try {
+			categoryRepository.deleteById(id);
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isUsing(String id) {
+		return productGroupRepository.countByCategoryId(id) > 0;
+	}
+	
+	@Override
+	public boolean isExistName(String name) {
+		return categoryRepository.countByName(name) > 0;
+	}
+	
+	@Override
+	public boolean isExistNameIgnore(String name, String categoryId) {
+		return categoryRepository.countByNameIgnore(name, categoryId) > 0;
 	}
 }

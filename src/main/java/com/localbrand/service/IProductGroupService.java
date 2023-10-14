@@ -14,7 +14,9 @@ public interface IProductGroupService {
 	
 	ProductGroupDto update(ProductGroupDto productGroupDto);
 	
-	Boolean deleteById(String id);
+	boolean deleteById(String id);
 
-	Boolean isUsingName(String name);
+	boolean isExistName(String name);
+
+	boolean isExistNameIgnore(String name, String productGroupId);
 }
