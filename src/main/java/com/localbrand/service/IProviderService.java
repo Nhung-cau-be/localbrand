@@ -12,6 +12,8 @@ public interface IProviderService {
 	ProviderDto getById(String id);
 	ProviderDto insert(ProviderDto providerDto);
 	ProviderDto update(ProviderDto providerDto);
-	Boolean  deleteById(String id);
-	Boolean isUsingCode(String code);
+	boolean  deleteById(String id);
+	boolean isUsingCode(String code);
+	boolean isUsingCodeIgnore(String code, String providerId);
+	
 }

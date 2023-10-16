@@ -26,49 +26,38 @@ public class ProviderServiceImpl implements IProviderService {
 	}
 	@Override
 	public ProviderDto getById(String id) {
-		Provider provider = providerRepository.findById(id).orElse(null);
-		if (provider != null) {
-			ProviderDto providerDto = IProviderDtoMapper.INSTANCE.toProviderDto(provider);
-			
-			return providerDto;
-		}
+			Provider provider = providerRepository.findById(id).orElse(null);
+			return IProviderDtoMapper.INSTANCE.toProviderDto(provider);
 		
-		return null;
 	}
 	@Override
 	public ProviderDto insert(ProviderDto providerDto){
 		try {
+			providerDto.setId(UUID.randomUUID().toString());
 			Provider provider = IProviderDtoMapper.INSTANCE.toProvider(providerDto);
-			provider.setId(UUID.randomUUID().toString());
-			Provider create = providerRepository.save(provider);
-			ProviderDto newproviderDto = IProviderDtoMapper.INSTANCE.toProviderDto(create);
+			providerRepository.save(provider);
 			
-			return newproviderDto;
+			return providerDto;
 		}catch (Exception e) {
-			
+			System.out.println(e.getMessage());
 			return null;
 		}
 		
 	}
 	@Override
 	public ProviderDto update(ProviderDto providerDto ) {
-		Provider newProvider = IProviderDtoMapper.INSTANCE.toProvider(providerDto);
-		String id = providerDto.getId();
-		Provider provider = providerRepository.findById(id).orElse(null);
-		if (provider != null) {
-			provider.setName(newProvider.getName());
-			provider.setAddress(newProvider.getAddress());
-			provider.setCode(newProvider.getCode());
-			Provider create = providerRepository.save(provider);
-			ProviderDto newproviderDto = IProviderDtoMapper.INSTANCE.toProviderDto(create);
+		try {
+			Provider provider = IProviderDtoMapper.INSTANCE.toProvider(providerDto);
+			providerRepository.save(provider);
 			
-			return newproviderDto;
-        }
-		
-        return null;
+			return providerDto;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
 	}
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 		try {
 				providerRepository.deleteById(id);
 				return true;
@@ -79,13 +68,11 @@ public class ProviderServiceImpl implements IProviderService {
 		}
 	}
 	@Override
-	public Boolean isUsingCode(String code) {
-		try {
+	public boolean isUsingCode(String code) {
 			return providerRepository.countByCode(code) > 0;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			
-			return null;
-		}
+	}
+	@Override
+	public boolean isUsingCodeIgnore(String code, String providerId) {
+			return providerRepository.countByCodeIgnore(code, providerId) > 0;
 	}
 }

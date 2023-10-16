@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class ProviderDto {
-	@NotBlank(message = "Không được để trống id")
 	private String id;
 	
 	@NotBlank(message = "Không được để trống code")
