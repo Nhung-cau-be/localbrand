@@ -70,29 +70,18 @@ public class ProviderServiceImpl implements IProviderService {
 	@Override
 	public Boolean deleteById(String id) {
 		try {
-			Provider provider = providerRepository.findById(id).orElse(null);
-			if (provider != null) {
 				providerRepository.deleteById(id);
-				
 				return true;
-			}
-			return false;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			
-			return null;
+			return false;
 		}
 	}
 	@Override
 	public Boolean isUsingCode(String code) {
 		try {
-			int count = providerRepository.countByCode(code);
-			if(count != 0)
-			{
-				return true;
-			}
-			
-			return false;
+			return providerRepository.countByCode(code) > 0;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			
