@@ -69,27 +69,15 @@ public class CustomerServiceImpl implements ICustomerService {
 	
 	@Override
 	public CustomerDto update(CustomerDto customerDto ) {
-			Customer newCustomer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
-			String id = customerDto.getId();
-			Customer customer = customerRepository.findById(id).orElse(null);
-			if (customer != null) {
-				customer.setCustomerType(newCustomer.getCustomerType());
-				customer.setName(newCustomer.getName());
-				customer.setPhoneNumber(newCustomer.getPhoneNumber());
-				customer.setIsMan(newCustomer.getIsMan());
-				customer.setBirthdate(newCustomer.getBirthdate());
-				customer.setAddress(newCustomer.getAddress());
-				customer.setEmail(newCustomer.getEmail());
-				customer.setMembershipPoint(newCustomer.getMembershipPoint());
-				customer.setUsername(newCustomer.getUsername());
-				customer.setPassword(newCustomer.getPassword());
-				Customer update = customerRepository.save(customer);
-				CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(update);
-				
-				return newCustomerDto;
-				}
+		try {
+			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
 			
+			customerRepository.save(customer);			
+			
+			return customerDto;
+		} catch (Exception e) {
 			return null;
+		}
 	}
 
 	@Override
