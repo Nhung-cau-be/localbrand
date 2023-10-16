@@ -12,7 +12,7 @@ public interface IProviderService {
 	ProviderDto getById(String id);
 	ProviderDto insert(ProviderDto providerDto);
 	ProviderDto update(ProviderDto providerDto);
-	boolean  deleteById(String id);
+	boolean deleteById(String id);
 	boolean isExistCode(String code);
 	boolean isExistCodeIgnore(String code, String providerId);
 	

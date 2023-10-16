@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.localbrand.dal.entity.Provider;
 import com.localbrand.dtos.response.ProviderDto;
 import com.localbrand.dtos.response.ResponseDto;
 import com.localbrand.service.IProviderService;
+
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -32,18 +35,16 @@ public class ProviderController {
     public ResponseEntity<?> getAll() {
 			List<ProviderDto> result = providerService.getAll();
 			
-	        return ResponseEntity.ok(new ResponseDto(List.of("Danh sách nhà cung cấp "), HttpStatus.OK.value(), result));
+	        return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
     }
 	
 	@GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable String id) {
 			ProviderDto result = providerService.getById(id);
-			
-			if (result != null)
-				return ResponseEntity.ok(new ResponseDto(List.of("Nhà cung cấp theo id " + id ), HttpStatus.OK.value(), result));
-			
-	        return ResponseEntity.badRequest().body(new ResponseDto(List.of("Không tìm thấy nhà cung cấp theo id " + id ), HttpStatus.BAD_REQUEST.value(), null));
-    }
+			ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+	                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Nhà cung cấp không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+			return res;
+	}
 	
 	@PostMapping("/insert")
     public ResponseEntity<?> insert(@Valid @RequestBody ProviderDto providerDto) {
@@ -51,10 +52,9 @@ public class ProviderController {
 				return ResponseEntity.badRequest().body(new ResponseDto(List.of("Mã đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
 			}
 	        ProviderDto result = providerService.insert(providerDto);
-	        if (result != null)
-	        	return ResponseEntity.ok(new ResponseDto(List.of("Thêm thành công nhà cung cấp" ), HttpStatus.OK.value(), result));
-	        
-	        return ResponseEntity.badRequest().body(new ResponseDto(List.of("Thêm không thành công nhà cung cấp" ), HttpStatus.BAD_REQUEST.value(), null));
+	        ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Thêm nhà cung cấp thành công"), HttpStatus.OK.value(), result))
+	                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Thêm nhà cung cấp thất bại"), HttpStatus.BAD_REQUEST.value(), null));     
+	        return res;
 	}
 	
 	@PutMapping("/update")
@@ -65,21 +65,18 @@ public class ProviderController {
 	        }
 		
 	        ProviderDto result = providerService.update(providerDto);
-	        if (result != null)
-	        	return ResponseEntity.ok(new ResponseDto(List.of("Sửa thành công nhà cung cấp" ), HttpStatus.OK.value(), result));
-	        return ResponseEntity.badRequest().body(new ResponseDto(List.of("Sửa không thành công nhà cung cấp" ), HttpStatus.BAD_REQUEST.value(), null));
-    }
+	        ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật nhà cung cấp thành công"), HttpStatus.OK.value(), result))
+	                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật nhà cung cấp thất bại"), HttpStatus.BAD_REQUEST.value(), null));     
+	        return res;
+	}
 	
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteById(@PathVariable String id) {
+	public ResponseEntity<?> deleteById(@RequestParam String id) {
 	        boolean result = providerService.deleteById(id);
-	        
-	        if (result) {
-	        	return ResponseEntity.ok(new ResponseDto(List.of("Xóa thành công" ), HttpStatus.OK.value(), result));
-	        }
-	        
-	        return ResponseEntity.badRequest().body(new ResponseDto(List.of("Xóa không thành công" ), HttpStatus.BAD_REQUEST.value(), null));
-    }
+	        ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa nhà cung cấp thành công"), HttpStatus.OK.value(), result))
+	                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa nhà cung cấp thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+	        return res;
+	}
 	private List<String> updateValidation(ProviderDto providerDto) {
         List<String> result = new ArrayList<>();
 

@@ -1,5 +1,6 @@
 package com.localbrand.dtos.response;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
