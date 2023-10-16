@@ -3,10 +3,12 @@ package com.localbrand.controller;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.validator.EmailValidator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,81 +49,40 @@ public class CustomerController {
 
 	@PostMapping("/insert")
 	public ResponseEntity<?> insert(@RequestBody CustomerDto customerDto){
-		try {
-
-			if (customerDto.getName().isBlank()) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (customerDto.getCustomerType() == null)
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Loại khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (customerDto.getAccount() == null)
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Account khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (!Validate.checkPhoneNumber(customerDto.getSdt()) || customerService.isUsingPhoneNumber(customerDto.getSdt())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Sdt sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (!Validate.checkEmail(customerDto.getEmail()) || customerService.isUsingEmail(customerDto.getEmail())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Email sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			CustomerDto result = customerService.insert(customerDto);
-			return ResponseEntity.ok(new ResponseDto(List.of("Thêm khách hàng thành công"), HttpStatus.OK.value(), result));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Thêm khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
+		List<String> msg = insertValidation(customerDto);
+        if (msg.size() > 0) {
+            return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
+        }
+        
+		CustomerDto result = customerService.insert(customerDto);
+		
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Thêm khách hàng thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Thêm khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		return res;
 	}
+	
 
 	@PutMapping("/update")
 	public ResponseEntity<?> update(@RequestBody CustomerDto customerDto) {
-		try {
-			if (customerDto.getId() == null || customerDto.getId().isBlank()) {
-		        return ResponseEntity.ok(new ResponseDto(List.of("ID khách hàng không hợp lệ"), HttpStatus.BAD_REQUEST.value(), null));
-		        }
-			if (customerDto.getName().isBlank()) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Tên khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (customerDto.getCustomerType() == null)
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Loại khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (customerDto.getAccount() == null)
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Account khách hàng không thể để trống"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (!Validate.checkPhoneNumber(customerDto.getSdt()) || customerService.isUsingPhoneNumber(customerDto.getSdt())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Sdt sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-			if (!Validate.checkEmail(customerDto.getEmail()) || customerService.isUsingEmail(customerDto.getEmail())) {
-				return ResponseEntity.ok(new ResponseDto(List.of("Email sai định dạng hoặc đã được sử dụng"), HttpStatus.BAD_REQUEST.value(), null));
-			}
-
-			CustomerDto result = customerService.update(customerDto);
-			if (result != null) {
-		        return ResponseEntity.ok(new ResponseDto(List.of("Sửa thành công khách hàng"), HttpStatus.OK.value(), result));
-		    } else {
-		        return ResponseEntity.ok(new ResponseDto(List.of("Sửa thất bại khách hàng"), HttpStatus.BAD_REQUEST.value(), null));
-		    }
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Sửa khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
+		 List<String> msg = updateValidation(customerDto);
+	        if (msg.size() > 0) {
+	            return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
+	        }
+			
+	        CustomerDto result = customerService.update(customerDto);
+			ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật khách hàng thành công"), HttpStatus.OK.value(), result))
+	                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+			return res;
 	}
 
 
 	@DeleteMapping("delete")
 	public ResponseEntity<?> deleteById(@RequestParam String id) {
-		try {
-			boolean result = customerService.deleteById(id);
+		boolean result = customerService.deleteById(id);			
 
-			if(result==true)
-			{
-				return ResponseEntity.ok(new ResponseDto(List.of("Xóa khách hàng thành công"), HttpStatus.OK.value(), result));
-			}
-			return ResponseEntity.ok(new ResponseDto(List.of("Xóa khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		} catch (Exception e) {
-			return ResponseEntity.ok(new ResponseDto(List.of("Xóa khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-		}
+		ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa khách hàng thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		return res;
 	}
 
 	@GetMapping("/searchByName")
@@ -137,8 +98,8 @@ public class CustomerController {
 	 }
 
 	@GetMapping("/searchByPhoneNumber")
-	    public ResponseEntity<?> searchByPhoneNumber (@RequestParam String sdt) {
-		 		List<CustomerDto> result = customerService.searchByPhoneNumber(sdt);
+	    public ResponseEntity<?> searchByPhoneNumber (@RequestParam String phoneNumber) {
+		 		List<CustomerDto> result = customerService.searchByPhoneNumber(phoneNumber);
 		 		if (result.isEmpty())
 	          	{
 	            	return ResponseEntity.ok(new ResponseDto(List.of("Tìm kiếm theo sdt thất bại"), HttpStatus.BAD_REQUEST.value(), null));
@@ -147,5 +108,51 @@ public class CustomerController {
 	           );
 	 }
 
+	private List<String> insertValidation(CustomerDto customerDto) {
+        List<String> result = new ArrayList<>();
+        
+        if (!Validate.checkPhoneNumber(customerDto.getPhoneNumber())) {
+        	result.add("Số điện thoại sai định dạng");
+        }
+        
+        if (customerService.isExitsPhoneNumber(customerDto.getPhoneNumber())) {
+            result.add("Số điện thoại đã tồn tại");
+        }
+        
+        if (customerService.isExitsEmail(customerDto.getEmail())) {
+            result.add("Email đã tồn tại");
+        }
+        
+        if (customerDto.getMembershipPoint() < 0) {
+        	result.add("Điểm khách hàng không được nhỏ hơn 0");
+        }
+        
+        if (customerService.isExitsUsername(customerDto.getUsername())) {
+        	result.add("Tài khoản đã tồn tại");
+        }
+        
+        return result;
+    }
+	
+    private List<String> updateValidation(CustomerDto customerDto) {
+        List<String> result = new ArrayList<>();
+        
+        if (customerDto.getMembershipPoint() < 0) {
+        	result.add("Điểm khách hàng không được nhỏ hơn 0");
+        }
+        
+        if (customerService.isExitsEmailIgnore(customerDto.getEmail(), customerDto.getId())) {
+            result.add("Email đã tồn tại");
+        }
+
+        if (customerService.isExitsPhoneNumberIgnore(customerDto.getPhoneNumber(), customerDto.getId())) {
+            result.add("Số điện thoại đã tồn tại");
+        }
+
+        return result;
+    }
 
 }
+	
+	
+	

@@ -14,6 +14,13 @@ public interface ICustomerTypeService {
 	
 	Boolean deleteById(String id);
 	
-	Boolean isUsingName(String name);
+	Boolean isExitsName(String name);
 	
+	Boolean isExitsNameIgnore(String name, String customerTypeId);
+	
+	boolean isUsing(String id);
+	
+	Boolean isExitsStandardPoint(Integer standardPoint);
+	
+	Boolean isExitsStandardPointIgnore(Integer standardPoint, String customerTypeId);
 }

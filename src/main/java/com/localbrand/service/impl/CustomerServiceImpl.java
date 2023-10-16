@@ -7,11 +7,14 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.localbrand.dal.entity.Account;
 import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
+import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.CustomerTypeDto;
+import com.localbrand.mappers.IAccountDtoMapper;
 import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.ICustomerTypeDtoMapper;
 import com.localbrand.service.ICustomerService;
@@ -21,6 +24,9 @@ public class CustomerServiceImpl implements ICustomerService {
 	
 	@Autowired
 	private ICustomerRepository customerRepository;
+	
+	@Autowired
+	private IAccountRepository accountRepository;
 
 	@Override
 	public List<CustomerDto> getAll() {
@@ -29,13 +35,28 @@ public class CustomerServiceImpl implements ICustomerService {
 		
 		return customerDtos;
 	}
+	
+	@Override
+	public CustomerDto getById(String id) {
+		Customer customer = customerRepository.findById(id).orElse(null);
+		return ICustomerDtoMapper.INSTANCE.toCustomerDto(customer);
+	}
 
 	@Override
 	public CustomerDto insert(CustomerDto customerDto) {
 		try {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
 			customer.setId(UUID.randomUUID().toString());
+			
 			Customer newCustomer = customerRepository.save(customer);
+			
+			Account account = new Account();
+			account.setId(UUID.randomUUID().toString());
+			account.setUsername(customer.getUsername());
+			account.setPassword(customer.getPassword());
+			account.setType("Khách Hàng");
+			accountRepository.save(account);
+			
 			CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(newCustomer);
 			
 			return newCustomerDto;
@@ -53,15 +74,15 @@ public class CustomerServiceImpl implements ICustomerService {
 			Customer customer = customerRepository.findById(id).orElse(null);
 			if (customer != null) {
 				customer.setCustomerType(newCustomer.getCustomerType());
-				customer.setAccount(newCustomer.getAccount());
 				customer.setName(newCustomer.getName());
-				customer.setSdt(newCustomer.getSdt());
-				customer.setMan(newCustomer.isMan());
+				customer.setPhoneNumber(newCustomer.getPhoneNumber());
+				customer.setIsMan(newCustomer.getIsMan());
 				customer.setBirthdate(newCustomer.getBirthdate());
 				customer.setAddress(newCustomer.getAddress());
 				customer.setEmail(newCustomer.getEmail());
-				customer.setMembership_point(newCustomer.getMembership_point());
-				customer.setMembership(newCustomer.getMembership());
+				customer.setMembershipPoint(newCustomer.getMembershipPoint());
+				customer.setUsername(newCustomer.getUsername());
+				customer.setPassword(newCustomer.getPassword());
 				Customer update = customerRepository.save(customer);
 				CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(update);
 				
@@ -98,45 +119,37 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 
 	@Override
-	public List<CustomerDto> searchByPhoneNumber(String sdt) {
-		List<Customer> customers = customerRepository.findByPhoneNumber(sdt);
+	public List<CustomerDto> searchByPhoneNumber(String phoneNumber) {
+		List<Customer> customers = customerRepository.findByPhoneNumber(phoneNumber);
 		 List<CustomerDto> customerDtos = ICustomerDtoMapper.INSTANCE.toCustomerDtos(customers);
 		 
 		 return customerDtos;
 	}
 	
 	@Override
-	public Boolean isUsingPhoneNumber(String sdt) {
-		try {
-			int count = customerRepository.countByPhoneNumber(sdt);
-			if(count != 0)
-			{
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
+	public Boolean isExitsPhoneNumber(String phoneNumber) {
+		return customerRepository.countByPhoneNumber(phoneNumber) > 0;
 	}
 	
 	@Override
-	public Boolean isUsingEmail(String email) {
-		try {
-			int count = customerRepository.countByEmail(email);
-			if(count != 0)
-			{
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			
-			return null;
-		}
+	public Boolean isExitsEmail(String email) {
+		return customerRepository.countByEmail(email) > 0;
 	}
 	
+	@Override
+	public Boolean isExitsPhoneNumberIgnore(String phoneNumber,  String customerId) {
+		return customerRepository.countByPhoneNumberIgnore(phoneNumber, customerId) > 0;
+	}
 	
+	@Override
+	public Boolean isExitsEmailIgnore(String email,  String customerId) {
+		return customerRepository.countByEmailIgnore(email, customerId) > 0;
+	}
+
+	@Override
+	public Boolean isExitsUsername(String username) {
+		return customerRepository.countByUsername(username) > 0;
+	}
 	
 	
 }

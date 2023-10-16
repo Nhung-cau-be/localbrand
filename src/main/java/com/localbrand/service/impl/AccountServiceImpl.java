@@ -1,7 +1,7 @@
 package com.localbrand.service.impl;
 
 import java.util.List;
-
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +23,21 @@ public class AccountServiceImpl implements IAccountService {
 		List<AccountDto> accountDtos = IAccountDtoMapper.INSTANCE.toAccountDtos(account);
 		
 		return accountDtos;
+	}
+
+	@Override
+	public AccountDto insert(AccountDto accountDto){
+		try {
+			Account account = IAccountDtoMapper.INSTANCE.toAccount(accountDto);
+			account.setId(UUID.randomUUID().toString());
+			Account newAccount = accountRepository.save(account);
+			AccountDto newAccountDto = IAccountDtoMapper.INSTANCE.toAccountDto(newAccount);
+			
+			return newAccountDto;
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 	
 }

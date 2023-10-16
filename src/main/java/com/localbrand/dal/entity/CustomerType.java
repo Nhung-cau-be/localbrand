@@ -16,7 +16,7 @@ public class CustomerType {
 	@Column
 	private String name;
 	@Column
-	private int standardPoint;
+	private Integer standardPoint;
 	@Column
-	private float discountPercent;
+	private Float discountPercent;
 }

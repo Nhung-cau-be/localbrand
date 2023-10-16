@@ -2,7 +2,9 @@ package com.localbrand;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.validator.EmailValidator;
+import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
+
+
 
 public class Validate {
 	public static boolean checkPhoneNumber(String sdt){
@@ -18,10 +20,10 @@ public class Validate {
 //        return matcher.find();
 //    }
 //    
-    public static boolean checkEmail(String email){
-       return EmailValidator.getInstance().isValid(email);
-  
-    }
-   
+//    public static boolean checkEmail(String email){
+//       return EmailValidator.getInstance().isValid(email);
+//  
+//    }
+//   
     
 }
