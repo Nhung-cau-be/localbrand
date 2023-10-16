@@ -6,12 +6,12 @@ import lombok.Data;
 public class ProviderDto {
 	private String id;
 	
-	@NotBlank(message = "Không được để trống code")
+	@NotBlank(message = "Vui lòng nhập mã nhà cung cấp")
 	private String code;
 	
-	@NotBlank(message = "Không được để trống name")
+	@NotBlank(message = "Vui lòng nhập tên nhà cung cấp")
 	private String name;
 	
-	@NotBlank(message = "Không được để trống address")
+	@NotBlank(message = "Vui lòng nhập địa chỉ nhà cung cấp")
 	private String address;
 }

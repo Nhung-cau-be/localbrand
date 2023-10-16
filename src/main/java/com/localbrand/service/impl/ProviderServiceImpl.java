@@ -68,11 +68,11 @@ public class ProviderServiceImpl implements IProviderService {
 		}
 	}
 	@Override
-	public boolean isUsingCode(String code) {
+	public boolean isExistCode(String code) {
 			return providerRepository.countByCode(code) > 0;
 	}
 	@Override
-	public boolean isUsingCodeIgnore(String code, String providerId) {
+	public boolean isExistCodeIgnore(String code, String providerId) {
 			return providerRepository.countByCodeIgnore(code, providerId) > 0;
 	}
 }
