@@ -14,3 +14,4 @@ public class ResponseDto {
     int status;
     Object result;
 }
+
