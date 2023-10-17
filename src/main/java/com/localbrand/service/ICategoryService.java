@@ -2,13 +2,15 @@ package com.localbrand.service;
 
 import java.util.List;
 
+import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.dtos.response.CategoryFullDto;
-import com.localbrand.dtos.response.ProductGroupDto;
 
 public interface ICategoryService {
 	
 	List<CategoryDto> getAll();
+
+	BaseSearchDto<List<CategoryDto>> findAll(BaseSearchDto<List<CategoryDto>> searchDto);
 	
 	CategoryDto getById(String id);
 

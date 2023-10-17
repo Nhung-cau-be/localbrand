@@ -4,11 +4,16 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.localbrand.dal.entity.Category;
 import com.localbrand.dal.repository.ICategoryRepository;
 import com.localbrand.dal.repository.IProductGroupRepository;
+import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.dtos.response.CategoryFullDto;
 import com.localbrand.dtos.response.ProductGroupDto;
@@ -29,6 +34,27 @@ public class CategoryServiceImpl implements ICategoryService {
 		List<Category> categories = categoryRepository.findAll();
 		List<CategoryDto> categoryDtos = ICategoryDtoMapper.INSTANCE.toCategoryDtos(categories);
 		return categoryDtos;
+	}
+
+	@Override
+	public BaseSearchDto<List<CategoryDto>> findAll(BaseSearchDto<List<CategoryDto>> searchDto) {
+		if (searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
+            searchDto.setResult(this.getAll());
+            return searchDto;
+        }
+
+        if (searchDto.getSortBy() == null || searchDto.getSortBy().isEmpty()) {
+            searchDto.setSortBy("name");
+        }
+        Sort sort = searchDto.isSortAsc() ? Sort.by(Sort.Direction.ASC, searchDto.getSortBy()) : Sort.by(Sort.Direction.DESC, searchDto.getSortBy());
+
+        Pageable pageable = PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage(), sort);
+
+        Page<Category> page = categoryRepository.findAll(pageable);
+        searchDto.setTotalRecords(page.getTotalElements());
+        searchDto.setResult(ICategoryDtoMapper.INSTANCE.toCategoryDtos(page.getContent()));
+
+        return searchDto;
 	}
 
 	@Override
