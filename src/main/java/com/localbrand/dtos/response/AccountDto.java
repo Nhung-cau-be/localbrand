@@ -7,10 +7,9 @@ import lombok.Data;
 @Data
 public class AccountDto {
 	private String id;
-	@NotNull (message = "vui lòng nhập tài khoản")
+	@NotBlank (message = "vui lòng chọn tài khoản")
 	private String username;
-	@NotNull (message = "vui lòng nhập mật khẩu")
+	@NotBlank (message = "vui lòng chọn mật khẩu")
 	private String password;
-	@NotNull (message = "vui lòng nhập loại tài khoản")
 	private String type;
 }

@@ -1,5 +1,7 @@
 package com.localbrand.dal.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +21,10 @@ public interface ICustomerTypeRepository extends JpaRepository<CustomerType, Str
 	
 	@Query("SELECT count(c.id) FROM CustomerType c WHERE c.standardPoint = :standardPoint AND c.id != :customerTypeId")
 	int countByStandardPointIgnore(@Param("standardPoint") Integer standardPoint, @Param("customerTypeId") String customerTypeId);
+	
+	@Query("SELECT c FROM CustomerType c WHERE c.standardPoint = :standardPoint")
+	CustomerType findByStandardPoint(@Param("standardPoint") Integer standardPoint);
+	
+	@Query("SELECT c FROM CustomerType c WHERE c.standardPoint < :standardPoint")
+	List<CustomerType> findByStandardPointDelete(Integer standardPoint);
 }

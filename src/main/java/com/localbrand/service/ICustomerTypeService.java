@@ -10,7 +10,9 @@ public interface ICustomerTypeService {
 	
 	CustomerTypeDto insert(CustomerTypeDto customerTypeDto);
 	
-	CustomerTypeDto update(CustomerTypeDto providerDto);
+	CustomerTypeDto update(CustomerTypeDto customerTypeDto);
+	
+	CustomerTypeDto findById (String id);
 	
 	Boolean deleteById(String id);
 	
@@ -18,9 +20,10 @@ public interface ICustomerTypeService {
 	
 	Boolean isExitsNameIgnore(String name, String customerTypeId);
 	
-	boolean isUsing(String id);
+	Boolean isUsing(String id);
 	
 	Boolean isExitsStandardPoint(Integer standardPoint);
 	
 	Boolean isExitsStandardPointIgnore(Integer standardPoint, String customerTypeId);
+	
 }

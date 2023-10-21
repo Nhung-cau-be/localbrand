@@ -14,10 +14,6 @@ public interface ICustomerService {
 	
 	Boolean deleteById(String id);
 	
-	List<CustomerDto> searchByName(String name);
-	
-	List<CustomerDto> searchByPhoneNumber(String phoneNumber);
-	
 	Boolean isExitsPhoneNumber(String phoneNumber);
 	
 	Boolean isExitsEmail(String email);
@@ -26,5 +22,4 @@ public interface ICustomerService {
 	
 	Boolean isExitsEmailIgnore(String email, String customerId);
 	
-	Boolean isExitsUsername(String username);
 }

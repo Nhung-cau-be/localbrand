@@ -1,11 +1,8 @@
 package com.localbrand.controller;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 
@@ -14,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.localbrand.Validate;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.ResponseDto;
+import com.localbrand.service.IAccountService;
 import com.localbrand.service.ICustomerService;
 
 
@@ -34,7 +31,9 @@ public class CustomerController {
 
 	@Autowired
 	private ICustomerService customerService;
-
+	
+	@Autowired IAccountService accountService;
+	
 	@GetMapping("")
 	 public ResponseEntity<?> getAll() {
 		try {
@@ -58,6 +57,7 @@ public class CustomerController {
 		
 		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Thêm khách hàng thành công"), HttpStatus.OK.value(), result))
                 : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Thêm khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		
 		return res;
 	}
 	
@@ -85,51 +85,26 @@ public class CustomerController {
 		return res;
 	}
 
-	@GetMapping("/searchByName")
-	    public ResponseEntity<?> searchByName (@RequestParam String name) {
-	        List<CustomerDto> result = customerService.searchByName(name);
-	        if (result.isEmpty())
-	          	{
-	            	return ResponseEntity.ok(new ResponseDto(List.of("Tìm kiếm theo tên thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-	            }
-	            return ResponseEntity.ok(new ResponseDto(List.of("Tìm kiếm theo tên thành công"), HttpStatus.OK.value(), result)
-	           );
-
-	 }
-
-	@GetMapping("/searchByPhoneNumber")
-	    public ResponseEntity<?> searchByPhoneNumber (@RequestParam String phoneNumber) {
-		 		List<CustomerDto> result = customerService.searchByPhoneNumber(phoneNumber);
-		 		if (result.isEmpty())
-	          	{
-	            	return ResponseEntity.ok(new ResponseDto(List.of("Tìm kiếm theo sdt thất bại"), HttpStatus.BAD_REQUEST.value(), null));
-	            }
-	            return ResponseEntity.ok(new ResponseDto(List.of("Tìm kiếm theo sdt thành công"), HttpStatus.OK.value(), result)
-	           );
-	 }
-
 	private List<String> insertValidation(CustomerDto customerDto) {
         List<String> result = new ArrayList<>();
         
-        if (!Validate.checkPhoneNumber(customerDto.getPhoneNumber())) {
+        if (!Validate.checkPhoneNumber(customerDto.getPhonenumber())) {
         	result.add("Số điện thoại sai định dạng");
         }
         
-        if (customerService.isExitsPhoneNumber(customerDto.getPhoneNumber())) {
+        if (customerService.isExitsPhoneNumber(customerDto.getPhonenumber())) {
             result.add("Số điện thoại đã tồn tại");
         }
         
         if (customerService.isExitsEmail(customerDto.getEmail())) {
             result.add("Email đã tồn tại");
         }
-        
-        if (customerDto.getMembershipPoint() < 0) {
-        	result.add("Điểm khách hàng không được nhỏ hơn 0");
+  
+        if (accountService.isExitsUsername(customerDto.getAccount().getUsername()))
+        {
+        	result.add("Username đã tồn tại");
         }
         
-        if (customerService.isExitsUsername(customerDto.getUsername())) {
-        	result.add("Tài khoản đã tồn tại");
-        }
         
         return result;
     }
@@ -137,15 +112,11 @@ public class CustomerController {
     private List<String> updateValidation(CustomerDto customerDto) {
         List<String> result = new ArrayList<>();
         
-        if (customerDto.getMembershipPoint() < 0) {
-        	result.add("Điểm khách hàng không được nhỏ hơn 0");
-        }
-        
         if (customerService.isExitsEmailIgnore(customerDto.getEmail(), customerDto.getId())) {
             result.add("Email đã tồn tại");
         }
 
-        if (customerService.isExitsPhoneNumberIgnore(customerDto.getPhoneNumber(), customerDto.getId())) {
+        if (customerService.isExitsPhoneNumberIgnore(customerDto.getPhonenumber(), customerDto.getId())) {
             result.add("Số điện thoại đã tồn tại");
         }
 

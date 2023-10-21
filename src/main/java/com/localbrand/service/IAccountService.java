@@ -11,4 +11,5 @@ public interface IAccountService {
 	
 	AccountDto insert(AccountDto accountDto);
 	
+	Boolean isExitsUsername(String username);
 }

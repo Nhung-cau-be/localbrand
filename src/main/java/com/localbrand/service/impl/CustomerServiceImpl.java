@@ -12,11 +12,11 @@ import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
 import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.ICustomerRepository;
+import com.localbrand.dal.repository.ICustomerTypeRepository;
 import com.localbrand.dtos.response.CustomerDto;
-import com.localbrand.dtos.response.CustomerTypeDto;
+import com.localbrand.dtos.response.AccountDto;
 import com.localbrand.mappers.IAccountDtoMapper;
 import com.localbrand.mappers.ICustomerDtoMapper;
-import com.localbrand.mappers.ICustomerTypeDtoMapper;
 import com.localbrand.service.ICustomerService;
 
 @Service
@@ -27,6 +27,10 @@ public class CustomerServiceImpl implements ICustomerService {
 	
 	@Autowired
 	private IAccountRepository accountRepository;
+	
+	@Autowired
+	private ICustomerTypeRepository customerTypeRepository;
+	
 
 	@Override
 	public List<CustomerDto> getAll() {
@@ -48,15 +52,25 @@ public class CustomerServiceImpl implements ICustomerService {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
 			customer.setId(UUID.randomUUID().toString());
 			
-			Customer newCustomer = customerRepository.save(customer);
+			CustomerType customerType = customerTypeRepository.findByStandardPoint(0);
+
+	        if (customerType != null) {
+	            customer.setCustomerType(customerType);
+	        }
+
+			customer.setMembershipPoint(0);
 			
 			Account account = new Account();
-			account.setId(UUID.randomUUID().toString());
-			account.setUsername(customer.getUsername());
-			account.setPassword(customer.getPassword());
-			account.setType("Khách Hàng");
-			accountRepository.save(account);
-			
+		    account.setId(UUID.randomUUID().toString());
+		    account.setUsername(customerDto.getAccount().getUsername());
+		    account.setPassword(customerDto.getAccount().getPassword());
+		    account.setType("Khách Hàng");
+		   
+		    customer.setAccount(account);
+		    
+		    accountRepository.save(account);
+		    Customer newCustomer = customerRepository.save(customer);
+		    
 			CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(newCustomer);
 			
 			return newCustomerDto;
@@ -83,36 +97,15 @@ public class CustomerServiceImpl implements ICustomerService {
 	@Override
 	public Boolean deleteById(String id) {
 		try {
-			Customer customer = customerRepository.findById(id).orElse(null);
-			if (customer != null) {
-				customerRepository.deleteById(id);
-				
-				return true;
-			}
-			return false;
-		} 
-		catch (Exception e) {
-			System.out.println(e.getMessage());
+			customerRepository.deleteById(id);
 			
-			return null;
+			return true;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
 		}
 	}
 
-	@Override
-	public List<CustomerDto> searchByName(String name) {
-		 List<Customer> customers = customerRepository.findByName(name);
-		 List<CustomerDto> customerDtos = ICustomerDtoMapper.INSTANCE.toCustomerDtos(customers);
-		 
-		 return customerDtos;
-	}
-
-	@Override
-	public List<CustomerDto> searchByPhoneNumber(String phoneNumber) {
-		List<Customer> customers = customerRepository.findByPhoneNumber(phoneNumber);
-		 List<CustomerDto> customerDtos = ICustomerDtoMapper.INSTANCE.toCustomerDtos(customers);
-		 
-		 return customerDtos;
-	}
 	
 	@Override
 	public Boolean isExitsPhoneNumber(String phoneNumber) {
@@ -134,10 +127,7 @@ public class CustomerServiceImpl implements ICustomerService {
 		return customerRepository.countByEmailIgnore(email, customerId) > 0;
 	}
 
-	@Override
-	public Boolean isExitsUsername(String username) {
-		return customerRepository.countByUsername(username) > 0;
-	}
+
 	
 	
 }

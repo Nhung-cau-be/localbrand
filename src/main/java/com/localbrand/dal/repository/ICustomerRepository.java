@@ -11,29 +11,22 @@ import com.localbrand.dal.entity.Customer;
 
 @Repository
 public interface ICustomerRepository extends JpaRepository<Customer, String>{
-	@Query(value = "SELECT c FROM Customer c WHERE c.name LIKE %:name%")
-	List<Customer> findByName(String name);
-
-	@Query("SELECT c FROM Customer c WHERE c.phoneNumber = :phoneNumber")
-	List<Customer> findByPhoneNumber(String phoneNumber);
 	
-	@Query("SELECT COUNT(c) FROM Customer c WHERE c.phoneNumber = :phoneNumber")
-	int countByPhoneNumber(String phoneNumber);
+	@Query("SELECT COUNT(c) FROM Customer c WHERE c.phonenumber = :phonenumber")
+	int countByPhoneNumber(String phonenumber);
 	
 	@Query("SELECT COUNT(c) FROM Customer c WHERE c.email = :email")
 	int countByEmail(String email);
 	
-	@Query("SELECT COUNT(c.id) FROM Customer c WHERE c.phoneNumber = :phoneNumber AND c.id != :customerId")
-	int countByPhoneNumberIgnore(@Param("phoneNumber") String phoneNumber, @Param ("customerId") String customerId);
+	@Query("SELECT COUNT(c.id) FROM Customer c WHERE c.phonenumber = :phonenumber AND c.id != :customerId")
+	int countByPhoneNumberIgnore(@Param("phonenumber") String phonenumber, @Param ("customerId") String customerId);
 	
 	@Query("SELECT COUNT(c.id) FROM Customer c WHERE c.email = :email AND c.id != :customerId")
 	int countByEmailIgnore(@Param("email") String email, @Param ("customerId") String customerId);
 	
 	int countByCustomerTypeId(String id);
 	
-	@Query("SELECT COUNT(c) FROM Customer c WHERE c.username = :username")
-	int countByUsername(String username);
+	@Query("SELECT c FROM Customer c WHERE c.customerType.id = :customerTypeId")
+    List<Customer> findByCustomerType(@Param("customerTypeId") String customerTypeId);
 	
-	@Query("SELECT COUNT(c.id) FROM Customer c WHERE c.username = :username AND c.id != :customerId")
-	int countByUsernameIgnore(@Param("username") String username, @Param ("customerId") String customerId);
 }

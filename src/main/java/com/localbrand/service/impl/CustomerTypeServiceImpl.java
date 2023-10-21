@@ -1,5 +1,6 @@
 package com.localbrand.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,6 +36,13 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 
 
 	@Override
+	public CustomerTypeDto findById(String id) {
+		CustomerType customerType = customerTypeRepository.findById(id).orElse(null);
+		return ICustomerTypeDtoMapper.INSTANCE.toCustomerTypeDto(customerType);
+	}
+
+		
+	@Override
 	public CustomerTypeDto insert(CustomerTypeDto customerTypeDto){
 		try {
 			customerTypeDto.setId(UUID.randomUUID().toString());
@@ -64,24 +72,38 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	
 	@Override
 	public Boolean deleteById(String id) {
-		try {
-			CustomerType customerType = customerTypeRepository.findById(id).orElse(null);
-			if (customerType != null) {
-				customerTypeRepository.deleteById(id);
-				
-				return true;
-			}
-			return false;
-		} 
-		catch (Exception e) {
-			System.out.println(e.getMessage());
-			
-			return null;
-		}
+	    try {
+	    	
+	        CustomerType customerTypeDelete = customerTypeRepository.findById(id).orElse(null);
+	        if (customerTypeDelete != null) {
+	            if (isUsing(id)) {
+	                List<CustomerType> customerTypesLowerStandardPoint = customerTypeRepository.findByStandardPointDelete(customerTypeDelete.getStandardPoint());
+
+	                if (!customerTypesLowerStandardPoint.isEmpty()) {
+	                    customerTypesLowerStandardPoint.sort(Comparator.comparing(CustomerType::getStandardPoint));
+
+	                    CustomerType newCustomerType = customerTypesLowerStandardPoint.get(customerTypesLowerStandardPoint.size() - 1);
+	                    List<Customer> newCustomerUpdate = customerRepository.findByCustomerType(id);
+	                    for (Customer customer : newCustomerUpdate) {
+	                        customer.setCustomerType(newCustomerType);
+	                        customer.setMembershipPoint(0);
+	                    }
+	                    customerRepository.saveAll(newCustomerUpdate);
+	                }
+	            }
+	            customerTypeRepository.deleteById(id);
+
+	            return true;
+	        }
+	        return false;
+	    } catch (Exception e) {
+	        System.out.println(e.getMessage());
+	        return false;
+	    }
 	}
 	
 	@Override
-	public boolean isUsing(String id) {
+	public Boolean isUsing(String id) {
 		return customerRepository.countByCustomerTypeId(id) > 0;
 	}
 	

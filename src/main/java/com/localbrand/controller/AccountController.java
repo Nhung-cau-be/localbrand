@@ -23,14 +23,9 @@ public class AccountController {
 	
 	@GetMapping("")
 	 public ResponseEntity<?> getAll() {
-		try {
-			List<AccountDto> result = accountService.getAll();
-	        return ResponseEntity.ok(new ResponseDto(List.of("Danh sách Account "), HttpStatus.OK.value(), result));
-		}
-		catch (Exception e) {
-	        return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy Account "),HttpStatus.BAD_REQUEST.value(), null));
-		}
-    }
+		List<AccountDto> result = accountService.getAll();
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+	}
 	
 }
 
