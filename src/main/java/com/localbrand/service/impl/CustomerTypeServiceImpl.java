@@ -73,29 +73,31 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	@Override
 	public Boolean deleteById(String id) {
 	    try {
-	    	
 	        CustomerType customerTypeDelete = customerTypeRepository.findById(id).orElse(null);
-	        if (customerTypeDelete != null) {
-	            if (isUsing(id)) {
-	                List<CustomerType> customerTypesLowerStandardPoint = customerTypeRepository.findByStandardPointDelete(customerTypeDelete.getStandardPoint());
 
-	                if (!customerTypesLowerStandardPoint.isEmpty()) {
-	                    customerTypesLowerStandardPoint.sort(Comparator.comparing(CustomerType::getStandardPoint));
-
-	                    CustomerType newCustomerType = customerTypesLowerStandardPoint.get(customerTypesLowerStandardPoint.size() - 1);
-	                    List<Customer> newCustomerUpdate = customerRepository.findByCustomerType(id);
-	                    for (Customer customer : newCustomerUpdate) {
-	                        customer.setCustomerType(newCustomerType);
-	                        customer.setMembershipPoint(0);
-	                    }
-	                    customerRepository.saveAll(newCustomerUpdate);
-	                }
-	            }
-	            customerTypeRepository.deleteById(id);
-
-	            return true;
+	        if (customerTypeDelete == null || !isUsing(id)) {
+	            return false;
 	        }
-	        return false;
+
+	        List<CustomerType> customerTypesLowerStandardPoint = customerTypeRepository.findByStandardPointDelete(customerTypeDelete.getStandardPoint());
+
+	        if (!customerTypesLowerStandardPoint.isEmpty()) {
+	            customerTypesLowerStandardPoint.sort(Comparator.comparing(CustomerType::getStandardPoint));
+
+	            CustomerType newCustomerType = customerTypesLowerStandardPoint.get(customerTypesLowerStandardPoint.size() - 1);
+	            List<Customer> customersToUpdate = customerRepository.findByCustomerType(id);
+	            
+	            customersToUpdate.forEach(customer -> {
+		            customer.setCustomerType(newCustomerType);
+		            customer.setMembershipPoint(newCustomerType.getStandardPoint());
+	                });
+	            
+	            customerRepository.saveAll(customersToUpdate);
+	        }
+
+	        customerTypeRepository.deleteById(id);
+
+	        return true;
 	    } catch (Exception e) {
 	        System.out.println(e.getMessage());
 	        return false;
@@ -108,22 +110,22 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	}
 	
 	@Override
-	public Boolean isExitsName(String name) {
+	public Boolean isExistName(String name) {
 		return customerTypeRepository.countByName(name) > 0;
 	}
 	
 	@Override
-	public Boolean isExitsNameIgnore(String name, String customerTypeId) {
+	public Boolean isExistNameIgnore(String name, String customerTypeId) {
 		return customerTypeRepository.countByNameIgnore(name, customerTypeId) > 0;
 	}
 	
 	@Override
-	public Boolean isExitsStandardPoint(Integer standardPoint) {
+	public Boolean isExistStandardPoint(Integer standardPoint) {
 		return customerTypeRepository.countByStandardPoint(standardPoint) > 0;
 	}
 	
 	@Override
-	public Boolean isExitsStandardPointIgnore(Integer standardPoint, String customerTypeId) {
+	public Boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId) {
 		return customerTypeRepository.countByStandardPointIgnore(standardPoint, customerTypeId) > 0;
 	}
 

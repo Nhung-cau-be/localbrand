@@ -34,12 +34,6 @@ public class CustomerTypeController {
 	@Autowired
 	private ICustomerTypeService customerTypeService;
 	
-	@Autowired
-	private ICustomerRepository customerRepository;
-	
-	@Autowired
-	private ICustomerTypeRepository customerTypeRepository;
-	
 	@GetMapping("")
 	 public ResponseEntity<?> getAll() {
 		List<CustomerTypeDto> result = customerTypeService.getAll();
@@ -92,11 +86,11 @@ public class CustomerTypeController {
     private List<String> insertValidation(CustomerTypeDto customerTypeDto) {
         List<String> result = new ArrayList<>();
 
-        if (customerTypeService.isExitsName(customerTypeDto.getName())) {
+        if (customerTypeService.isExistName(customerTypeDto.getName())) {
             result.add("Tên đã tồn tại");
         }
         
-        if (customerTypeService.isExitsStandardPoint(customerTypeDto.getStandardPoint())) {
+        if (customerTypeService.isExistStandardPoint(customerTypeDto.getStandardPoint())) {
         	result.add("Không được trùng điểm tiêu chuẩn");
         }
 
@@ -106,11 +100,11 @@ public class CustomerTypeController {
 	private List<String> updateValidation(CustomerTypeDto customerTypeDto) {
         List<String> result = new ArrayList<>();
         
-        if (customerTypeService.isExitsNameIgnore(customerTypeDto.getName(), customerTypeDto.getId())) {
+        if (customerTypeService.isExistNameIgnore(customerTypeDto.getName(), customerTypeDto.getId())) {
             result.add("Tên đã tồn tại");
         }
         
-        if (customerTypeService.isExitsStandardPointIgnore(customerTypeDto.getStandardPoint(), customerTypeDto.getId())) {
+        if (customerTypeService.isExistStandardPointIgnore(customerTypeDto.getStandardPoint(), customerTypeDto.getId())) {
         	result.add("Không được trùng điểm tiêu chuẩn");
         }
 
@@ -122,7 +116,7 @@ public class CustomerTypeController {
         List<String> result = new ArrayList<>();
 
         if (customerTypeService.findById(customerTypeId).getStandardPoint() == 0) {
-            result.add("Không thể xóa loại khách hàng có standardpoint = 0, ");
+            result.add("Không thể xóa loại khách hàng có điểm chuẩn bằng 0 ");
         }
         
         return result;

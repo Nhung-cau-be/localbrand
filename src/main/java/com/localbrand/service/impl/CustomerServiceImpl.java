@@ -2,11 +2,10 @@ package com.localbrand.service.impl;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.localbrand.AES;
 import com.localbrand.dal.entity.Account;
 import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
@@ -14,8 +13,6 @@ import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.ICustomerTypeRepository;
 import com.localbrand.dtos.response.CustomerDto;
-import com.localbrand.dtos.response.AccountDto;
-import com.localbrand.mappers.IAccountDtoMapper;
 import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.service.ICustomerService;
 
@@ -31,6 +28,7 @@ public class CustomerServiceImpl implements ICustomerService {
 	@Autowired
 	private ICustomerTypeRepository customerTypeRepository;
 	
+	final String secretKey = "locabrand!";
 
 	@Override
 	public List<CustomerDto> getAll() {
@@ -63,7 +61,8 @@ public class CustomerServiceImpl implements ICustomerService {
 			Account account = new Account();
 		    account.setId(UUID.randomUUID().toString());
 		    account.setUsername(customerDto.getAccount().getUsername());
-		    account.setPassword(customerDto.getAccount().getPassword());
+		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);  
+		    account.setPassword(encryptedpassword);
 		    account.setType("Khách Hàng");
 		   
 		    customer.setAccount(account);
@@ -108,22 +107,22 @@ public class CustomerServiceImpl implements ICustomerService {
 
 	
 	@Override
-	public Boolean isExitsPhoneNumber(String phoneNumber) {
+	public Boolean isExistPhoneNumber(String phoneNumber) {
 		return customerRepository.countByPhoneNumber(phoneNumber) > 0;
 	}
 	
 	@Override
-	public Boolean isExitsEmail(String email) {
+	public Boolean isExistEmail(String email) {
 		return customerRepository.countByEmail(email) > 0;
 	}
 	
 	@Override
-	public Boolean isExitsPhoneNumberIgnore(String phoneNumber,  String customerId) {
+	public Boolean isExistPhoneNumberIgnore(String phoneNumber,  String customerId) {
 		return customerRepository.countByPhoneNumberIgnore(phoneNumber, customerId) > 0;
 	}
 	
 	@Override
-	public Boolean isExitsEmailIgnore(String email,  String customerId) {
+	public Boolean isExistEmailIgnore(String email,  String customerId) {
 		return customerRepository.countByEmailIgnore(email, customerId) > 0;
 	}
 

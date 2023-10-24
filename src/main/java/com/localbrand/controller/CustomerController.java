@@ -32,7 +32,8 @@ public class CustomerController {
 	@Autowired
 	private ICustomerService customerService;
 	
-	@Autowired IAccountService accountService;
+	@Autowired 
+	private IAccountService accountService;
 	
 	@GetMapping("")
 	 public ResponseEntity<?> getAll() {
@@ -92,17 +93,17 @@ public class CustomerController {
         	result.add("Số điện thoại sai định dạng");
         }
         
-        if (customerService.isExitsPhoneNumber(customerDto.getPhonenumber())) {
+        if (customerService.isExistPhoneNumber(customerDto.getPhonenumber())) {
             result.add("Số điện thoại đã tồn tại");
         }
         
-        if (customerService.isExitsEmail(customerDto.getEmail())) {
+        if (customerService.isExistEmail(customerDto.getEmail())) {
             result.add("Email đã tồn tại");
         }
   
         if (accountService.isExitsUsername(customerDto.getAccount().getUsername()))
         {
-        	result.add("Username đã tồn tại");
+        	result.add("Tài khoản đã tồn tại");
         }
         
         
@@ -112,11 +113,11 @@ public class CustomerController {
     private List<String> updateValidation(CustomerDto customerDto) {
         List<String> result = new ArrayList<>();
         
-        if (customerService.isExitsEmailIgnore(customerDto.getEmail(), customerDto.getId())) {
+        if (customerService.isExistEmailIgnore(customerDto.getEmail(), customerDto.getId())) {
             result.add("Email đã tồn tại");
         }
 
-        if (customerService.isExitsPhoneNumberIgnore(customerDto.getPhonenumber(), customerDto.getId())) {
+        if (customerService.isExistPhoneNumberIgnore(customerDto.getPhonenumber(), customerDto.getId())) {
             result.add("Số điện thoại đã tồn tại");
         }
 
