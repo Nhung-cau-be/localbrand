@@ -52,6 +52,7 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 			
 			return customerTypeDto;
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			return null;
 		}
 	}
@@ -66,6 +67,7 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 			
 			return customerTypeDto;
 		} catch (Exception e) {
+			 System.out.println(e.getMessage());
 			return null;
 		}
 	}
@@ -75,25 +77,27 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	    try {
 	        CustomerType customerTypeDelete = customerTypeRepository.findById(id).orElse(null);
 
-	        if (customerTypeDelete == null || !isUsing(id)) {
+	        if (customerTypeDelete == null) {
 	            return false;
 	        }
 
-	        List<CustomerType> customerTypesLowerStandardPoint = customerTypeRepository.findByStandardPointDelete(customerTypeDelete.getStandardPoint());
+	        if (isUsing(id)) {
+	        	 List<CustomerType> customerTypesLowerStandardPoint = customerTypeRepository.findByStandardPointDelete(customerTypeDelete.getStandardPoint());
 
-	        if (!customerTypesLowerStandardPoint.isEmpty()) {
-	            customerTypesLowerStandardPoint.sort(Comparator.comparing(CustomerType::getStandardPoint));
+	 	        if (!customerTypesLowerStandardPoint.isEmpty()) {
+	 	            customerTypesLowerStandardPoint.sort(Comparator.comparing(CustomerType::getStandardPoint));
 
-	            CustomerType newCustomerType = customerTypesLowerStandardPoint.get(customerTypesLowerStandardPoint.size() - 1);
-	            List<Customer> customersToUpdate = customerRepository.findByCustomerType(id);
-	            
-	            customersToUpdate.forEach(customer -> {
-		            customer.setCustomerType(newCustomerType);
-		            customer.setMembershipPoint(newCustomerType.getStandardPoint());
-	                });
-	            
-	            customerRepository.saveAll(customersToUpdate);
+	 	            CustomerType newCustomerType = customerTypesLowerStandardPoint.get(customerTypesLowerStandardPoint.size() - 1);
+	 	            List<Customer> customersToUpdate = customerRepository.findByCustomerType(id);
+	 	            
+	 	            customersToUpdate.forEach(customer -> {
+	 		            customer.setCustomerType(newCustomerType);	          
+	 	                });
+	 	            
+	 	            customerRepository.saveAll(customersToUpdate);
+	 	        }
 	        }
+	       
 
 	        customerTypeRepository.deleteById(id);
 

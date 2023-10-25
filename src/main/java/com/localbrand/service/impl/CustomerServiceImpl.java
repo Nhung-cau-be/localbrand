@@ -75,6 +75,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			return newCustomerDto;
 		} 
 		catch (Exception e) {
+			 System.out.println(e.getMessage());
 			return null;
 		}
 	}
@@ -89,6 +90,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			
 			return customerDto;
 		} catch (Exception e) {
+			 System.out.println(e.getMessage());
 			return null;
 		}
 	}
