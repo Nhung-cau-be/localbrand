@@ -14,11 +14,11 @@ public interface ICustomerService {
 	
 	Boolean deleteById(String id);
 	
-	Boolean isExistPhoneNumber(String phoneNumber);
+	Boolean isExistPhone(String phone);
 	
 	Boolean isExistEmail(String email);
 	
-	Boolean isExistPhoneNumberIgnore(String phoneNumber, String customerId);
+	Boolean isExistPhoneIgnore(String phone, String customerId);
 	
 	Boolean isExistEmailIgnore(String email, String customerId);
 	

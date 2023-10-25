@@ -7,23 +7,11 @@ import org.hibernate.validator.internal.constraintvalidators.bv.EmailValidator;
 
 
 public class Validate {
-	public static boolean checkPhoneNumber(String sdt){
+	public static boolean checkPhone(String phone){
         Pattern pattern = Pattern.compile("^0[0-9]{9}$");
-        Matcher matcher = pattern.matcher(sdt);
+        Matcher matcher = pattern.matcher(phone);
         
         return matcher.find();
     }
-//     public static boolean checkCCCD(String cccd){
-//        Pattern pattern = Pattern.compile("^0[0-9]{11}$");
-//        Matcher matcher = pattern.matcher(cccd);
-//        
-//        return matcher.find();
-//    }
-//    
-//    public static boolean checkEmail(String email){
-//       return EmailValidator.getInstance().isValid(email);
-//  
-//    }
-//   
-    
+
 }

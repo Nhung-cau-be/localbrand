@@ -12,14 +12,14 @@ import com.localbrand.dal.entity.Customer;
 @Repository
 public interface ICustomerRepository extends JpaRepository<Customer, String>{
 	
-	@Query("SELECT COUNT(c) FROM Customer c WHERE c.phonenumber = :phonenumber")
-	int countByPhoneNumber(String phonenumber);
+	@Query("SELECT COUNT(c) FROM Customer c WHERE c.phone = :phone")
+	int countByPhone(String phone);
 	
 	@Query("SELECT COUNT(c) FROM Customer c WHERE c.email = :email")
 	int countByEmail(String email);
 	
-	@Query("SELECT COUNT(c.id) FROM Customer c WHERE c.phonenumber = :phonenumber AND c.id != :customerId")
-	int countByPhoneNumberIgnore(@Param("phonenumber") String phonenumber, @Param ("customerId") String customerId);
+	@Query("SELECT COUNT(c.id) FROM Customer c WHERE c.phone = :phone AND c.id != :customerId")
+	int countByPhoneIgnore(@Param("phone") String phone, @Param ("customerId") String customerId);
 	
 	@Query("SELECT COUNT(c.id) FROM Customer c WHERE c.email = :email AND c.id != :customerId")
 	int countByEmailIgnore(@Param("email") String email, @Param ("customerId") String customerId);

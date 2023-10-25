@@ -26,9 +26,9 @@ public class Customer {
 	private Account account;
 	@Column
 	private String name;
-	@Column
-	private String phonenumber;
-	@Column
+	@Column (name = "phone")
+	private String phone;
+	@Column (name = "is_man")
 	private Boolean isMan;
 	@Column
 	private Date birthdate;
@@ -36,6 +36,6 @@ public class Customer {
 	private String address;
 	@Column
 	private String email;
-	@Column
+	@Column (name = "membership_point")
 	private Integer membershipPoint;
 }

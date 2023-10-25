@@ -17,8 +17,8 @@ public class CustomerDto {
 	private Account account;
 	@NotBlank(message = "Vui lòng chọn tên khách hàng")
 	private String name;
-	@NotBlank(message = "Vui lòng nhập sdt khách hàng")
-	private String phonenumber;
+	@NotBlank(message = "Vui lòng nhập số điện thoại khách hàng")
+	private String phone;
 	@NotBlank(message = "Vui lòng chọn giới tính khách hàng")
 	private Boolean isMan;
 	@NotBlank(message = "Vui lòng chọn ngày sinh khách hàng")

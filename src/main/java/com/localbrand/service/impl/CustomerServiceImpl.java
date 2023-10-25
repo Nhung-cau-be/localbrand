@@ -75,7 +75,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			return newCustomerDto;
 		} 
 		catch (Exception e) {
-			 System.out.println(e.getMessage());
+			System.out.println(e.getMessage());
 			return null;
 		}
 	}
@@ -90,7 +90,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			
 			return customerDto;
 		} catch (Exception e) {
-			 System.out.println(e.getMessage());
+			System.out.println(e.getMessage());
 			return null;
 		}
 	}
@@ -109,8 +109,8 @@ public class CustomerServiceImpl implements ICustomerService {
 
 	
 	@Override
-	public Boolean isExistPhoneNumber(String phoneNumber) {
-		return customerRepository.countByPhoneNumber(phoneNumber) > 0;
+	public Boolean isExistPhone(String phone) {
+		return customerRepository.countByPhone(phone) > 0;
 	}
 	
 	@Override
@@ -119,8 +119,8 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 	
 	@Override
-	public Boolean isExistPhoneNumberIgnore(String phoneNumber,  String customerId) {
-		return customerRepository.countByPhoneNumberIgnore(phoneNumber, customerId) > 0;
+	public Boolean isExistPhoneIgnore(String phone,  String customerId) {
+		return customerRepository.countByPhoneIgnore(phone, customerId) > 0;
 	}
 	
 	@Override

@@ -89,11 +89,11 @@ public class CustomerController {
 	private List<String> insertValidation(CustomerDto customerDto) {
         List<String> result = new ArrayList<>();
         
-        if (!Validate.checkPhoneNumber(customerDto.getPhonenumber())) {
+        if (!Validate.checkPhone(customerDto.getPhone())) {
         	result.add("Số điện thoại sai định dạng");
         }
         
-        if (customerService.isExistPhoneNumber(customerDto.getPhonenumber())) {
+        if (customerService.isExistPhone(customerDto.getPhone())) {
             result.add("Số điện thoại đã tồn tại");
         }
         
@@ -112,12 +112,16 @@ public class CustomerController {
 	
     private List<String> updateValidation(CustomerDto customerDto) {
         List<String> result = new ArrayList<>();
-        
+      
         if (customerService.isExistEmailIgnore(customerDto.getEmail(), customerDto.getId())) {
             result.add("Email đã tồn tại");
         }
-
-        if (customerService.isExistPhoneNumberIgnore(customerDto.getPhonenumber(), customerDto.getId())) {
+        
+        if (!Validate.checkPhone(customerDto.getPhone())) {
+        	result.add("Số điện thoại sai định dạng");
+        }       
+        
+        if (customerService.isExistPhoneIgnore(customerDto.getPhone(), customerDto.getId())) {
             result.add("Số điện thoại đã tồn tại");
         }
 

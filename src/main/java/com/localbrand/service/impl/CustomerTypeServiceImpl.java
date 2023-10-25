@@ -67,7 +67,7 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 			
 			return customerTypeDto;
 		} catch (Exception e) {
-			 System.out.println(e.getMessage());
+			System.out.println(e.getMessage());
 			return null;
 		}
 	}
@@ -97,7 +97,6 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	 	            customerRepository.saveAll(customersToUpdate);
 	 	        }
 	        }
-	       
 
 	        customerTypeRepository.deleteById(id);
 

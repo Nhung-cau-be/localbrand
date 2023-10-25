@@ -36,6 +36,7 @@ public class AccountServiceImpl implements IAccountService {
 			return newAccountDto;
 		}
 		catch (Exception e) {
+			System.out.println(e.getMessage());
 			return null;
 		}
 	}
