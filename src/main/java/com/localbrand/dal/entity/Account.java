@@ -7,14 +7,16 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "category")
+@Table (name = "account")
 @Data
-public class Category {
-	
+public class Account {
 	@Id
 	@Column(updatable = false, nullable = false)
 	private String id;
-	
 	@Column
-	private String name;
+	private String username;
+	@Column
+	private String password;
+	@Column
+	private String type;
 }
