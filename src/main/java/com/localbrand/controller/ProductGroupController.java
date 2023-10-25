@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.dtos.response.ProductGroupDto;
 import com.localbrand.dtos.response.ResponseDto;
@@ -32,6 +33,12 @@ public class ProductGroupController {
 	@GetMapping("")
 	public ResponseEntity<?> getAll() {
 		List<ProductGroupDto> result = productGroupService.getAll();
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+	}
+	
+	@PostMapping("")
+	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<ProductGroupDto>> searchDto) {
+		BaseSearchDto<List<ProductGroupDto>> result = productGroupService.findAll(searchDto);
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
 	

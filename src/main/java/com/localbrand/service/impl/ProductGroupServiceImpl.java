@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.localbrand.dal.entity.Category;
 import com.localbrand.dal.entity.ProductGroup;
-import com.localbrand.dal.repository.ICategoryRepository;
 import com.localbrand.dal.repository.IProductGroupRepository;
+import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.ProductGroupDto;
 import com.localbrand.mappers.IProductGroupDtoMapper;
 import com.localbrand.service.IProductGroupService;
@@ -27,6 +30,27 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 		return productGroupDtos;
 	}
 
+	@Override
+	public BaseSearchDto<List<ProductGroupDto>> findAll(BaseSearchDto<List<ProductGroupDto>> searchDto) {
+		if (searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
+            searchDto.setResult(this.getAll());
+            return searchDto;
+        }
+
+        if (searchDto.getSortBy() == null || searchDto.getSortBy().isEmpty()) {
+            searchDto.setSortBy("name");
+        }
+        Sort sort = searchDto.isSortAsc() ? Sort.by(Sort.Direction.ASC, searchDto.getSortBy()) : Sort.by(Sort.Direction.DESC, searchDto.getSortBy());
+
+        Pageable pageable = PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage(), sort);
+
+        Page<ProductGroup> page = productGroupRepository.findAll(pageable);
+        searchDto.setTotalRecords(page.getTotalElements());
+        searchDto.setResult(IProductGroupDtoMapper.INSTANCE.toProductGroupDtos(page.getContent()));
+
+        return searchDto;
+	}
+	
 	@Override
 	public ProductGroupDto getById(String id) {
 		ProductGroup productGroup = productGroupRepository.findById(id).orElse(null);
