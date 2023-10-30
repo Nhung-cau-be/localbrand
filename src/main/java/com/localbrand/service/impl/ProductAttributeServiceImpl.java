@@ -10,6 +10,9 @@ import com.localbrand.dtos.response.ProductAttributeFullDto;
 import com.localbrand.mappers.IProductAttributeDtoMapper;
 import com.localbrand.mappers.IProductAttributeValueDtoMapper;
 import com.localbrand.service.IProductAttributeService;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +25,8 @@ import java.util.UUID;
 
 @Service
 public class ProductAttributeServiceImpl implements IProductAttributeService {
+    private static final Logger logger = LoggerFactory.getLogger(ProductAttributeServiceImpl.class);
+
     @Autowired
     private IProductAttributeRepository productAttributeRepository;
     @Autowired
@@ -54,6 +59,18 @@ public class ProductAttributeServiceImpl implements IProductAttributeService {
     }
 
     @Override
+    public ProductAttributeFullDto getFullById(String id) {
+        ProductAttribute productAttribute = productAttributeRepository.findById(id).orElse(null);
+        if(productAttribute == null)
+            return null;
+
+        ProductAttributeFullDto productAttributeFullDto = IProductAttributeDtoMapper.INSTANCE.toProductAttributeFullDto(productAttribute);
+        productAttributeFullDto.setValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(productAttributeValueRepository.getByAttributeId(id)));
+
+        return productAttributeFullDto;
+    }
+
+    @Override
     public ProductAttributeFullDto insert(ProductAttributeFullDto productAttributeFullDto) {
         try {
             productAttributeFullDto.setId(UUID.randomUUID().toString());
@@ -64,8 +81,37 @@ public class ProductAttributeServiceImpl implements IProductAttributeService {
 
             return productAttributeFullDto;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public ProductAttributeFullDto update(ProductAttributeFullDto productAttributeFullDto) {
+        try {
+            ProductAttribute productAttribute = IProductAttributeDtoMapper.INSTANCE.toProductAttribute(productAttributeFullDto);
+
+            productAttributeRepository.save(productAttribute);
+            productAttributeFullDto = saveValues(productAttributeFullDto);
+
+            return productAttributeFullDto;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return null;
+        }
+    }
+
+    @Transactional
+    @Override
+    public boolean deleteById(String id) {
+        try {
+            productAttributeValueRepository.deleteByAttributeId(id);
+            productAttributeRepository.deleteById(id);
+
+            return true;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return false;
         }
     }
 
@@ -74,12 +120,17 @@ public class ProductAttributeServiceImpl implements IProductAttributeService {
         return productAttributeRepository.countByCode(code) > 0;
     }
 
+    @Override
+    public boolean isExistCodeIgnore(String code, String id) {
+        return productAttributeRepository.countByCodeIgnore(code, id) > 0;
+    }
+
     private ProductAttributeFullDto saveValues(ProductAttributeFullDto productAttributeFullDto) {
         ProductAttribute productAttribute = IProductAttributeDtoMapper.INSTANCE.toProductAttribute(productAttributeFullDto);
         List<ProductAttributeValue> values = IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValues(productAttributeFullDto.getValues());
 
         values.forEach(value -> {
-            value.setId(UUID.randomUUID().toString());
+            value.setId(value.getId() == null ? UUID.randomUUID().toString() : value.getId());
             value.setAttribute(productAttribute);
         });
         productAttributeValueRepository.saveAll(values);

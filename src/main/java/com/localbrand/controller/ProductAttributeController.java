@@ -36,6 +36,15 @@ public class ProductAttributeController {
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
 
+	@GetMapping("/get-full/{id}")
+	public ResponseEntity<?> getFullById(@PathVariable String id) {
+		ProductAttributeFullDto result = productAttributeService.getFullById(id);
+
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Danh mục không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));
+		return res;
+	}
+
 	@PostMapping("/insert")
 	public ResponseEntity<?> insert(@RequestBody ProductAttributeFullDto productAttribute) {
 		List<String> msg = insertValidation(productAttribute);
@@ -49,11 +58,42 @@ public class ProductAttributeController {
 		return res;
 	}
 
+	@PutMapping("/update")
+	public ResponseEntity<?> update(@RequestBody ProductAttributeFullDto productAttribute) {
+		List<String> msg = updateValidation(productAttribute);
+		if (msg.size() > 0) {
+			return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
+		}
+
+		ProductAttributeFullDto result = productAttributeService.update(productAttribute);
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật thuộc tính sản phẩm thành công"), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật thuộc tính sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+		return res;
+	}
+
+	@DeleteMapping("/delete")
+	public ResponseEntity<?> deleteById(@RequestParam String id) {
+		boolean result = productAttributeService.deleteById(id);
+		ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa thuộc tính thành công"), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa thuộc tính thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+		return res;
+	}
+
 	private List<String> insertValidation(ProductAttributeFullDto productAttribute) {
 		List<String> result = new ArrayList<>();
 
 		if (productAttributeService.isExistCode(productAttribute.getName())) {
-			result.add("Tên đã tồn tại");
+			result.add("Mã đã tồn tại");
+		}
+
+		return result;
+	}
+
+	private List<String> updateValidation(ProductAttributeFullDto productAttribute) {
+		List<String> result = new ArrayList<>();
+
+		if (productAttributeService.isExistCodeIgnore(productAttribute.getName(), productAttribute.getId())) {
+			result.add("Mã đã tồn tại");
 		}
 
 		return result;

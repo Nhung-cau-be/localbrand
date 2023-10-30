@@ -11,7 +11,15 @@ public interface IProductAttributeService {
 
 	BaseSearchDto<List<ProductAttributeDto>> findAll(BaseSearchDto<List<ProductAttributeDto>> searchDto);
 
+	ProductAttributeFullDto getFullById(String id);
+
 	ProductAttributeFullDto insert(ProductAttributeFullDto productAttribute);
 
+	ProductAttributeFullDto update(ProductAttributeFullDto productAttribute);
+
+	boolean deleteById(String id);
+
 	boolean isExistCode(String code);
+
+	boolean isExistCodeIgnore(String code, String id);
 }
