@@ -37,13 +37,8 @@ public class CustomerController {
 	
 	@GetMapping("")
 	 public ResponseEntity<?> getAll() {
-		try {
-			List<CustomerDto> result = customerService.getAll();
-	        return ResponseEntity.ok(new ResponseDto(List.of("Danh sách khách hàng "), HttpStatus.OK.value(), result));
-		}
-		catch (Exception e) {
-	        return ResponseEntity.ok(new ResponseDto(List.of("Không tìm thấy khách hàng "),HttpStatus.BAD_REQUEST.value(), null));
-		}
+		List<CustomerDto> result = customerService.getAll();
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
    }
 
 

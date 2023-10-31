@@ -12,7 +12,6 @@ import com.localbrand.dal.entity.CustomerType;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.ICustomerTypeRepository;
 import com.localbrand.dtos.response.CustomerTypeDto;
-import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.ICustomerTypeDtoMapper;
 import com.localbrand.service.ICustomerTypeService;
 
