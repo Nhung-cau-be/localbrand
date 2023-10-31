@@ -1,6 +1,6 @@
 package com.localbrand.dtos.response;
 
-import java.util.Date;
+import java.sql.Date;
 
 import com.localbrand.dal.entity.Account;
 import com.localbrand.dal.entity.CustomerType;

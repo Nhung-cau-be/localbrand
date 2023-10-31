@@ -2,6 +2,8 @@ package com.localbrand.service;
 
 import java.util.List;
 
+import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.CustomerTypeDto;
 
 
@@ -26,4 +28,6 @@ public interface ICustomerTypeService {
 	
 	Boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId);
 	
+	BaseSearchDto<List<CustomerTypeDto>> findAll(BaseSearchDto<List<CustomerTypeDto>> searchDto);
+
 }

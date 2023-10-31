@@ -8,9 +8,12 @@ import org.springframework.stereotype.Service;
 
 import com.localbrand.service.IAccountService;
 import com.localbrand.dal.entity.Account;
+import com.localbrand.dal.entity.Category;
 import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dtos.response.AccountDto;
+import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.mappers.IAccountDtoMapper;
+import com.localbrand.mappers.ICategoryDtoMapper;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
@@ -23,6 +26,12 @@ public class AccountServiceImpl implements IAccountService {
 		List<AccountDto> accountDtos = IAccountDtoMapper.INSTANCE.toAccountDtos(account);
 		
 		return accountDtos;
+	}
+	
+	@Override
+	public AccountDto getById(String id) {
+		Account account =accountRepository.findById(id).orElse(null);
+		return IAccountDtoMapper.INSTANCE.toAccountDto(account);
 	}
 
 	@Override
