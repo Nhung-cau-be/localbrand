@@ -46,18 +46,6 @@ public class AccountServiceImpl implements IAccountService {
 	}
 	
 	@Override
-    public boolean deleteById(String id) {
-        try {
-           accountRepository.deleteById(id);
-
-            return true;
-        } catch (Exception e) {
-        	System.out.println(e.getMessage());
-            return false;
-        }
-    }
-	
-	@Override
 	public boolean isExitsUsername(String username) {
 		return accountRepository.countByUsername(username) > 0;
 	}
