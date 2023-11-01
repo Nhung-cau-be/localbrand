@@ -112,9 +112,12 @@ public class CustomerServiceImpl implements ICustomerService {
 	public CustomerDto update(CustomerDto customerDto ) {
 		try {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
-			String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
-			customer.getAccount().setPassword(encryptedpassword);
-			accountRepository.save(customer.getAccount());
+      
+      if(customer.getAccount().getPassword() != null && !customer.getAccount().getPassword().isBlank()) {
+			  String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
+			  customer.getAccount().setPassword(encryptedpassword);
+			  accountRepository.save(customer.getAccount());
+      }
 			customerRepository.save(customer);			
 			
 			return customerDto;

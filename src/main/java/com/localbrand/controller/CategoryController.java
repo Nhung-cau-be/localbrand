@@ -100,6 +100,7 @@ public class CategoryController {
 		ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa danh mục thành công"), HttpStatus.OK.value(), result))
                 : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa danh mục thất bại"), HttpStatus.BAD_REQUEST.value(), null));
 		return res;
+	
 	}
 	
     private List<String> insertValidation(CategoryDto categoryDto) {
