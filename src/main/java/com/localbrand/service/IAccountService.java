@@ -10,8 +10,6 @@ public interface IAccountService {
 	
 	AccountDto insert(AccountDto accountDto);
 	
-	boolean deleteById(String id);
-	
 	boolean isExitsUsername(String username);
 	
 	boolean isExitsUsernameIgnore(String username, String accountId);
