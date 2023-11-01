@@ -33,7 +33,7 @@ public class AccountController {
 		AccountDto result = accountService.getById(id);
 		
 		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
-                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Danh mục không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Tài khoản không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
 		return res;
 	}
 }
