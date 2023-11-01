@@ -28,7 +28,12 @@ public class AccountServiceImpl implements IAccountService {
 		return accountDtos;
 	}
 	
-	
+	@Override
+	public AccountDto getById(String id) {
+		Account account =accountRepository.findById(id).orElse(null);
+		return IAccountDtoMapper.INSTANCE.toAccountDto(account);
+	}
+
 	@Override
 	public AccountDto insert(AccountDto accountDto){
 		try {

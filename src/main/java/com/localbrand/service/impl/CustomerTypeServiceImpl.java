@@ -5,12 +5,18 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.ICustomerTypeRepository;
+import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.CustomerTypeDto;
 import com.localbrand.mappers.ICustomerTypeDtoMapper;
 import com.localbrand.service.ICustomerTypeService;
@@ -33,7 +39,26 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 		return customerTypeDtos;
 	}
 
+	@Override
+	public BaseSearchDto<List<CustomerTypeDto>> findAll(BaseSearchDto<List<CustomerTypeDto>> searchDto) {
+		if (searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
+            searchDto.setResult(this.getAll());
+            return searchDto;
+        }
 
+        if (searchDto.getSortBy() == null || searchDto.getSortBy().isEmpty()) {
+            searchDto.setSortBy("name");
+        }
+        Sort sort = searchDto.isSortAsc() ? Sort.by(Sort.Direction.ASC, searchDto.getSortBy()) : Sort.by(Sort.Direction.DESC, searchDto.getSortBy());
+
+        Pageable pageable = PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage(), sort);
+
+        Page<CustomerType> page = customerTypeRepository.findAll(pageable);
+        searchDto.setTotalRecords(page.getTotalElements());
+        searchDto.setResult(ICustomerTypeDtoMapper.INSTANCE.toCustomerTypeDtos(page.getContent()));
+
+        return searchDto;
+	}
 	@Override
 	public CustomerTypeDto findById(String id) {
 		CustomerType customerType = customerTypeRepository.findById(id).orElse(null);
@@ -72,7 +97,7 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	}
 	
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 	    try {
 	        CustomerType customerTypeDelete = customerTypeRepository.findById(id).orElse(null);
 
@@ -107,27 +132,27 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	}
 	
 	@Override
-	public Boolean isUsing(String id) {
+	public boolean isUsing(String id) {
 		return customerRepository.countByCustomerTypeId(id) > 0;
 	}
 	
 	@Override
-	public Boolean isExistName(String name) {
+	public boolean isExistName(String name) {
 		return customerTypeRepository.countByName(name) > 0;
 	}
 	
 	@Override
-	public Boolean isExistNameIgnore(String name, String customerTypeId) {
+	public boolean isExistNameIgnore(String name, String customerTypeId) {
 		return customerTypeRepository.countByNameIgnore(name, customerTypeId) > 0;
 	}
 	
 	@Override
-	public Boolean isExistStandardPoint(Integer standardPoint) {
+	public boolean isExistStandardPoint(Integer standardPoint) {
 		return customerTypeRepository.countByStandardPoint(standardPoint) > 0;
 	}
 	
 	@Override
-	public Boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId) {
+	public boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId) {
 		return customerTypeRepository.countByStandardPointIgnore(standardPoint, customerTypeId) > 0;
 	}
 

@@ -17,5 +17,5 @@ public interface IProductGroupDtoMapper {
 	
 	ProductGroupDto toProductGroupDto(ProductGroup productGroup);
 	
-	List<ProductGroupDto> toProductGroupDtos(List<ProductGroup> producGroups);
+	List<ProductGroupDto> toProductGroupDtos(List<ProductGroup> productGroups);
 }
