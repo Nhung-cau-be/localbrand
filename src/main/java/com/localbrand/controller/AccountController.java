@@ -24,7 +24,7 @@ public class AccountController {
 	@GetMapping("")
 	 public ResponseEntity<?> getAll() {
 		List<AccountDto> result = accountService.getAll();
-		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+		return ResponseEntity.ok( new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
 	
 }
