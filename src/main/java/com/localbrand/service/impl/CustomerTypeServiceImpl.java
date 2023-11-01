@@ -98,7 +98,7 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	}
 	
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 	    try {
 	        CustomerType customerTypeDelete = customerTypeRepository.findById(id).orElse(null);
 
@@ -133,27 +133,27 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 	}
 	
 	@Override
-	public Boolean isUsing(String id) {
+	public boolean isUsing(String id) {
 		return customerRepository.countByCustomerTypeId(id) > 0;
 	}
 	
 	@Override
-	public Boolean isExistName(String name) {
+	public boolean isExistName(String name) {
 		return customerTypeRepository.countByName(name) > 0;
 	}
 	
 	@Override
-	public Boolean isExistNameIgnore(String name, String customerTypeId) {
+	public boolean isExistNameIgnore(String name, String customerTypeId) {
 		return customerTypeRepository.countByNameIgnore(name, customerTypeId) > 0;
 	}
 	
 	@Override
-	public Boolean isExistStandardPoint(Integer standardPoint) {
+	public boolean isExistStandardPoint(Integer standardPoint) {
 		return customerTypeRepository.countByStandardPoint(standardPoint) > 0;
 	}
 	
 	@Override
-	public Boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId) {
+	public boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId) {
 		return customerTypeRepository.countByStandardPointIgnore(standardPoint, customerTypeId) > 0;
 	}
 

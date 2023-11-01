@@ -125,10 +125,14 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 		try {
+			Customer customer = customerRepository.findById(id).orElse(null);
+			Account account = customer.getAccount();
+			
 			customerRepository.deleteById(id);
 			
+			accountRepository.delete(account);
 			return true;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -138,22 +142,22 @@ public class CustomerServiceImpl implements ICustomerService {
 
 	
 	@Override
-	public Boolean isExistPhone(String phone) {
+	public boolean isExistPhone(String phone) {
 		return customerRepository.countByPhone(phone) > 0;
 	}
 	
 	@Override
-	public Boolean isExistEmail(String email) {
+	public boolean isExistEmail(String email) {
 		return customerRepository.countByEmail(email) > 0;
 	}
 	
 	@Override
-	public Boolean isExistPhoneIgnore(String phone,  String customerId) {
+	public boolean isExistPhoneIgnore(String phone,  String customerId) {
 		return customerRepository.countByPhoneIgnore(phone, customerId) > 0;
 	}
 	
 	@Override
-	public Boolean isExistEmailIgnore(String email,  String customerId) {
+	public boolean isExistEmailIgnore(String email,  String customerId) {
 		return customerRepository.countByEmailIgnore(email, customerId) > 0;
 	}
 

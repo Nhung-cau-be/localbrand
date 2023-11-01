@@ -16,17 +16,17 @@ public interface ICustomerTypeService {
 	
 	CustomerTypeDto findById (String id);
 	
-	Boolean deleteById(String id);
+	boolean deleteById(String id);
 	
-	Boolean isExistName(String name);
+	boolean isExistName(String name);
 	
-	Boolean isExistNameIgnore(String name, String customerTypeId);
+	boolean isExistNameIgnore(String name, String customerTypeId);
 	
-	Boolean isUsing(String id);
+	boolean isUsing(String id);
 	
-	Boolean isExistStandardPoint(Integer standardPoint);
+	boolean isExistStandardPoint(Integer standardPoint);
 	
-	Boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId);
+	boolean isExistStandardPointIgnore(Integer standardPoint, String customerTypeId);
 	
 	BaseSearchDto<List<CustomerTypeDto>> findAll(BaseSearchDto<List<CustomerTypeDto>> searchDto);
 

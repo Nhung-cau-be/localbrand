@@ -51,7 +51,7 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
-	public Boolean isExitsUsername(String username) {
+	public boolean isExitsUsername(String username) {
 		return accountRepository.countByUsername(username) > 0;
 	}
 }

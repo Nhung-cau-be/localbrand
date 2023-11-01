@@ -14,15 +14,15 @@ public interface ICustomerService {
 	
 	CustomerDto update(CustomerDto customerDto);
 	
-	Boolean deleteById(String id);
+	boolean deleteById(String id);
 	
-	Boolean isExistPhone(String phone);
+	boolean isExistPhone(String phone);
 	
-	Boolean isExistEmail(String email);
+	boolean isExistEmail(String email);
 	
-	Boolean isExistPhoneIgnore(String phone, String customerId);
+	boolean isExistPhoneIgnore(String phone, String customerId);
 	
-	Boolean isExistEmailIgnore(String email, String customerId);
+	boolean isExistEmailIgnore(String email, String customerId);
 	
 	BaseSearchDto<List<CustomerDto>> findAll(BaseSearchDto<List<CustomerDto>> searchDto);
 
