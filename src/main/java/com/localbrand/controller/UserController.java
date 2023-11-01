@@ -9,7 +9,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,101 +20,102 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.localbrand.Validate;
+import com.localbrand.dtos.response.UserDto;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CategoryDto;
-import com.localbrand.dtos.response.CustomerDto;
-import com.localbrand.dtos.response.ProviderDto;
+import com.localbrand.dtos.response.ProductGroupDto;
 import com.localbrand.dtos.response.ResponseDto;
 import com.localbrand.service.IAccountService;
-import com.localbrand.service.ICustomerService;
+import com.localbrand.service.IUserService;
 
 
 @RestController
-@RequestMapping("/customer")
-@CrossOrigin(origins = "http://localhost:4200")
-public class CustomerController {
+@RequestMapping("/user")
+public class UserController {
 
 	@Autowired
-	private ICustomerService customerService;
+	private IUserService userService;
 	
 	@Autowired 
 	private IAccountService accountService;
 	
 	@GetMapping("")
 	 public ResponseEntity<?> getAll() {
-		List<CustomerDto> result = customerService.getAll();
+		List<UserDto> result = userService.getAll();
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
-   }
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable String id) {
-		CustomerDto result = customerService.getById(id);
+		UserDto result = userService.getById(id);
 		
 		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
-                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Khách hàng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Người dùng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
 		return res;
 	}
-
+	
+	
 	@PostMapping("")
-	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<CustomerDto>> searchDto) {
-		BaseSearchDto<List<CustomerDto>> result = customerService.findAll(searchDto);
+	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<UserDto>> searchDto) {
+		BaseSearchDto<List<UserDto>> result = userService.findAll(searchDto);
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
 
 	@PostMapping("/insert")
-	public ResponseEntity<?> insert(@RequestBody CustomerDto customerDto){
-		List<String> msg = insertValidation(customerDto);
+	public ResponseEntity<?> insert(@RequestBody UserDto userDto){
+		List<String> msg = insertValidation(userDto);
         if (msg.size() > 0) {
             return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
         }
         
-		CustomerDto result = customerService.insert(customerDto);
+		UserDto result = userService.insert(userDto);
 		
-		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Thêm khách hàng thành công"), HttpStatus.OK.value(), result))
-                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Thêm khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Thêm người dùng thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Thêm người dùng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
 		
 		return res;
 	}
 	
 
 	@PutMapping("/update")
-	public ResponseEntity<?> update(@RequestBody CustomerDto customerDto) {
-		 List<String> msg = updateValidation(customerDto);
+	public ResponseEntity<?> update(@RequestBody UserDto userDto) {
+		 List<String> msg = updateValidation(userDto);
 	        if (msg.size() > 0) {
 	            return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
 	        }
 			
-	        CustomerDto result = customerService.update(customerDto);
-			ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật khách hàng thành công"), HttpStatus.OK.value(), result))
-	                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+	        UserDto result = userService.update(userDto);
+			ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật người dùng thành công"), HttpStatus.OK.value(), result))
+	                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật người dùng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
 			return res;
 	}
 
 
 	@DeleteMapping("delete")
 	public ResponseEntity<?> deleteById(@RequestParam String id) {
-		boolean result = customerService.deleteById(id);			
+		boolean result = userService.deleteById(id);			
 
-		ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa khách hàng thành công"), HttpStatus.OK.value(), result))
-                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa khách hàng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
+		ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa người dùng thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa người dùng thất bại"), HttpStatus.BAD_REQUEST.value(), null));	
 		return res;
 	}
 
-	private List<String> insertValidation(CustomerDto customerDto) {
+	private List<String> insertValidation(UserDto userDto) {
         List<String> result = new ArrayList<>();
         
-        if (!Validate.checkPhone(customerDto.getPhone())) {
+        if (!Validate.checkPhone(userDto.getPhone())) {
         	result.add("Số điện thoại sai định dạng");
         }
         
-        if (customerService.isExistPhone(customerDto.getPhone())) {
+        if (userService.isExistPhone(userDto.getPhone())) {
             result.add("Số điện thoại đã tồn tại");
         }
         
-        if (customerService.isExistEmail(customerDto.getEmail())) {
+        if (userService.isExistEmail(userDto.getEmail())) {
             result.add("Email đã tồn tại");
         }
   
-        if (accountService.isExitsUsername(customerDto.getAccount().getUsername()))
+        if (accountService.isExitsUsername(userDto.getAccount().getUsername()))
         {
         	result.add("Tài khoản đã tồn tại");
         }
@@ -124,19 +124,24 @@ public class CustomerController {
         return result;
     }
 	
-    private List<String> updateValidation(CustomerDto customerDto) {
+    private List<String> updateValidation(UserDto userDto) {
         List<String> result = new ArrayList<>();
       
-        if (customerService.isExistEmailIgnore(customerDto.getEmail(), customerDto.getId())) {
+        if (userService.isExistEmailIgnore(userDto.getEmail(), userDto.getId())) {
             result.add("Email đã tồn tại");
         }
         
-        if (!Validate.checkPhone(customerDto.getPhone())) {
+        if (!Validate.checkPhone(userDto.getPhone())) {
         	result.add("Số điện thoại sai định dạng");
         }       
         
-        if (customerService.isExistPhoneIgnore(customerDto.getPhone(), customerDto.getId())) {
+        if (userService.isExistPhoneIgnore(userDto.getPhone(), userDto.getId())) {
             result.add("Số điện thoại đã tồn tại");
+        }
+        
+        if (accountService.isExitsUsername(userDto.getAccount().getUsername()))
+        {
+        	result.add("Tài khoản đã tồn tại");
         }
 
         return result;

@@ -1,6 +1,8 @@
 package com.localbrand.dal.entity;
 
-import java.sql.Date;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,15 +14,15 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "customer")
+@Table(name = "user")
 @Data
-public class Customer {
+public class User {
 	@Id
 	@Column(updatable = false, nullable = false)
 	private String id;
 	@ManyToOne
-	@JoinColumn (name = "customer_type_id")
-	private CustomerType customerType;
+	@JoinColumn (name = "user_type_id")
+	private UserType userType;
 	@OneToOne
 	@JoinColumn (name = "account_id")
 	private Account account;
@@ -36,6 +38,4 @@ public class Customer {
 	private String address;
 	@Column
 	private String email;
-	@Column (name = "membership_point")
-	private Integer membershipPoint;
 }
