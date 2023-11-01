@@ -50,7 +50,7 @@ public class UserController {
 		UserDto result = userService.getById(id);
 		
 		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
-                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Khách hàng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Người dùng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
 		return res;
 	}
 	
@@ -137,6 +137,11 @@ public class UserController {
         
         if (userService.isExistPhoneIgnore(userDto.getPhone(), userDto.getId())) {
             result.add("Số điện thoại đã tồn tại");
+        }
+        
+        if (accountService.isExitsUsername(userDto.getAccount().getUsername()))
+        {
+        	result.add("Tài khoản đã tồn tại");
         }
 
         return result;

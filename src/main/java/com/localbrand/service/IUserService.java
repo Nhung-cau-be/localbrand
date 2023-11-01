@@ -15,14 +15,14 @@ public interface IUserService {
 	
 	UserDto update(UserDto userDto);
 	
-	Boolean deleteById(String id);
+	boolean deleteById(String id);
 	
-	Boolean isExistPhone(String phone);
+	boolean isExistPhone(String phone);
 	
-	Boolean isExistEmail(String email);
+	boolean isExistEmail(String email);
 	
-	Boolean isExistPhoneIgnore(String phone, String userId);
+	boolean isExistPhoneIgnore(String phone, String userId);
 	
-	Boolean isExistEmailIgnore(String email, String userId);
+	boolean isExistEmailIgnore(String email, String userId);
 	
 }

@@ -116,9 +116,15 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 		try {
+			
+			User user = userRepository.findById(id).orElse(null);
+			Account account = user.getAccount();
+			
 			userRepository.deleteById(id);
+			
+			accountRepository.delete(account);
 			
 			return true;
 		} catch (Exception e) {
@@ -129,22 +135,22 @@ public class UserServiceImpl implements IUserService {
 	
 
 	@Override
-	public Boolean isExistPhone(String phone) {
+	public boolean isExistPhone(String phone) {
 		return userRepository.countByPhone(phone) > 0;
 	}
 	
 	@Override
-	public Boolean isExistEmail(String email) {
+	public boolean isExistEmail(String email) {
 		return userRepository.countByEmail(email) > 0;
 	}
 	
 	@Override
-	public Boolean isExistPhoneIgnore(String phone,  String customerId) {
+	public boolean isExistPhoneIgnore(String phone,  String customerId) {
 		return userRepository.countByPhoneIgnore(phone, customerId) > 0;
 	}
 	
 	@Override
-	public Boolean isExistEmailIgnore(String email,  String customerId) {
+	public boolean isExistEmailIgnore(String email,  String customerId) {
 		return userRepository.countByEmailIgnore(email, customerId) > 0;
 	}
 

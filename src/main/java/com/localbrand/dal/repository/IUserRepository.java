@@ -31,4 +31,5 @@ public interface IUserRepository extends JpaRepository<User, String>{
 	@Query("SELECT c FROM User c WHERE c.userType.id = :userTypeId")
     List<Customer> findByUserType(@Param("userTypeId") String userTypeId);
 	
+	
 }

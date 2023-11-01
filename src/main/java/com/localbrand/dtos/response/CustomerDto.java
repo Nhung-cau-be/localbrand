@@ -3,7 +3,6 @@ package com.localbrand.dtos.response;
 import java.sql.Date;
 
 import com.localbrand.dal.entity.Account;
-import com.localbrand.dal.entity.CustomerType;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +11,7 @@ import lombok.Data;
 @Data
 public class CustomerDto {
 	private String id;
-	private CustomerType customerType;
+	private CustomerTypeDto customerType;
 	@Valid
 	private Account account;
 	@NotBlank(message = "Vui lòng chọn tên khách hàng")
@@ -20,7 +19,7 @@ public class CustomerDto {
 	@NotBlank(message = "Vui lòng nhập số điện thoại khách hàng")
 	private String phone;
 	@NotBlank(message = "Vui lòng chọn giới tính khách hàng")
-	private Boolean isMan;
+	private boolean isMan;
 	@NotBlank(message = "Vui lòng chọn ngày sinh khách hàng")
 	private Date birthdate;
 	@NotBlank(message = "Vui lòng nhập địa chỉ khách hàng")

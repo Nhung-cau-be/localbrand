@@ -17,11 +17,11 @@ public interface IUserTypeService {
 	
 	UserTypeDto update(UserTypeDto userTypeDto);
 	
-	Boolean deleteById(String id);
+	boolean deleteById(String id);
 	
-	Boolean isExistName(String name);
+	boolean isExistName(String name);
 	
-	Boolean isExistNameIgnore(String name, String userTypeId);
+	boolean isExistNameIgnore(String name, String userTypeId);
 	
-	Boolean isUsing(String id);
+	boolean isUsing(String id);
 }

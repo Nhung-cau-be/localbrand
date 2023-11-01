@@ -97,7 +97,7 @@ public class UserTypeServiceImpl implements IUserTypeService {
 
 
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 		try {
 			userTypeRepository.deleteById(id);
 			
@@ -109,17 +109,17 @@ public class UserTypeServiceImpl implements IUserTypeService {
 	}
 
 	@Override
-	public Boolean isExistName(String name) {
+	public boolean isExistName(String name) {
 		return userTypeRepository.countByName(name) > 0;
 	}
 	
 	@Override
-	public Boolean isExistNameIgnore(String name, String userTypeId) {
+	public boolean isExistNameIgnore(String name, String userTypeId) {
 		return userTypeRepository.countByNameIgnore(name, userTypeId) > 0;
 	}
 
 	@Override
-	public Boolean isUsing(String id) {
+	public boolean isUsing(String id) {
 		return userRepository.countByUserTypeId(id) > 0;
 	}
 
