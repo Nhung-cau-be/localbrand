@@ -4,16 +4,24 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.localbrand.AES;
 import com.localbrand.dal.entity.Account;
 import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
+import com.localbrand.dal.entity.Provider;
 import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.ICustomerTypeRepository;
+import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CustomerDto;
+import com.localbrand.dtos.response.ProviderDto;
 import com.localbrand.mappers.ICustomerDtoMapper;
+import com.localbrand.mappers.IProviderDtoMapper;
 import com.localbrand.service.ICustomerService;
 
 @Service
@@ -37,7 +45,26 @@ public class CustomerServiceImpl implements ICustomerService {
 		
 		return customerDtos;
 	}
-	
+	@Override
+	public BaseSearchDto<List<CustomerDto>> findAll(BaseSearchDto<List<CustomerDto>> searchDto) {
+		if (searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
+            searchDto.setResult(this.getAll());
+            return searchDto;
+        }
+
+        if (searchDto.getSortBy() == null || searchDto.getSortBy().isEmpty()) {
+            searchDto.setSortBy("name");
+        }
+        Sort sort = searchDto.isSortAsc() ? Sort.by(Sort.Direction.ASC, searchDto.getSortBy()) : Sort.by(Sort.Direction.DESC, searchDto.getSortBy());
+
+        Pageable pageable = PageRequest.of(searchDto.getCurrentPage(), searchDto.getRecordOfPage(), sort);
+
+        Page<Customer> page = customerRepository.findAll(pageable);
+        searchDto.setTotalRecords(page.getTotalElements());
+        searchDto.setResult(ICustomerDtoMapper.INSTANCE.toCustomerDtos(page.getContent()));
+
+        return searchDto;
+	}
 	@Override
 	public CustomerDto getById(String id) {
 		Customer customer = customerRepository.findById(id).orElse(null);
@@ -85,7 +112,9 @@ public class CustomerServiceImpl implements ICustomerService {
 	public CustomerDto update(CustomerDto customerDto ) {
 		try {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
-			
+			String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
+			customer.getAccount().setPassword(encryptedpassword);
+			accountRepository.save(customer.getAccount());
 			customerRepository.save(customer);			
 			
 			return customerDto;
@@ -96,10 +125,14 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 
 	@Override
-	public Boolean deleteById(String id) {
+	public boolean deleteById(String id) {
 		try {
+			Customer customer = customerRepository.findById(id).orElse(null);
+			Account account = customer.getAccount();
+			
 			customerRepository.deleteById(id);
 			
+			accountRepository.delete(account);
 			return true;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -109,22 +142,22 @@ public class CustomerServiceImpl implements ICustomerService {
 
 	
 	@Override
-	public Boolean isExistPhone(String phone) {
+	public boolean isExistPhone(String phone) {
 		return customerRepository.countByPhone(phone) > 0;
 	}
 	
 	@Override
-	public Boolean isExistEmail(String email) {
+	public boolean isExistEmail(String email) {
 		return customerRepository.countByEmail(email) > 0;
 	}
 	
 	@Override
-	public Boolean isExistPhoneIgnore(String phone,  String customerId) {
+	public boolean isExistPhoneIgnore(String phone,  String customerId) {
 		return customerRepository.countByPhoneIgnore(phone, customerId) > 0;
 	}
 	
 	@Override
-	public Boolean isExistEmailIgnore(String email,  String customerId) {
+	public boolean isExistEmailIgnore(String email,  String customerId) {
 		return customerRepository.countByEmailIgnore(email, customerId) > 0;
 	}
 

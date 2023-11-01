@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,8 @@ import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.ICustomerTypeRepository;
+import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.CustomerTypeDto;
 import com.localbrand.dtos.response.ResponseDto;
 
@@ -30,6 +33,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/customer-type")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CustomerTypeController {
 	@Autowired
 	private ICustomerTypeService customerTypeService;
@@ -39,7 +43,11 @@ public class CustomerTypeController {
 		List<CustomerTypeDto> result = customerTypeService.getAll();
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
     }
-	
+	@PostMapping("")
+	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<CustomerTypeDto>> searchDto) {
+		BaseSearchDto<List<CustomerTypeDto>> result = customerTypeService.findAll(searchDto);
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+	}
 	
 	@PostMapping("/insert")
     public ResponseEntity<?> insert(@RequestBody CustomerTypeDto customerTypeDto) {
