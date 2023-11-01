@@ -13,4 +13,6 @@ public interface IAccountService {
 	boolean deleteById(String id);
 	
 	boolean isExitsUsername(String username);
+	
+	boolean isExitsUsernameIgnore(String username, String accountId);
 }

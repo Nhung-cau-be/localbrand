@@ -145,13 +145,13 @@ public class UserServiceImpl implements IUserService {
 	}
 	
 	@Override
-	public boolean isExistPhoneIgnore(String phone,  String customerId) {
-		return userRepository.countByPhoneIgnore(phone, customerId) > 0;
+	public boolean isExistPhoneIgnore(String phone,  String userId) {
+		return userRepository.countByPhoneIgnore(phone, userId) > 0;
 	}
 	
 	@Override
-	public boolean isExistEmailIgnore(String email,  String customerId) {
-		return userRepository.countByEmailIgnore(email, customerId) > 0;
+	public boolean isExistEmailIgnore(String email,  String userId) {
+		return userRepository.countByEmailIgnore(email,  userId) > 0;
 	}
 
 }
