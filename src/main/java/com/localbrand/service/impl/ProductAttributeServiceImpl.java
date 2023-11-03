@@ -71,6 +71,19 @@ public class ProductAttributeServiceImpl implements IProductAttributeService {
     }
 
     @Override
+    public List<ProductAttributeFullDto> getAllFull() {
+        List<ProductAttributeFullDto> productAttributeFullDtos = IProductAttributeDtoMapper.INSTANCE.toProductAttributeFullDtos(productAttributeRepository.findAll());
+
+        productAttributeFullDtos.forEach(productAttributeFullDto -> {
+            productAttributeFullDto.setValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(
+                    productAttributeValueRepository.getByAttributeId(productAttributeFullDto.getId())
+            ));
+        });
+
+        return productAttributeFullDtos;
+    }
+
+    @Override
     public ProductAttributeFullDto insert(ProductAttributeFullDto productAttributeFullDto) {
         try {
             productAttributeFullDto.setId(UUID.randomUUID().toString());

@@ -45,6 +45,13 @@ public class ProductAttributeController {
 		return res;
 	}
 
+	@GetMapping("get-all-full")
+	public ResponseEntity<?> getAllFull() {
+		List<ProductAttributeFullDto> result = productAttributeService.getAllFull();
+
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+	}
+
 	@PostMapping("/insert")
 	public ResponseEntity<?> insert(@RequestBody ProductAttributeFullDto productAttribute) {
 		List<String> msg = insertValidation(productAttribute);

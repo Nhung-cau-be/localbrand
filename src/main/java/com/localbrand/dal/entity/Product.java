@@ -19,6 +19,7 @@ public class Product {
 	private String name;
 	@Column(name = "main_image_url")
 	private String mainImageUrl;
+	@Column
 	private Integer price;
 	@Column(name = "discount_price")
 	private Integer discountPrice;
