@@ -9,7 +9,7 @@ CREATE TABLE cart (
 CREATE TABLE cart_item (
 	id varchar(50) primary key,
 	cart_id varchar(50),
-	product_cku_id varchar(50),
+	product_sku_id varchar(50),
 	quantity int
 );
 CREATE TABLE `order` (
@@ -28,7 +28,7 @@ CREATE TABLE `order` (
 CREATE TABLE order_item (
 	id varchar(50) primary key,
 	order_id varchar(50),
-	product_cku_id varchar(50),
+	product_sku_id varchar(50),
 	quantity int,
 	price int,
 	discount_prite int
