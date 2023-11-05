@@ -12,7 +12,13 @@ public interface IProductService {
 
 	BaseSearchDto<List<ProductDto>> findAll(BaseSearchDto<List<ProductDto>> searchDto);
 
+	ProductFullDto getFullById(String id);
+
 	ProductFullDto insert(ProductFullDto productFullDto);
 
+	ProductFullDto update(ProductFullDto productFullDto);
+
 	boolean isExistCode(String code);
+
+	boolean deleteById(String id);
 }

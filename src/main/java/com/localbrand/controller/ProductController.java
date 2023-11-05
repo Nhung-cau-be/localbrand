@@ -27,6 +27,15 @@ public class ProductController {
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
 
+	@GetMapping("get-full/{id}")
+	public ResponseEntity<?> getFullById( @PathVariable String id) {
+		ProductFullDto result = productService.getFullById(id);
+
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Sản phẩm không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));
+		return res;
+	}
+
 	@PostMapping("/insert")
 	public ResponseEntity<?> insert(@Valid @RequestBody ProductFullDto productFullDto) {
 		List<String> msg = insertValidation(productFullDto);
@@ -37,6 +46,28 @@ public class ProductController {
 		ProductFullDto result = productService.insert(productFullDto);
 		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Thêm sản phẩm thành công"), HttpStatus.OK.value(), result))
 				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Thêm sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+		return res;
+	}
+
+	@PutMapping("/update")
+	public ResponseEntity<?> update(@Valid @RequestBody ProductFullDto productFullDto) {
+		List<String> msg = updateValidation(productFullDto);
+		if (msg.size() > 0) {
+			return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
+		}
+
+		ProductFullDto result = productService.update(productFullDto);
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Sửa sản phẩm thành công"), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Sửa sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+		return res;
+	}
+
+	@DeleteMapping("/delete")
+	public ResponseEntity<?> deleteById(@RequestParam String id) {
+		boolean result = productService.deleteById(id);
+
+		ResponseEntity<?> res  = result ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Xóa sản phẩm thành công"), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Xóa sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), null));
 		return res;
 	}
 
@@ -53,6 +84,20 @@ public class ProductController {
 
 		if(productService.isExistCode(productFullDto.getCode())) {
 			result.add("Mã sản phẩm đã tồn tại");
+		}
+
+		return result;
+	}
+
+	private List<String> updateValidation(ProductFullDto productFullDto) {
+		List<String> result = new ArrayList<>();
+
+		if(productFullDto.getProductGroup() == null || productFullDto.getProductGroup().getId() == null || productFullDto.getProductGroup().getId().isBlank()) {
+			result.add("Vui lòng chọn nhóm sản phẩm");
+		}
+
+		if(productFullDto.getProvider() == null || productFullDto.getProvider().getId() == null || productFullDto.getProvider().getId().isBlank()) {
+			result.add("Vui lòng chọn nhà cung cấp");
 		}
 
 		return result;

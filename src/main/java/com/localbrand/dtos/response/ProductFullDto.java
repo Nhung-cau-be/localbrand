@@ -20,4 +20,5 @@ public class ProductFullDto {
 
 	private List<ProductImageDto> images;
 	private List<ProductSKUDto> productSKUs;
+	private List<ProductAttributeValueDto> attributeValues;
 }

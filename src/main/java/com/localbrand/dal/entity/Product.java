@@ -13,7 +13,7 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "product_group_id")
 	private ProductGroup productGroup;
-	@Column
+	@Column(updatable = false, nullable = false)
 	private String code;
 	@Column
 	private String name;

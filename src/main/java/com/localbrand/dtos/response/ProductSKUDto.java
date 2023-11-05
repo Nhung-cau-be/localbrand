@@ -10,5 +10,4 @@ public class ProductSKUDto {
 	private String code;
 	private Integer quantity;
 	private ProductDto productDto;
-	private List<ProductAttributeValueDto> attributeValues;
 }
