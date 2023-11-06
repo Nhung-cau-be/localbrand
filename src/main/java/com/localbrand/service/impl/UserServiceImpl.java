@@ -82,14 +82,13 @@ public class UserServiceImpl implements IUserService {
 		    account.setUsername(userDto.getAccount().getUsername());
 		    String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);  
 		    account.setPassword(encryptedpassword);
-		    account.setType(AccountTypeEnum.NGƯỜI_DÙNG);
+		    account.setType(AccountTypeEnum.USER);
 		   
 		    user.setAccount(account);
-		    
-		    accountRepository.save(account);
 		    User newUser = userRepository.save(user);
 		    
 			UserDto newUserDto = IUserDtoMapper.INSTANCE.toUserDto(newUser);
+			accountRepository.save(account);
 			
 			return newUserDto;
 		} 

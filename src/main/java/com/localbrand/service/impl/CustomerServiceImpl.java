@@ -91,14 +91,15 @@ public class CustomerServiceImpl implements ICustomerService {
 		    account.setUsername(customerDto.getAccount().getUsername());
 		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);  
 		    account.setPassword(encryptedpassword);
-		    account.setType(AccountTypeEnum.KHÁCH_HÀNG);
+		    account.setType(AccountTypeEnum.CUSTOMER);
 		   
 		    customer.setAccount(account);
 		    
-		    accountRepository.save(account);
 		    Customer newCustomer = customerRepository.save(customer);
 		    
 			CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(newCustomer);
+			
+			accountRepository.save(account);
 			
 			return newCustomerDto;
 		} 
