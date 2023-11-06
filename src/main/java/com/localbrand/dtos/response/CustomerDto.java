@@ -1,6 +1,7 @@
 package com.localbrand.dtos.response;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.localbrand.dal.entity.Account;
@@ -23,7 +24,7 @@ public class CustomerDto {
 	private boolean isMan;
 	@NotBlank(message = "Vui lòng chọn ngày sinh khách hàng")
 	@JsonFormat(pattern="yyyy-MM-dd")
-	private Date birthdate;
+	private LocalDate birthdate;
 	@NotBlank(message = "Vui lòng nhập địa chỉ khách hàng")
 	private String address;
 	@NotBlank(message = "Vui lòng nhập email khách hàng")

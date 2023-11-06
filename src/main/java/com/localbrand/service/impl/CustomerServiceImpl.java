@@ -20,6 +20,7 @@ import com.localbrand.dal.repository.ICustomerTypeRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.ProviderDto;
+import com.localbrand.enums.AccountTypeEnum;
 import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.IProviderDtoMapper;
 import com.localbrand.service.ICustomerService;
@@ -90,14 +91,15 @@ public class CustomerServiceImpl implements ICustomerService {
 		    account.setUsername(customerDto.getAccount().getUsername());
 		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);  
 		    account.setPassword(encryptedpassword);
-		    account.setType("Khách Hàng");
+		    account.setType(AccountTypeEnum.CUSTOMER);
 		   
 		    customer.setAccount(account);
 		    
-		    accountRepository.save(account);
 		    Customer newCustomer = customerRepository.save(customer);
 		    
 			CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(newCustomer);
+			
+			accountRepository.save(account);
 			
 			return newCustomerDto;
 		} 

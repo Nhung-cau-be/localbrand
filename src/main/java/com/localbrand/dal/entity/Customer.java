@@ -1,6 +1,6 @@
 package com.localbrand.dal.entity;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,7 +31,7 @@ public class Customer {
 	@Column (name = "is_man")
 	private Boolean isMan;
 	@Column
-	private Date birthdate;
+	private LocalDate birthdate;
 	@Column
 	private String address;
 	@Column
