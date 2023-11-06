@@ -1,8 +1,6 @@
 package com.localbrand.dtos.response;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDate;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -22,9 +20,8 @@ public class UserDto {
 	private String phone;
 	@NotBlank(message = "Vui lòng chọn giới tính người dùng")
 	private Boolean isMan;
-	@JsonFormat(pattern="dd-MM-yyyy")
 	@NotBlank(message = "Vui lòng chọn ngày sinh người dùng")
-	private Date birthdate;
+	private LocalDate birthdate;
 	@NotBlank(message = "Vui lòng nhập địa chỉ người dùng")
 	private String address;
 	@NotBlank(message = "Vui lòng nhập email người dùng")
