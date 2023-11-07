@@ -21,4 +21,6 @@ public interface ICategoryDtoMapper {
 	List<CategoryDto> toCategoryDtos(List<Category> categories);
 	
 	CategoryFullDto toCategoryFullDto(Category category);	
+	
+	List<CategoryFullDto> toCategoryFullDtos(List<Category> categories);
 }

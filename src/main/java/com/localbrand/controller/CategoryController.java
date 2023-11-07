@@ -54,6 +54,15 @@ public class CategoryController {
 		return res;
 	}
 	
+	@GetMapping("/get-all-full")
+	public ResponseEntity<?> getAllFull() {
+		List<CategoryFullDto> result = categoryService.getAllFull();
+		
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Danh mục không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+		return res;
+	}
+	
 	@GetMapping("/get-full/{id}")
 	public ResponseEntity<?> getFullById(@PathVariable String id) {
 		CategoryFullDto result = categoryService.getFull(id);
