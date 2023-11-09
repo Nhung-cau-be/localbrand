@@ -80,7 +80,9 @@ public class ProductServiceImpl implements IProductService {
             return searchDto;
         } catch (Exception e) {
             logger.error(e.getMessage());
-            throw new RuntimeException();
+            searchDto.setResult(null);
+
+            return searchDto;
         }
     }
 
@@ -108,6 +110,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    @Transactional
     public ProductFullDto insert(ProductFullDto productFullDto) {
         try {
             productFullDto.setId(UUID.randomUUID().toString());
@@ -125,6 +128,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    @Transactional
     public ProductFullDto update(ProductFullDto productFullDto) {
         try {
             Product product = IProductDtoMapper.INSTANCE.toProduct(productFullDto);
@@ -160,8 +164,8 @@ public class ProductServiceImpl implements IProductService {
             productRepository.deleteById(id);
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
+            logger.error(e.getMessage());
+            logger.error(e.getStackTrace().toString());
             return false;
         }
     }
@@ -186,7 +190,7 @@ public class ProductServiceImpl implements IProductService {
         if(productFullDto.getAttributeValues().isEmpty()) {
             ProductSKU productSKU = new ProductSKU();
             productSKU.setId(UUID.randomUUID().toString());
-            productSKU.setCode(productFullDto.getCode() + "1");
+            productSKU.setCode(productFullDto.getCode() + "0");
             productSKU.setQuantity(0);
             productSKU.setProduct(product);
             productSKURepository.save(productSKU);
@@ -232,7 +236,6 @@ public class ProductServiceImpl implements IProductService {
                     productAttributeDetail.setProductAttributeValue(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValue(value));
                     productAttributeDetailRepository.save(productAttributeDetail);
                 }
-
             }
         }
 
