@@ -1,11 +1,14 @@
 package com.localbrand.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.localbrand.dal.dao.IProductDao;
 import com.localbrand.dal.entity.*;
 import com.localbrand.dal.repository.IProductAttributeDetailRepository;
 import com.localbrand.dal.repository.IProductImageRepository;
 import com.localbrand.dal.repository.IProductRepository;
 import com.localbrand.dal.repository.IProductSKURepository;
 import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.request.ProductSearchDto;
 import com.localbrand.dtos.response.*;
 import com.localbrand.mappers.*;
 import com.localbrand.service.IProductService;
@@ -33,6 +36,8 @@ public class ProductServiceImpl implements IProductService {
     private IProductAttributeDetailRepository productAttributeDetailRepository;
     @Autowired
     private IProductSKURepository productSKURepository;
+    @Autowired
+    private IProductDao productDao;
 
     @Override
     public List<ProductDto> getAll() {
@@ -58,6 +63,25 @@ public class ProductServiceImpl implements IProductService {
         searchDto.setResult(IProductDtoMapper.INSTANCE.toProductDtos(page.getContent()));
 
         return searchDto;
+    }
+
+    @Override
+    public ProductSearchDto search(ProductSearchDto searchDto) {
+        try {
+            var oMapper = new ObjectMapper();
+            Map<String, Object> map = oMapper.convertValue(searchDto, Map.class);
+
+            var result = productDao.search(map);
+            var productDtoList = IProductDtoMapper.INSTANCE.toProductDtos(result.getResult());
+
+            searchDto.setTotalRecords(result.getTotalRecords());
+            searchDto.setResult(productDtoList);
+
+            return searchDto;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException();
+        }
     }
 
     @Override
