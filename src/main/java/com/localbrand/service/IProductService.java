@@ -19,5 +19,9 @@ public interface IProductService {
 
 	ProductFullDto insert(ProductFullDto productFullDto);
 
+	ProductFullDto update(ProductFullDto productFullDto);
+
 	boolean isExistCode(String code);
+
+	boolean deleteById(String id);
 }

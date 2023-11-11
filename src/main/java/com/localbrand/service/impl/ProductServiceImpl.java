@@ -6,11 +6,15 @@ import com.localbrand.dal.entity.*;
 import com.localbrand.dal.repository.IProductAttributeDetailRepository;
 import com.localbrand.dal.repository.IProductImageRepository;
 import com.localbrand.dal.repository.IProductRepository;
+import com.localbrand.dal.repository.IProductSKURepository;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.request.ProductSearchDto;
 import com.localbrand.dtos.response.*;
 import com.localbrand.mappers.*;
 import com.localbrand.service.IProductService;
+
+import jakarta.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +24,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements IProductService {

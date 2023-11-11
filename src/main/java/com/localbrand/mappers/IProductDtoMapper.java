@@ -18,4 +18,6 @@ public interface IProductDtoMapper {
 	ProductDto toProductDto(Product product);
 	
 	List<ProductDto> toProductDtos(List<Product> products);
+
+    ProductFullDto toProductFullDto(Product product);
 }

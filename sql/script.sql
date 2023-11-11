@@ -93,6 +93,7 @@ CREATE TABLE product (
 );
 CREATE TABLE product_group (
    id varchar(50) primary key,
+   code    varchar(10),
    category_id    varchar(50),
    name   varchar(20)
 );
@@ -112,6 +113,7 @@ CREATE TABLE collection (
 );
 CREATE TABLE category (
     id varchar(50) primary key,
+	code    varchar(10),
     name   varchar(20)
 );
 CREATE TABLE provider (
