@@ -11,7 +11,10 @@ import java.util.List;
 @Repository
 public interface IProductAttributeDetailRepository extends JpaRepository<ProductAttributeDetail, String> {
     @Query("SELECT p FROM ProductAttributeDetail p WHERE p.productSKU.product.id = ?1")
-    List<ProductAttributeDetail> getByProductId(String id);
+    List<ProductAttributeDetail> getByProductId(String productId);
+
+    @Query("SELECT p FROM ProductAttributeDetail p WHERE p.productSKU.id = ?1")
+    List<ProductAttributeDetail> getByProductSKUId(String productSKUId);
 
     @Modifying
     @Query("DELETE FROM ProductAttributeDetail p WHERE p.productSKU.product.id = ?1")

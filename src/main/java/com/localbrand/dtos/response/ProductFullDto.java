@@ -19,6 +19,6 @@ public class ProductFullDto {
 	private ProviderDto provider;
 
 	private List<ProductImageDto> images;
-	private List<ProductSKUDto> productSKUs;
+	private List<ProductSKUFullDto> productSKUs;
 	private List<ProductAttributeValueDto> attributeValues;
 }

@@ -9,5 +9,5 @@ public class ProductSKUDto {
 	private String id;
 	private String code;
 	private Integer quantity;
-	private ProductDto productDto;
+	private ProductDto product;
 }

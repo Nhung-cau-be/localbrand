@@ -39,6 +39,8 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     private IProductDao productDao;
 
+    private int currentVariant = 1;
+
     @Override
     public List<ProductDto> getAll() {
         return IProductDtoMapper.INSTANCE.toProductDtos(productRepository.findAll());
@@ -95,8 +97,13 @@ public class ProductServiceImpl implements IProductService {
                 return null;
 
             ProductFullDto productFullDto = IProductDtoMapper.INSTANCE.toProductFullDto(product);
-            productFullDto.setProductSKUs(IProductSKUDtoMapper.INSTANCE.toProductSKUDtos(productSKURepository.getByProductId(id)));
             productFullDto.setImages(IProductImageDtoMapper.INSTANCE.toProductImageDtos(productImageRepository.getByProductId(id)));
+
+            productFullDto.setProductSKUs(IProductSKUDtoMapper.INSTANCE.toProductSKUFullDtos(productSKURepository.getByProductId(id)));
+            productFullDto.getProductSKUs().forEach(sku -> sku.setAttributeValues(
+                    IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(
+                            productAttributeDetailRepository.getByProductSKUId(sku.getId()).stream().map(ProductAttributeDetail::getProductAttributeValue).collect(Collectors.toList())
+                    )));
 
             List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByProductId(id);
             List<ProductAttributeValue> productAttributeValues = productAttributeDetails.stream().map(ProductAttributeDetail::getProductAttributeValue).collect(Collectors.toList());
@@ -185,6 +192,7 @@ public class ProductServiceImpl implements IProductService {
         return productFullDto;
     }
 
+    @Transactional
     private ProductFullDto saveSkus(ProductFullDto productFullDto) {
         Product product = IProductDtoMapper.INSTANCE.toProduct(productFullDto);
         if(productFullDto.getAttributeValues().isEmpty()) {
@@ -211,42 +219,75 @@ public class ProductServiceImpl implements IProductService {
             totalVariant *= values.size();
         }
 
-        int variant = 0;
-        while (variant < totalVariant) {
-            List<ProductAttributeValueDto> attributeValueDtos = new ArrayList<>();
-            for(ProductAttributeValueDto attributeValue : productFullDto.getAttributeValues()) {
-                if(isValidSKU(attributeValueDtos, attributeValue)) {
-                    attributeValueDtos.add(attributeValue);
-                }
+//        int variant = 0;
+//        while (variant < totalVariant) {
+//            List<ProductAttributeValueDto> attributeValueDtos = new ArrayList<>();
+//            for(ProductAttributeValueDto attributeValue : productFullDto.getAttributeValues()) {
+//                if(isValidSKU(attributeValueDtos, attributeValue)) {
+//                    attributeValueDtos.add(attributeValue);
+//                }
+//
+//            }
+//            if(attributeValueDtos.size() == productAttributeDtos.size()) {
+//                variant++;
+//                ProductSKU productSKU = new ProductSKU();
+//                productSKU.setId(UUID.randomUUID().toString());
+//                productSKU.setCode(productFullDto.getCode() + variant);
+//                productSKU.setQuantity(0);
+//                productSKU.setProduct(product);
+//                productSKURepository.save(productSKU);
+//
+//                for(ProductAttributeValueDto value : attributeValueDtos) {
+//                    ProductAttributeDetail productAttributeDetail = new ProductAttributeDetail();
+//                    productAttributeDetail.setId(UUID.randomUUID().toString());
+//                    productAttributeDetail.setProductSKU(productSKU);
+//                    productAttributeDetail.setProductAttributeValue(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValue(value));
+//                    productAttributeDetailRepository.save(productAttributeDetail);
+//                }
+//            }
+//        }
 
-            }
-            if(attributeValueDtos.size() == productAttributeDtos.size()) {
-                variant++;
-                ProductSKU productSKU = new ProductSKU();
-                productSKU.setId(UUID.randomUUID().toString());
-                productSKU.setCode(productFullDto.getCode() + variant);
-                productSKU.setQuantity(0);
-                productSKU.setProduct(product);
-                productSKURepository.save(productSKU);
-
-                for(ProductAttributeValueDto value : attributeValueDtos) {
-                    ProductAttributeDetail productAttributeDetail = new ProductAttributeDetail();
-                    productAttributeDetail.setId(UUID.randomUUID().toString());
-                    productAttributeDetail.setProductSKU(productSKU);
-                    productAttributeDetail.setProductAttributeValue(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValue(value));
-                    productAttributeDetailRepository.save(productAttributeDetail);
-                }
-            }
-        }
+        currentVariant = 1;
+        createSKU(product, productAttributeDtos.stream().toList(), new ArrayList<>());
 
         return productFullDto;
     }
 
-    private boolean isValidSKU(List<ProductAttributeValueDto> attributeValueDtos, ProductAttributeValueDto attributeValueCurrent) {
-        for(ProductAttributeValueDto attributeValue : attributeValueDtos) {
-            if(attributeValue.getId().equals(attributeValueCurrent.getId()) || attributeValue.getAttribute().getId().equals(attributeValueCurrent.getAttribute().getId()))
-                return false;
+    @Transactional
+    private void createSKU(Product product, List<ProductAttributeFullDto> productAttributeRemains, List<ProductAttributeValueDto> productAttributeValueDtos) {
+        if(productAttributeRemains.size() == 0) {
+            ProductSKU productSKU = new ProductSKU();
+            productSKU.setId(UUID.randomUUID().toString());
+            productSKU.setCode(product.getCode() + currentVariant++);
+            productSKU.setQuantity(0);
+            productSKU.setProduct(product);
+            productSKURepository.save(productSKU);
+
+            List<ProductAttributeDetail> productAttributeDetails = new ArrayList<>();
+            for(ProductAttributeValueDto value : productAttributeValueDtos) {
+                ProductAttributeDetail productAttributeDetail = new ProductAttributeDetail();
+                productAttributeDetail.setId(UUID.randomUUID().toString());
+                productAttributeDetail.setProductSKU(productSKU);
+                productAttributeDetail.setProductAttributeValue(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValue(value));
+                productAttributeDetails.add(productAttributeDetail);
+            }
+            productAttributeDetailRepository.saveAll(productAttributeDetails);
+        } else {
+            ProductAttributeFullDto productAttributeFullDto = productAttributeRemains.get(0);
+
+            for(ProductAttributeValueDto productAttributeValueDto : productAttributeFullDto.getValues()) {
+                productAttributeValueDtos.removeIf(value -> value.getAttribute().getId().equals(productAttributeFullDto.getId()));
+                productAttributeValueDtos.add(productAttributeValueDto);
+                createSKU(product, productAttributeRemains.size()==1 ? new ArrayList<>() : productAttributeRemains.subList(1, productAttributeRemains.size()),productAttributeValueDtos);
+            }
         }
-        return true;
     }
+
+//    private boolean isValidSKU(List<ProductAttributeValueDto> attributeValueDtos, ProductAttributeValueDto attributeValueCurrent) {
+//        for(ProductAttributeValueDto attributeValue : attributeValueDtos) {
+//            if(attributeValue.getId().equals(attributeValueCurrent.getId()) || attributeValue.getAttribute().getId().equals(attributeValueCurrent.getAttribute().getId()))
+//                return false;
+//        }
+//        return true;
+//    }
 }
