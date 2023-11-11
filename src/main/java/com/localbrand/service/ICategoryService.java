@@ -24,7 +24,7 @@ public interface ICategoryService {
 	
 	boolean isUsing(String id);
 	
-	boolean isExistName(String name);
+	boolean isExistCode(String code);
 	
-	boolean isExistNameIgnore(String name, String categoryId);
+	boolean isExistCodeIgnore(String code, String categoryId);
 }

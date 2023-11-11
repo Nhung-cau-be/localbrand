@@ -97,12 +97,12 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 	}
 	
 	@Override
-	public boolean isExistName(String name) {
-		return productGroupRepository.countByName(name) > 0;
+	public boolean isExistCode(String code) {
+		return productGroupRepository.countByCode(code) > 0;
 	}
 	
 	@Override
-	public boolean isExistNameIgnore(String name, String productGroupId) {
-		return productGroupRepository.countByNameIgnore(name, productGroupId) > 0;
+	public boolean isExistCodeIgnore(String code, String productGroupId) {
+		return productGroupRepository.countByCodeIgnore(code, productGroupId) > 0;
 	}
 }

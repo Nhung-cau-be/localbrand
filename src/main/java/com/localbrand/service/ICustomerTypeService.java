@@ -10,6 +10,8 @@ import com.localbrand.dtos.response.CustomerTypeDto;
 public interface ICustomerTypeService {
 	List<CustomerTypeDto> getAll();
 	
+	CustomerTypeDto getById(String id);
+
 	CustomerTypeDto insert(CustomerTypeDto customerTypeDto);
 	
 	CustomerTypeDto update(CustomerTypeDto customerTypeDto);

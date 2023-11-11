@@ -1,6 +1,8 @@
 package com.localbrand.dal.entity;
 
-import java.time.LocalDate;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,7 +33,7 @@ public class User {
 	@Column (name = "is_man")
 	private Boolean isMan;
 	@Column
-	private LocalDate birthdate;
+	private Date birthdate;
 	@Column
 	private String address;
 	@Column

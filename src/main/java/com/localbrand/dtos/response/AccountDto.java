@@ -1,7 +1,5 @@
 package com.localbrand.dtos.response;
 
-import com.localbrand.enums.AccountTypeEnum;
-
 import jakarta.validation.constraints.NotBlank;
 
 import lombok.Data;
@@ -13,5 +11,5 @@ public class AccountDto {
 	private String username;
 	@NotBlank (message = "Vui lòng chọn mật khẩu")
 	private String password;
-	private AccountTypeEnum type;
+	private String type;
 }

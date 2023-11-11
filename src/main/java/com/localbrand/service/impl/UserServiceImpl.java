@@ -19,7 +19,6 @@ import com.localbrand.dal.repository.IUserRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.UserDto;
-import com.localbrand.enums.AccountTypeEnum;
 import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.IUserDtoMapper;
 import com.localbrand.service.IUserService;
@@ -82,13 +81,14 @@ public class UserServiceImpl implements IUserService {
 		    account.setUsername(userDto.getAccount().getUsername());
 		    String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);  
 		    account.setPassword(encryptedpassword);
-		    account.setType(AccountTypeEnum.USER);
+		    account.setType("Người dùng");
 		   
 		    user.setAccount(account);
+		    
+		    accountRepository.save(account);
 		    User newUser = userRepository.save(user);
 		    
 			UserDto newUserDto = IUserDtoMapper.INSTANCE.toUserDto(newUser);
-			accountRepository.save(account);
 			
 			return newUserDto;
 		} 

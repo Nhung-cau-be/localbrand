@@ -21,6 +21,4 @@ public interface IProductAttributeDtoMapper {
 	ProductAttributeFullDto toProductAttributeFullDto(ProductAttribute productAttribute);
 
 	List<ProductAttributeFullDto> toProductAttributeFullDtos(List<ProductAttribute> productAttributes);
-
-    ProductAttributeFullDto toProductAttributeFullDto(ProductAttributeDto attributeDto);
 }

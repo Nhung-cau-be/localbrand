@@ -106,8 +106,8 @@ public class CategoryController {
     private List<String> insertValidation(CategoryDto categoryDto) {
         List<String> result = new ArrayList<>();
 
-        if (categoryService.isExistName(categoryDto.getName())) {
-            result.add("Tên đã tồn tại");
+        if (categoryService.isExistCode(categoryDto.getCode())) {
+            result.add("Mã đã tồn tại");
         }
 
         return result;
@@ -121,8 +121,8 @@ public class CategoryController {
             return result;
         }
 
-        if (categoryService.isExistNameIgnore(categoryDto.getName(), categoryDto.getId())) {
-            result.add("Tên đã tồn tại");
+        if (categoryService.isExistCodeIgnore(categoryDto.getCode(), categoryDto.getId())) {
+            result.add("Mã đã tồn tại");
         }
 
         return result;

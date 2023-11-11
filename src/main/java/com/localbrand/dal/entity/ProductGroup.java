@@ -17,6 +17,9 @@ public class ProductGroup {
 	@Column(updatable = false, nullable = false)
 	private String id;
 	
+	@Column
+	private String code;
+	
 	@ManyToOne
 	@JoinColumn (name = "category_id")
 	private Category category;

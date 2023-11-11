@@ -89,8 +89,8 @@ public class ProductGroupController {
     private List<String> insertValidation(ProductGroupDto productGroupDto) {
         List<String> result = new ArrayList<>();
 
-        if (productGroupService.isExistName(productGroupDto.getName())) {
-            result.add("Tên đã tồn tại");
+        if (productGroupService.isExistCode(productGroupDto.getCode())) {
+            result.add("Mã đã tồn tại");
         }
 
         if (productGroupDto.getCategory() == null || productGroupDto.getCategory().getId().isBlank()) {
@@ -107,8 +107,8 @@ public class ProductGroupController {
             result.add("Vui lòng nhập id nhóm sản phẩm");
         }
 
-        if (productGroupService.isExistNameIgnore(productGroupDto.getName(), productGroupDto.getId())) {
-            result.add("Tên đã tồn tại");
+        if (productGroupService.isExistCodeIgnore(productGroupDto.getCode(), productGroupDto.getId())) {
+            result.add("Mã đã tồn tại");
         }
 
         if (productGroupDto.getCategory() == null || productGroupDto.getCategory().getId().isBlank()) {

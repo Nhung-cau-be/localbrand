@@ -13,8 +13,6 @@ public interface IProductAttributeService {
 
 	ProductAttributeFullDto getFullById(String id);
 
-	List<ProductAttributeFullDto> getAllFull();
-
 	ProductAttributeFullDto insert(ProductAttributeFullDto productAttribute);
 
 	ProductAttributeFullDto update(ProductAttributeFullDto productAttribute);

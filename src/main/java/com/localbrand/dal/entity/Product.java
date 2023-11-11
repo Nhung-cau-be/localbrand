@@ -13,13 +13,12 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "product_group_id")
 	private ProductGroup productGroup;
-	@Column(updatable = false, nullable = false)
+	@Column
 	private String code;
 	@Column
 	private String name;
 	@Column(name = "main_image_url")
 	private String mainImageUrl;
-	@Column
 	private Integer price;
 	@Column(name = "discount_price")
 	private Integer discountPrice;

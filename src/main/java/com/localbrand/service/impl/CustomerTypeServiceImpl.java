@@ -18,6 +18,7 @@ import com.localbrand.dal.repository.ICustomerTypeRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.CustomerTypeDto;
+import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.ICustomerTypeDtoMapper;
 import com.localbrand.service.ICustomerTypeService;
 
@@ -38,6 +39,11 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 		
 		return customerTypeDtos;
 	}
+	@Override
+	public CustomerTypeDto getById(String id) {
+		CustomerType customerType = customerTypeRepository.findById(id).orElse(null);
+		return ICustomerTypeDtoMapper.INSTANCE.toCustomerTypeDto(customerType);
+	}
 
 	@Override
 	public BaseSearchDto<List<CustomerTypeDto>> findAll(BaseSearchDto<List<CustomerTypeDto>> searchDto) {
@@ -47,7 +53,7 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
         }
 
         if (searchDto.getSortBy() == null || searchDto.getSortBy().isEmpty()) {
-            searchDto.setSortBy("name");
+            searchDto.setSortBy("standardPoint");
         }
         Sort sort = searchDto.isSortAsc() ? Sort.by(Sort.Direction.ASC, searchDto.getSortBy()) : Sort.by(Sort.Direction.DESC, searchDto.getSortBy());
 
@@ -80,7 +86,6 @@ public class CustomerTypeServiceImpl implements ICustomerTypeService {
 			return null;
 		}
 	}
-
 
 	@Override
 	public CustomerTypeDto update(CustomerTypeDto customerTypeDto) {

@@ -20,7 +20,6 @@ import com.localbrand.dal.repository.ICustomerTypeRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.ProviderDto;
-import com.localbrand.enums.AccountTypeEnum;
 import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.IProviderDtoMapper;
 import com.localbrand.service.ICustomerService;
@@ -91,15 +90,14 @@ public class CustomerServiceImpl implements ICustomerService {
 		    account.setUsername(customerDto.getAccount().getUsername());
 		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);  
 		    account.setPassword(encryptedpassword);
-		    account.setType(AccountTypeEnum.CUSTOMER);
+		    account.setType("Khách Hàng");
 		   
 		    customer.setAccount(account);
 		    
+		    accountRepository.save(account);
 		    Customer newCustomer = customerRepository.save(customer);
 		    
 			CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(newCustomer);
-			
-			accountRepository.save(account);
 			
 			return newCustomerDto;
 		} 
@@ -115,12 +113,10 @@ public class CustomerServiceImpl implements ICustomerService {
 		try {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
       
-      if(customer.getAccount().getPassword() != null && !customer.getAccount().getPassword().isBlank()) {
 			  String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
 			  customer.getAccount().setPassword(encryptedpassword);
 			  accountRepository.save(customer.getAccount());
-      }
-			customerRepository.save(customer);			
+			  customerRepository.save(customer);			
 			
 			return customerDto;
 		} catch (Exception e) {

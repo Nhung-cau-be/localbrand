@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +44,15 @@ public class CustomerTypeController {
 		List<CustomerTypeDto> result = customerTypeService.getAll();
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
     }
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getById(@PathVariable String id) {
+		CustomerTypeDto result = customerTypeService.getById(id);
+		
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Khách hàng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+		return res;
+	}
+	
 	@PostMapping("")
 	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<CustomerTypeDto>> searchDto) {
 		BaseSearchDto<List<CustomerTypeDto>> result = customerTypeService.findAll(searchDto);

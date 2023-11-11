@@ -17,6 +17,4 @@ public class ProductAttributeValue {
 	private String code;
 	@Column
 	private String name;
-	@Column
-	private String value;
 }
