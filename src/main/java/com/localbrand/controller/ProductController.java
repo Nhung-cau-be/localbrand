@@ -1,6 +1,7 @@
 package com.localbrand.controller;
 
 import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.request.ProductSearchDto;
 import com.localbrand.dtos.response.*;
 import com.localbrand.service.IProductGroupService;
 import com.localbrand.service.IProductService;
@@ -25,6 +26,21 @@ public class ProductController {
 	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<ProductDto>> searchDto) {
 		BaseSearchDto<List<ProductDto>> result = productService.findAll(searchDto);
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+	}
+
+	@PostMapping("/search")
+	public ResponseEntity<?> search(@RequestBody ProductSearchDto searchDto) {
+		ProductSearchDto search = productService.search(searchDto);
+		return ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), search));
+	}
+
+	@GetMapping("get-full/{id}")
+	public ResponseEntity<?> getFullById( @PathVariable String id) {
+		ProductFullDto result = productService.getFullById(id);
+
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Sản phẩm không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));
+		return res;
 	}
 
 	@PostMapping("/insert")

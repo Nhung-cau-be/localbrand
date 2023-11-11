@@ -16,6 +16,8 @@ public interface ICategoryService {
 
 	CategoryFullDto getFull(String id);
 	
+	List<CategoryFullDto> getAllFull();
+	
 	CategoryDto insert(CategoryDto categoryDto);
 
 	CategoryDto update(CategoryDto categoryDto);

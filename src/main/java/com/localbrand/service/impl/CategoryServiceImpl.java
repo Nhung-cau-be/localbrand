@@ -58,6 +58,26 @@ public class CategoryServiceImpl implements ICategoryService {
 	}
 
 	@Override
+	public List<CategoryFullDto> getAllFull() {
+		try {
+			List<Category> categories = categoryRepository.findAll();
+			List<CategoryFullDto> categoryFullDtos = ICategoryDtoMapper.INSTANCE.toCategoryFullDtos(categories);
+			
+			for(CategoryFullDto e : categoryFullDtos)
+			{
+				CategoryFullDto categoryFullDto = getFull(e.getId());
+				e.setProductGroups(categoryFullDto.getProductGroups());
+			}
+			
+			return categoryFullDtos;
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	@Override
 	public CategoryDto getById(String id) {
 		Category category = categoryRepository.findById(id).orElse(null);
 		return ICategoryDtoMapper.INSTANCE.toCategoryDto(category);
@@ -70,7 +90,7 @@ public class CategoryServiceImpl implements ICategoryService {
 			if(category == null)
 				return null;
 			
-			CategoryFullDto categoryFullDto = ICategoryDtoMapper.INSTANCE.toCategoryFullDto(null);
+			CategoryFullDto categoryFullDto = ICategoryDtoMapper.INSTANCE.toCategoryFullDto(category);
 			
 			List<ProductGroupDto> productGroupDto = IProductGroupDtoMapper.INSTANCE.toProductGroupDtos(productGroupRepository.findByCategoryId(id));
 			categoryFullDto.setProductGroups(productGroupDto);
