@@ -17,8 +17,8 @@ public interface IProductGroupRepository extends JpaRepository<ProductGroup, Str
 
 	int countByCategoryId(String id);
 	
-	int countByName(String name);
+	int countByCode(String code);
 
-	@Query("SELECT count(c.id) FROM ProductGroup c WHERE c.name = :name AND c.id != :productGroupId")
-	int countByNameIgnore(@Param("name") String name,@Param("productGroupId") String productGroupId);
+	@Query("SELECT count(c.id) FROM ProductGroup c WHERE c.code = :code AND c.id != :productGroupId")
+	int countByCodeIgnore(@Param("code") String code,@Param("productGroupId") String productGroupId);
 }

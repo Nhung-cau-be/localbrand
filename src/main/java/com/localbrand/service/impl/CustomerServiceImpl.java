@@ -1,6 +1,7 @@
 package com.localbrand.service.impl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.localbrand.AES;
+import com.localbrand.dal.dao.ICustomerDao;
+import com.localbrand.dal.dao.IProductDao;
+import com.localbrand.dal.dao.impl.CustomerDao;
 import com.localbrand.dal.entity.Account;
 import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
@@ -18,21 +24,27 @@ import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.ICustomerTypeRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.request.CustomerSearchDto;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.ProviderDto;
 import com.localbrand.enums.AccountTypeEnum;
 import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.IProviderDtoMapper;
 import com.localbrand.service.ICustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class CustomerServiceImpl implements ICustomerService {
-	
+	private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 	@Autowired
 	private ICustomerRepository customerRepository;
 	
 	@Autowired
 	private IAccountRepository accountRepository;
+	
+	@Autowired
+    private ICustomerDao customerDao;
 	
 	@Autowired
 	private ICustomerTypeRepository customerTypeRepository;
@@ -66,6 +78,25 @@ public class CustomerServiceImpl implements ICustomerService {
 
         return searchDto;
 	}
+	public CustomerSearchDto search(CustomerSearchDto searchDto) {
+        try {
+            var oMapper = new ObjectMapper();
+            Map<String, Object> map = oMapper.convertValue(searchDto, Map.class);
+
+            var result = customerDao.search(map);
+            var customerDtoList = ICustomerDtoMapper.INSTANCE.toCustomerDtos(result.getResult());
+
+            searchDto.setTotalRecords(result.getTotalRecords());
+            searchDto.setResult(customerDtoList);
+
+            return searchDto;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            searchDto.setResult(null);
+
+            return searchDto;
+        }
+    }
 	@Override
 	public CustomerDto getById(String id) {
 		Customer customer = customerRepository.findById(id).orElse(null);
@@ -94,12 +125,12 @@ public class CustomerServiceImpl implements ICustomerService {
 		    account.setType(AccountTypeEnum.CUSTOMER);
 		   
 		    customer.setAccount(account);
-		    
+		    accountRepository.save(account);
 		    Customer newCustomer = customerRepository.save(customer);
 		    
 			CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(newCustomer);
 			
-			accountRepository.save(account);
+			
 			
 			return newCustomerDto;
 		} 
@@ -115,12 +146,10 @@ public class CustomerServiceImpl implements ICustomerService {
 		try {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
       
-      if(customer.getAccount().getPassword() != null && !customer.getAccount().getPassword().isBlank()) {
 			  String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
 			  customer.getAccount().setPassword(encryptedpassword);
 			  accountRepository.save(customer.getAccount());
-      }
-			customerRepository.save(customer);			
+			  customerRepository.save(customer);			
 			
 			return customerDto;
 		} catch (Exception e) {

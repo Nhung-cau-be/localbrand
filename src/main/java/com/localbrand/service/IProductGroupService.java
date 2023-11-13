@@ -19,7 +19,7 @@ public interface IProductGroupService {
 	
 	boolean deleteById(String id);
 
-	boolean isExistName(String name);
+	boolean isExistCode(String code);
 
-	boolean isExistNameIgnore(String name, String productGroupId);
+	boolean isExistCodeIgnore(String code, String productGroupId);
 }

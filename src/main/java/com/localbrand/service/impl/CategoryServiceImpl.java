@@ -147,12 +147,12 @@ public class CategoryServiceImpl implements ICategoryService {
 	}
 	
 	@Override
-	public boolean isExistName(String name) {
-		return categoryRepository.countByName(name) > 0;
+	public boolean isExistCode(String code) {
+		return categoryRepository.countByCode(code) > 0;
 	}
 	
 	@Override
-	public boolean isExistNameIgnore(String name, String categoryId) {
-		return categoryRepository.countByNameIgnore(name, categoryId) > 0;
+	public boolean isExistCodeIgnore(String code, String categoryId) {
+		return categoryRepository.countByCodeIgnore(code, categoryId) > 0;
 	}
 }

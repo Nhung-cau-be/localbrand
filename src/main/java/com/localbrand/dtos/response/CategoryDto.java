@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class CategoryDto {
 	private String id;
+	@NotBlank(message = "Vui lòng nhập mã danh mục")
+	private String code;
 	@NotBlank(message = "Vui lòng nhập tên danh mục")
 	private String name;
 }
