@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.localbrand.Validate;
 import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.request.CustomerSearchDto;
+import com.localbrand.dtos.request.ProductSearchDto;
 import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.ProviderDto;
@@ -46,6 +48,12 @@ public class CustomerController {
 		List<CustomerDto> result = customerService.getAll();
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
    }
+	@PostMapping("/search")
+	public ResponseEntity<?> search(@RequestBody CustomerSearchDto searchDto) {
+		CustomerSearchDto search = customerService.search(searchDto);
+		return ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), search));
+	}
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable String id) {
 		CustomerDto result = customerService.getById(id);

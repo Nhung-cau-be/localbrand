@@ -14,7 +14,8 @@ public class Category {
 	@Id
 	@Column(updatable = false, nullable = false)
 	private String id;
-	
+	@Column
+	private String code;
 	@Column
 	private String name;
 }

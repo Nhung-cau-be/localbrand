@@ -2,6 +2,7 @@ package com.localbrand.service;
 import java.util.List;
 
 import com.localbrand.dtos.request.BaseSearchDto;
+import com.localbrand.dtos.request.CustomerSearchDto;
 import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.ProviderDto;
 
@@ -25,5 +26,8 @@ public interface ICustomerService {
 	boolean isExistEmailIgnore(String email, String customerId);
 	
 	BaseSearchDto<List<CustomerDto>> findAll(BaseSearchDto<List<CustomerDto>> searchDto);
+	
+	CustomerSearchDto search(CustomerSearchDto searchDto);
+
 
 }
