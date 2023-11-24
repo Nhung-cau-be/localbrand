@@ -2,6 +2,7 @@ package com.localbrand.service;
 
 import java.util.List;
 
+import com.localbrand.dal.entity.UserType;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.UserTypeDto;
 
@@ -16,6 +17,8 @@ public interface IUserTypeService {
 	UserTypeDto insert(UserTypeDto userTypeDto);
 	
 	UserTypeDto update(UserTypeDto userTypeDto);
+	
+	void createUserTypeDefaultPermission(UserType userType);
 	
 	boolean deleteById(String id);
 	
