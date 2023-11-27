@@ -73,6 +73,12 @@ public class ProductServiceImpl implements IProductService {
             var oMapper = new ObjectMapper();
             Map<String, Object> map = oMapper.convertValue(searchDto, Map.class);
 
+            if(searchDto.getAttributeValueIds() != null && !searchDto.getAttributeValueIds().isEmpty()) {
+                List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByAttributeValueIds(searchDto.getAttributeValueIds());
+                List<String> productIds = productAttributeDetails.stream().map(ProductAttributeDetail::getProductSKU).map(ProductSKU::getProduct).map(Product::getId).collect(Collectors.toSet()).stream().toList();
+                map.put("productIds", productIds);
+            }
+
             var result = productDao.search(map);
             var productDtoList = IProductDtoMapper.INSTANCE.toProductDtos(result.getResult());
 
@@ -83,6 +89,7 @@ public class ProductServiceImpl implements IProductService {
         } catch (Exception e) {
             logger.error(e.getMessage());
             searchDto.setResult(null);
+            searchDto.setTotalRecords(0);
 
             return searchDto;
         }

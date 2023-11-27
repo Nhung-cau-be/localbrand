@@ -2,6 +2,7 @@ package com.localbrand.dtos.response;
 
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -17,6 +18,8 @@ public class ProductFullDto {
 	private String describe;
 	private Boolean isDeleted;
 	private ProviderDto provider;
+	private Date createdDate;
+	private Date updatedDate;
 
 	private List<ProductImageDto> images;
 	private List<ProductSKUFullDto> productSKUs;

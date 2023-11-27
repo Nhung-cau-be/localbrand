@@ -1,5 +1,6 @@
 package com.localbrand.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +28,14 @@ public class ProductGroupServiceImpl implements IProductGroupService {
 	public List<ProductGroupDto> getAll() {
 		List<ProductGroup> productGroups = productGroupRepository.findAll();
 		List<ProductGroupDto> productGroupDtos = IProductGroupDtoMapper.INSTANCE.toProductGroupDtos(productGroups);
+
+		productGroupDtos.sort(new Comparator<ProductGroupDto>() {
+			@Override
+			public int compare(ProductGroupDto o1, ProductGroupDto o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+
 		return productGroupDtos;
 	}
 

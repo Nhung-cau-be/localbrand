@@ -11,7 +11,7 @@ public class ProductAttributeValue {
 	@Column(updatable = false, nullable = false)
 	private String id;
 	@ManyToOne
-	@JoinColumn (name = "product_attribute")
+	@JoinColumn (name = "product_attribute_id")
 	private ProductAttribute attribute;
 	@Column
 	private String code;
