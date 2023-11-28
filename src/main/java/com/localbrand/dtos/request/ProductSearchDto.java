@@ -9,6 +9,9 @@ import java.util.List;
 public class ProductSearchDto extends BaseSearchDto<List<ProductDto>> {
     private String code;
     private String productGroupId;
+    private String productId;
     private String categoryId;
     private List<String> attributeValueIds;
+    private String minPrice;
+    private String maxPrice;
 }

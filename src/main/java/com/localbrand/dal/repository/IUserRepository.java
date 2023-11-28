@@ -28,6 +28,8 @@ public interface IUserRepository extends JpaRepository<User, String>{
 	
 	int countByUserTypeId(String id);
 	
+	int countByAccountId(String id);
+	
 	@Query("SELECT c FROM User c WHERE c.userType.id = :userTypeId")
     List<Customer> findByUserType(@Param("userTypeId") String userTypeId);
 	
