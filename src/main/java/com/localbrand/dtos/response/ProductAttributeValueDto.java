@@ -12,4 +12,6 @@ public class ProductAttributeValueDto {
 	@NotBlank(message = "Vui lòng nhập tên giá trị thuộc tính")
 	private String name;
 	private String value;
+	@NotBlank(message = "Vui lòng nhập tên số thứ tự giá trị thuộc tính")
+	private Integer ordinalNumber;
 }
