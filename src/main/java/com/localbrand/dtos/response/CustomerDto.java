@@ -21,9 +21,8 @@ public class CustomerDto {
 	@NotBlank(message = "Vui lòng nhập số điện thoại khách hàng")
 	private String phone;
 	@NotBlank(message = "Vui lòng chọn giới tính khách hàng")
-	private boolean isMan;
+	private Boolean isMan;
 	@NotBlank(message = "Vui lòng chọn ngày sinh khách hàng")
-	@JsonFormat(pattern="yyyy-MM-dd")
 	private LocalDate birthdate;
 	@NotBlank(message = "Vui lòng nhập địa chỉ khách hàng")
 	private String address;

@@ -11,20 +11,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.localbrand.service.IAccountService;
+import com.localbrand.AES;
 import com.localbrand.dal.entity.Account;
+import com.localbrand.dal.entity.Category;
 import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.IUserRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.AccountDto;
+import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.mappers.IAccountDtoMapper;
+import com.localbrand.mappers.ICategoryDtoMapper;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
 	@Autowired
 	private IAccountRepository accountRepository;
 	
-	@Autowired
-	private IUserRepository userRepository;
+	final String secretKey = "locabrand!";
+
 
 	@Override
 	public List<AccountDto> getAll() {
@@ -61,46 +65,33 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
-	public AccountDto insert(AccountDto accountDto){
+	public AccountDto update(AccountDto accountDto) {
 		try {
-			Account account = IAccountDtoMapper.INSTANCE.toAccount(accountDto);
-			account.setId(UUID.randomUUID().toString());
-			Account newAccount = accountRepository.save(account);
-			AccountDto newAccountDto = IAccountDtoMapper.INSTANCE.toAccountDto(newAccount);
-			
-			return newAccountDto;
-		}
-		catch (Exception e) {
+			Account existingAccount = accountRepository.findById(accountDto.getId()).orElse(null);
+			Account updatedAccount = IAccountDtoMapper.INSTANCE.toAccount(accountDto);
+	            if (!accountDto.getPassword().equals(existingAccount.getPassword())&& accountDto.getPassword() != null &&
+	                    !accountDto.getPassword().isEmpty()) {
+	                
+	                String encryptedPassword = AES.encrypt(accountDto.getPassword(), secretKey);
+	                updatedAccount.setPassword(encryptedPassword);
+	            }
+           accountRepository.save(updatedAccount);
+           return accountDto;
+           
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
 	}
 	
 	@Override
-	public Boolean deleteById(String id) {
-		try {
-			
-			accountRepository.deleteById(id);
-			
-			return true;
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return false;
-		}
-	}
-	
-	@Override
-	public boolean isUsing(String id) {
-		return userRepository.countByAccountId(id) > 0;
-	}
-	@Override
-	public boolean isExitsUsername(String username) {
+	public boolean isExistUsername(String username) {
 		return accountRepository.countByUsername(username) > 0;
 	}
 
 
 	@Override
-	public boolean isExitsUsernameIgnore(String username, String accountId) {
+	public boolean isExistUsernameIgnore(String username, String accountId) {
 		return accountRepository.countByUsernameIgnore(username,  accountId) > 0;
 	}
 	

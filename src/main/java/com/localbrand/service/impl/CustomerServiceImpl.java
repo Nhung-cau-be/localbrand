@@ -144,14 +144,17 @@ public class CustomerServiceImpl implements ICustomerService {
 	@Override
 	public CustomerDto update(CustomerDto customerDto ) {
 		try {
-			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
-      
-			  String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
-			  customer.getAccount().setPassword(encryptedpassword);
-			  accountRepository.save(customer.getAccount());
-			  customerRepository.save(customer);			
-			
-			return customerDto;
+			Customer existingCustomer = customerRepository.findById(customerDto.getId()).orElse(null);
+
+	        if (existingCustomer != null) {
+	            existingCustomer.setName(customerDto.getName());
+	            accountRepository.save(existingCustomer.getAccount());
+	            customerRepository.save(existingCustomer);
+
+	            return customerDto;
+	        } else {
+	            return null;
+	        }
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;

@@ -115,7 +115,7 @@ public class UserController {
             result.add("Email đã tồn tại");
         }
   
-        if (accountService.isExitsUsername(userDto.getAccount().getUsername()))
+        if (accountService.isExistUsername(userDto.getAccount().getUsername()))
         {
         	result.add("Tài khoản đã tồn tại");
         }
@@ -139,7 +139,7 @@ public class UserController {
             result.add("Số điện thoại đã tồn tại");
         }
         
-        if (accountService.isExitsUsername(userDto.getAccount().getUsername()))
+        if (accountService.isExistUsername(userDto.getAccount().getUsername()))
         {
         	result.add("Tài khoản đã tồn tại");
         }

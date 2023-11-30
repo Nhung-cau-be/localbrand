@@ -123,7 +123,7 @@ public class CustomerController {
             result.add("Email đã tồn tại");
         }
   
-        if (accountService.isExitsUsername(customerDto.getAccount().getUsername()))
+        if (accountService.isExistUsername(customerDto.getAccount().getUsername()))
         {
         	result.add("Tài khoản đã tồn tại");
         }
