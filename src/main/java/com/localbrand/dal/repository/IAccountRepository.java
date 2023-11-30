@@ -12,10 +12,11 @@ import com.localbrand.dal.entity.Account;
 
 @Repository
 public interface IAccountRepository extends JpaRepository<Account, String> {
+	Account getByUsername(String username);
+
 	@Query("SELECT COUNT(c) FROM Account c WHERE c.username = :username")
 	int countByUsername(String username);
 	
 	@Query("SELECT COUNT(c.id) FROM Account c WHERE c.username = :username AND c.id != :accountId")
 	int countByUsernameIgnore(@Param("username") String username, @Param ("accountId") String accountId);
-	
 }

@@ -65,6 +65,12 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
+	public AccountDto getByUsername(String username) {
+		Account account =accountRepository.getByUsername(username);
+		return IAccountDtoMapper.INSTANCE.toAccountDto(account);
+	}
+  
+	@Override
 	public AccountDto update(AccountDto accountDto) {
 		try {
 			Account existingAccount = accountRepository.findById(accountDto.getId()).orElse(null);

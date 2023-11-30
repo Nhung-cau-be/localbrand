@@ -138,8 +138,8 @@ public class UserController {
         if (userService.isExistPhoneIgnore(userDto.getPhone(), userDto.getId())) {
             result.add("Số điện thoại đã tồn tại");
         }
-        
-        if (accountService.isExistUsername(userDto.getAccount().getUsername()))
+      
+        if (accountService.isExitsUsernameIgnore(userDto.getAccount().getUsername(), userDto.getAccount().getId()))
         {
         	result.add("Tài khoản đã tồn tại");
         }

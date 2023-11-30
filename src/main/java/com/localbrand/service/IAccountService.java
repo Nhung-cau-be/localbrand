@@ -13,6 +13,10 @@ public interface IAccountService {
 	BaseSearchDto<List<AccountDto>> findAll(BaseSearchDto<List<AccountDto>> searchDto);
 
 	AccountDto getById(String id);
+  
+	AccountDto getByUsername(String username);
+
+	AccountDto insert(AccountDto accountDto);
 	
 	AccountDto update(AccountDto accountDto);
 
