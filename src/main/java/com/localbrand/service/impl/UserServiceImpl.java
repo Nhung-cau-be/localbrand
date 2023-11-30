@@ -69,6 +69,11 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
+	public UserDto getByAccountId(String accountId) {
+		return IUserDtoMapper.INSTANCE.toUserDto(userRepository.getByAccountId(accountId));
+	}
+
+	@Override
 	public UserDto insert(UserDto userDto) {
 		try {
 			User user = IUserDtoMapper.INSTANCE.toUser(userDto);

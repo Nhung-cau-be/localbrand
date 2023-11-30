@@ -15,8 +15,6 @@ public interface IAccountService {
 	AccountDto getById(String id);
   
 	AccountDto getByUsername(String username);
-
-	AccountDto insert(AccountDto accountDto);
 	
 	AccountDto update(AccountDto accountDto);
 

@@ -27,8 +27,7 @@ public class AccountServiceImpl implements IAccountService {
 	@Autowired
 	private IAccountRepository accountRepository;
 	
-	final String secretKey = "locabrand!";
-
+	final String secretKey = "localbrand";
 
 	@Override
 	public List<AccountDto> getAll() {

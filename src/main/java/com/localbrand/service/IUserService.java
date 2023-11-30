@@ -11,6 +11,8 @@ public interface IUserService {
 	
 	BaseSearchDto<List<UserDto>> findAll(BaseSearchDto<List<UserDto>> searchDto);
 
+	UserDto getByAccountId(String id);
+
 	UserDto insert(UserDto userDto);
 	
 	UserDto update(UserDto userDto);
@@ -24,5 +26,4 @@ public interface IUserService {
 	boolean isExistPhoneIgnore(String phone, String userId);
 	
 	boolean isExistEmailIgnore(String email, String userId);
-	
 }

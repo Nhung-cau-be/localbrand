@@ -12,7 +12,9 @@ import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.User;
 
 @Repository
-public interface IUserRepository extends JpaRepository<User, String>{
+public interface IUserRepository extends JpaRepository<User, String> {
+	@Query("SELECT u FROM User u WHERE u.account.id = ?1")
+	User getByAccountId(String accountId);
 	
 	@Query("SELECT COUNT(c) FROM User c WHERE c.phone = :phone")
 	int countByPhone(String phone);
@@ -32,6 +34,4 @@ public interface IUserRepository extends JpaRepository<User, String>{
 	
 	@Query("SELECT c FROM User c WHERE c.userType.id = :userTypeId")
     List<Customer> findByUserType(@Param("userTypeId") String userTypeId);
-	
-	
 }
