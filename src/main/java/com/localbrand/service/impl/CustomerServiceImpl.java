@@ -48,8 +48,8 @@ public class CustomerServiceImpl implements ICustomerService {
 	
 	@Autowired
 	private ICustomerTypeRepository customerTypeRepository;
-	
-	final String secretKey = "locabrand!";
+
+	final String secretKey = "localbrand";
 
 	@Override
 	public List<CustomerDto> getAll() {
@@ -120,7 +120,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			Account account = new Account();
 		    account.setId(UUID.randomUUID().toString());
 		    account.setUsername(customerDto.getAccount().getUsername());
-		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);  
+		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
 		    account.setPassword(encryptedpassword);
 		    account.setType(AccountTypeEnum.CUSTOMER);
 		   

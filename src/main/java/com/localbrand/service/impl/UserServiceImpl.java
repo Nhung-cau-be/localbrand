@@ -33,7 +33,7 @@ public class UserServiceImpl implements IUserService {
 	@Autowired
 	private IAccountRepository accountRepository;
 	
-	final String secretKey = "locabrand!";
+	final String secretKey = "localbrand";
 	
 	
 	@Override
@@ -80,16 +80,15 @@ public class UserServiceImpl implements IUserService {
 			Account account = new Account();
 		    account.setId(UUID.randomUUID().toString());
 		    account.setUsername(userDto.getAccount().getUsername());
-		    String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);  
+		    String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);
 		    account.setPassword(encryptedpassword);
 		    account.setType(AccountTypeEnum.USER);
 		   
 		    user.setAccount(account);
+			accountRepository.save(account);
 		    User newUser = userRepository.save(user);
 		    
 			UserDto newUserDto = IUserDtoMapper.INSTANCE.toUserDto(newUser);
-			accountRepository.save(account);
-			
 			return newUserDto;
 		} 
 		catch (Exception e) {

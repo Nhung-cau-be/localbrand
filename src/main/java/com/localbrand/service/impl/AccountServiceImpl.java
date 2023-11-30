@@ -35,6 +35,12 @@ public class AccountServiceImpl implements IAccountService {
 	}
 
 	@Override
+	public AccountDto getByUsername(String username) {
+		Account account =accountRepository.getByUsername(username);
+		return IAccountDtoMapper.INSTANCE.toAccountDto(account);
+	}
+
+	@Override
 	public AccountDto insert(AccountDto accountDto){
 		try {
 			Account account = IAccountDtoMapper.INSTANCE.toAccount(accountDto);
