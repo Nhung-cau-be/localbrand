@@ -12,15 +12,12 @@ import org.springframework.stereotype.Service;
 
 import com.localbrand.AES;
 import com.localbrand.dal.entity.Account;
-import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.User;
 import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.IUserRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
-import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.UserDto;
 import com.localbrand.enums.AccountTypeEnum;
-import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.IUserDtoMapper;
 import com.localbrand.service.IUserService;
 
@@ -85,7 +82,9 @@ public class UserServiceImpl implements IUserService {
 		    account.setType(AccountTypeEnum.USER);
 		   
 		    user.setAccount(account);
+
 			accountRepository.save(account);
+			
 		    User newUser = userRepository.save(user);
 		    
 			UserDto newUserDto = IUserDtoMapper.INSTANCE.toUserDto(newUser);
@@ -100,14 +99,17 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public UserDto update(UserDto userDto) {
 		try {
-			User user = IUserDtoMapper.INSTANCE.toUser(userDto);
-			
-			String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);
-			user.getAccount().setPassword(encryptedpassword);
-			accountRepository.save(user.getAccount());
-			userRepository.save(user);			
-			
-			return userDto;
+			User existinguser = userRepository.findById(userDto.getId()).orElse(null);
+
+	        if (existinguser != null) {
+	            existinguser.setName(userDto.getName());
+	            accountRepository.save(existinguser.getAccount());
+	            userRepository.save(existinguser);
+
+	            return userDto;
+	        } else {
+	            return null;
+	        }
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;
