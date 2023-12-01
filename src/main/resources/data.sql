@@ -96,3 +96,12 @@ INSERT INTO `product_group` (`id`, `code`, `category_id`, `name`) VALUES ('b5e1d
 INSERT INTO `product_group` (`id`, `code`, `category_id`, `name`) VALUES ('37b8670e-4342-46b6-bf07-ee35221bfd84', 'GIAYDEP', '20095d3b-8c2f-4ef2-a4fc-46e0f361df03','Giày Dép SX 2023');
 
 INSERT INTO `provider` (`id`, `code`, `name`, `address`) VALUES ('c545cde5-5e73-48cd-a597-b045c79e6cc8', 'TONGKHOYAME', 'Tổng kho yame', 'Sài gòn');
+
+INSERT INTO user_type VALUES ('bce1f07f-314d-4b12-ae19-2f65017ab019', 'Admin');
+INSERT INTO user_type VALUES ('e4ad9289-aaf2-48e3-8faa-70686a255648', 'Nhân viên');
+
+INSERT INTO user_permission VALUES ('da2cb086-110a-43c8-8a3a-b17e944a6989', 'bce1f07f-314d-4b12-ae19-2f65017ab019', 'CUSTOMER_MANAGEMENT');
+INSERT INTO user_permission VALUES ('c4766ad3-d8c7-483e-b308-5e493bb104da', 'bce1f07f-314d-4b12-ae19-2f65017ab019', 'USER_MANAGEMENT');
+INSERT INTO user_permission VALUES ('03d39375-3d9b-4876-97c0-b446034bada5', 'bce1f07f-314d-4b12-ae19-2f65017ab019', 'PRODUCT_MANAGEMENT');
+INSERT INTO user_permission VALUES ('2485a629-00b9-45bc-9f15-7c1d38fb8257', 'bce1f07f-314d-4b12-ae19-2f65017ab019', 'PROVIDER_MANAGEMENT');
+INSERT INTO user_permission VALUES ('64c9da4a-72aa-4606-913e-26e15d3e689d', 'e4ad9289-aaf2-48e3-8faa-70686a255648', 'PRODUCT_MANAGEMENT');

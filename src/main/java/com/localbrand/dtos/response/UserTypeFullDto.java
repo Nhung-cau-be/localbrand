@@ -3,11 +3,11 @@ package com.localbrand.dtos.response;
 import com.localbrand.enums.PermissionEnum;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class UserPermissionDto {
+public class UserTypeFullDto {
 	private String id;
-	
-	private UserTypeDto userType;
-	
-    private PermissionEnum permission;
+	private String name;
+	private List<PermissionEnum> permissions;
 }

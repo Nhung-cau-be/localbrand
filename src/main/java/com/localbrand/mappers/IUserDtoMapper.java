@@ -2,6 +2,7 @@ package com.localbrand.mappers;
 
 import java.util.List;
 
+import com.localbrand.dtos.response.UserFullDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -17,4 +18,6 @@ public interface IUserDtoMapper {
 	User toUser (UserDto userDto);
 	
 	List<UserDto> toUserDtos(List<User> users);
+
+    UserFullDto toUserFullDto(User user);
 }

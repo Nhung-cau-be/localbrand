@@ -1,12 +1,10 @@
 package com.localbrand.controller;
 
 import com.localbrand.AES;
-import com.localbrand.dtos.response.AccountDto;
-import com.localbrand.dtos.response.LoginDto;
-import com.localbrand.dtos.response.ResponseDto;
-import com.localbrand.dtos.response.UserDto;
+import com.localbrand.dtos.response.*;
 import com.localbrand.enums.AccountTypeEnum;
 import com.localbrand.service.IAccountService;
+import com.localbrand.service.ICustomerService;
 import com.localbrand.service.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +27,11 @@ public class AuthController {
 	private IAccountService accountService;
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	private ICustomerService customerService;
 
 	@PostMapping("/login-admin")
-	public ResponseEntity<?> login(@Valid @RequestBody LoginDto user) {
+	public ResponseEntity<?> loginAdmin(@Valid @RequestBody LoginDto user) {
 		AccountDto accountDto = accountService.getByUsername(user.getUsername());
 
 		if (accountDto == null || !user.getPassword().equals(AES.decrypt(accountDto.getPassword()))) {
@@ -59,6 +59,35 @@ public class AuthController {
 		));
 	}
 
+
+	@PostMapping("/login-web")
+	public ResponseEntity<?> loginWeb(@Valid @RequestBody LoginDto user) {
+		AccountDto accountDto = accountService.getByUsername(user.getUsername());
+
+		if (accountDto == null || !user.getPassword().equals(AES.decrypt(accountDto.getPassword()))) {
+			return ResponseEntity.badRequest().body(new ResponseDto(
+					List.of("Tên đăng nhập hoặc password không đúng"),
+					HttpStatus.BAD_GATEWAY.value(),
+					""
+			));
+		}
+
+		if (accountDto.getType() != AccountTypeEnum.CUSTOMER) {
+			return ResponseEntity.badRequest().body(new ResponseDto(
+					List.of("Loại tài khoản không hợp lệ"),
+					HttpStatus.BAD_GATEWAY.value(),
+					""
+			));
+		}
+
+		CustomerDto customerDto = customerService.getByAccountId(accountDto.getId());
+
+		return ResponseEntity.ok(new ResponseDto(
+				List.of("Đăng nhập thành công"),
+				HttpStatus.OK.value(),
+				customerDto.getId()
+		));
+	}
 }
 
 	

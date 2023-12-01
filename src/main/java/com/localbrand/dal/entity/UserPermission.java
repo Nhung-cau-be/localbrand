@@ -1,6 +1,6 @@
 package com.localbrand.dal.entity;
 
-import com.localbrand.enums.UserPermissionEnum;
+import com.localbrand.enums.PermissionEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "permission")
+@Table(name = "user_permission")
 @Data
 public class UserPermission {
 	
@@ -25,6 +25,6 @@ public class UserPermission {
     private UserType userType;
 	
 	@Enumerated (EnumType.STRING)
-    private UserPermissionEnum permission;
+    private PermissionEnum permission;
 
 }

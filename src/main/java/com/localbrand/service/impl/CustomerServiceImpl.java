@@ -104,6 +104,12 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 
 	@Override
+	public CustomerDto getByAccountId(String id) {
+		Customer customer = customerRepository.getByAccountId(id);
+		return ICustomerDtoMapper.INSTANCE.toCustomerDto(customer);
+	}
+
+	@Override
 	public CustomerDto insert(CustomerDto customerDto) {
 		try {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);

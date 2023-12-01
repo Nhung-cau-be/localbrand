@@ -2,7 +2,12 @@ package com.localbrand.service.impl;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.localbrand.dal.entity.UserPermission;
+import com.localbrand.dal.repository.IUserPermissionRepository;
+import com.localbrand.dtos.response.UserFullDto;
+import com.localbrand.enums.PermissionEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,9 +31,10 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	private IUserRepository userRepository;
-	
 	@Autowired
 	private IAccountRepository accountRepository;
+	@Autowired
+	private IUserPermissionRepository userPermissionRepository;
 	
 	final String secretKey = "localbrand";
 	
@@ -71,6 +77,17 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public UserDto getByAccountId(String accountId) {
 		return IUserDtoMapper.INSTANCE.toUserDto(userRepository.getByAccountId(accountId));
+	}
+
+	@Override
+	public UserFullDto getFullById(String id) {
+		User user = userRepository.findById(id).orElse(null);
+		UserFullDto userFullDto = IUserDtoMapper.INSTANCE.toUserFullDto(user);
+
+		List<PermissionEnum> permissions = userPermissionRepository.getByUserTypeId(userFullDto.getUserType().getId()).stream().map(UserPermission::getPermission).collect(Collectors.toList());
+		userFullDto.getUserType().setPermissions(permissions);
+
+		return userFullDto;
 	}
 
 	@Override

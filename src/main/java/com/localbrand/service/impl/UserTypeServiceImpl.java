@@ -11,16 +11,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.localbrand.dal.repository.IUserTypeRepository;
-import com.localbrand.dal.entity.Category;
 import com.localbrand.dal.entity.UserPermission;
 import com.localbrand.dal.entity.UserType;
 import com.localbrand.dal.repository.IUserPermissionRepository;
 import com.localbrand.dal.repository.IUserRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
-import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.dtos.response.UserTypeDto;
-import com.localbrand.enums.UserPermissionEnum;
-import com.localbrand.mappers.ICategoryDtoMapper;
+import com.localbrand.enums.PermissionEnum;
 import com.localbrand.mappers.IUserTypeDtoMapper;
 import com.localbrand.service.IUserTypeService;
 
@@ -121,7 +118,7 @@ public class UserTypeServiceImpl implements IUserTypeService {
         UserPermission defaultPermission = new UserPermission();
         defaultPermission.setId(UUID.randomUUID().toString());
         defaultPermission.setUserType(userType);
-        defaultPermission.setPermission(UserPermissionEnum.PRODUCT_MANAGERMENT);
+        defaultPermission.setPermission(PermissionEnum.PRODUCT_MANAGEMENT);
         userPermissionRepository.save(defaultPermission);
     }
 	@Override
