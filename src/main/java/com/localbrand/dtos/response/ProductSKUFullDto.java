@@ -15,6 +15,6 @@ public class ProductSKUFullDto {
     @NotNull(message = "Vui lòng nhập số lượng")
     @Min(value = 0, message = "Số lượng không được âm")
     private Integer quantity;
-    private ProductDto productDto;
+    private ProductDto product;
     private List<ProductAttributeValueDto> attributeValues;
 }

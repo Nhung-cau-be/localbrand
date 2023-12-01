@@ -16,6 +16,10 @@ public interface IProductSKUDtoMapper {
 	
 	IProductSKUDtoMapper INSTANCE = Mappers.getMapper(IProductSKUDtoMapper.class);
 
+	ProductSKUFullDto toProductSKUFullDto(ProductSKU productSKU);
+
+	ProductSKUDto toProductSKUDto(ProductSKU productSKU);
+
 	List<ProductSKUDto> toProductSKUDtos(List<ProductSKU> productSKUs);
 
     List<ProductSKUFullDto> toProductSKUFullDtos(List<ProductSKU> productSKUS);
