@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -36,10 +37,16 @@ public class CartServiceImpl implements ICartService {
     @Override
     public CartFullDto getByCustomerId(HttpServletRequest request, String customerId) {
         Cart cart = cartRepository.getByCustomerId(customerId);
-        if (cart == null)
-            return null;
-
         Customer customer = customerRepository.getById(customerId);
+
+        if (cart == null) {
+            Cart newCart = new Cart();
+            newCart.setId(UUID.randomUUID().toString());
+            newCart.setCustomer(customer);
+            cartRepository.save(newCart);
+
+            return ICartDtoMapper.INSTANCE.toCartFullDto(newCart);
+        }
 
         List<CartItemFullDto> cartItemDtos = ICartItemDtoMapper.INSTANCE.toCartItemFullDtos(cartItemRepository.getByCartId(cart.getId()));
         for (CartItemFullDto cartItemFullDto : cartItemDtos) {

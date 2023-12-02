@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -109,6 +110,7 @@ public class CustomerServiceImpl implements ICustomerService {
 		return ICustomerDtoMapper.INSTANCE.toCustomerDto(customer);
 	}
 
+	@Transactional
 	@Override
 	public CustomerDto insert(CustomerDto customerDto) {
 		try {
@@ -119,7 +121,9 @@ public class CustomerServiceImpl implements ICustomerService {
 
 	        if (customerType != null) {
 	            customer.setCustomerType(customerType);
-	        }
+	        } else {
+				customer.setCustomerType(null);
+			}
 
 			customer.setMembershipPoint(0);
 			
@@ -135,9 +139,7 @@ public class CustomerServiceImpl implements ICustomerService {
 		    Customer newCustomer = customerRepository.save(customer);
 		    
 			CustomerDto newCustomerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(newCustomer);
-			
-			
-			
+
 			return newCustomerDto;
 		} 
 		catch (Exception e) {

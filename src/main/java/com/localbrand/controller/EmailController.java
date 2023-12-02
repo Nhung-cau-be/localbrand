@@ -36,7 +36,7 @@ public class EmailController {
 		emailService.sendEmail(emailDto.getTo(), emailDto.getSubject(), emailDto.getText());
 	}
 	
-	@PostMapping("/send-otp/{email}")
+	@GetMapping("/send-otp/{email}")
     public void sendOTP(@PathVariable String email) {
 		int checkIfEmailExists = customerRepository.countByEmail(email);
         if (checkIfEmailExists != 0) {
