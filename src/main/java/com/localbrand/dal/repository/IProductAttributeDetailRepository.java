@@ -16,6 +16,9 @@ public interface IProductAttributeDetailRepository extends JpaRepository<Product
     @Query("SELECT p FROM ProductAttributeDetail p WHERE p.productSKU.id = ?1")
     List<ProductAttributeDetail> getByProductSKUId(String productSKUId);
 
+    @Query("SELECT p FROM ProductAttributeDetail p WHERE p.productAttributeValue.id IN ?1")
+    List<ProductAttributeDetail> getByAttributeValueIds(List<String> productAttributeValueIds);
+
     @Modifying
     @Query("DELETE FROM ProductAttributeDetail p WHERE p.productSKU.product.id = ?1")
     void deleteByProductId(String id);

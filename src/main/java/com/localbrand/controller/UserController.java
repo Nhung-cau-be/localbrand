@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import com.localbrand.dtos.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.localbrand.Validate;
-import com.localbrand.dtos.response.UserDto;
 import com.localbrand.dtos.request.BaseSearchDto;
-import com.localbrand.dtos.response.CategoryDto;
-import com.localbrand.dtos.response.ProductGroupDto;
-import com.localbrand.dtos.response.ResponseDto;
 import com.localbrand.service.IAccountService;
 import com.localbrand.service.IUserService;
 
@@ -51,6 +48,15 @@ public class UserController {
 		
 		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
                 : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Người dùng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));		
+		return res;
+	}
+
+	@GetMapping("/get-full/{id}")
+	public ResponseEntity<?> getFullById(@PathVariable String id) {
+		UserFullDto result = userService.getFullById(id);
+
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Người dùng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));
 		return res;
 	}
 	
@@ -115,7 +121,7 @@ public class UserController {
             result.add("Email đã tồn tại");
         }
   
-        if (accountService.isExitsUsername(userDto.getAccount().getUsername()))
+        if (accountService.isExistUsername(userDto.getAccount().getUsername()))
         {
         	result.add("Tài khoản đã tồn tại");
         }
@@ -138,8 +144,8 @@ public class UserController {
         if (userService.isExistPhoneIgnore(userDto.getPhone(), userDto.getId())) {
             result.add("Số điện thoại đã tồn tại");
         }
-        
-        if (accountService.isExitsUsername(userDto.getAccount().getUsername()))
+      
+        if (accountService.isExistUsernameIgnore(userDto.getAccount().getUsername(), userDto.getAccount().getId()))
         {
         	result.add("Tài khoản đã tồn tại");
         }

@@ -5,7 +5,9 @@ import com.localbrand.dtos.response.ProductSKUDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,4 +19,9 @@ public interface IProductSKURepository extends JpaRepository<ProductSKU, String>
     @Modifying
     @Query("DELETE FROM ProductSKU p WHERE p.product.id = ?1")
     void deleteByProductId(String productId);
+
+    @Modifying
+    @Transactional
+    @Query("update ProductSKU t set t.quantity = t.quantity - :quantity where t.id = :productSKUId")
+    void updateQuantityById(@Param("productSKUId") String productSKUId, @Param("quantity") int quantity);
 }

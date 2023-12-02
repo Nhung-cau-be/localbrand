@@ -1,5 +1,6 @@
 package com.localbrand.service.impl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,6 +34,12 @@ public class CategoryServiceImpl implements ICategoryService {
 	public List<CategoryDto> getAll() {
 		List<Category> categories = categoryRepository.findAll();
 		List<CategoryDto> categoryDtos = ICategoryDtoMapper.INSTANCE.toCategoryDtos(categories);
+		categoryDtos.sort(new Comparator<CategoryDto>() {
+			@Override
+			public int compare(CategoryDto o1, CategoryDto o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
 		return categoryDtos;
 	}
 

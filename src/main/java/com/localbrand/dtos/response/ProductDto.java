@@ -2,6 +2,8 @@ package com.localbrand.dtos.response;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class ProductDto {
 	private String id;
@@ -15,4 +17,6 @@ public class ProductDto {
 	private String describe;
 	private Boolean isDeleted;
 	private ProviderDto provider;
+	private Date createdDate;
+	private Date updatedDate;
 }

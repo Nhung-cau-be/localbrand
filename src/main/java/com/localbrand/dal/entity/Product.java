@@ -2,6 +2,10 @@ package com.localbrand.dal.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "product")
@@ -17,7 +21,7 @@ public class Product {
 	private String code;
 	@Column
 	private String name;
-	@Column(name = "main_image_url")
+	@Column(name = "main_image_url", length = 1024)
 	private String mainImageUrl;
 	@Column
 	private Integer price;
@@ -32,4 +36,10 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "provider_id")
 	private Provider provider;
+	@CreationTimestamp
+	@Column(name = "created_date")
+	private Date createdDate;
+	@UpdateTimestamp
+	@Column(name = "updated_date")
+	private Date updatedDate;
 }

@@ -3,6 +3,7 @@ import java.util.List;
 
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.response.UserDto;
+import com.localbrand.dtos.response.UserFullDto;
 
 public interface IUserService {
 	List<UserDto> getAll();
@@ -10,6 +11,10 @@ public interface IUserService {
 	UserDto getById(String id);
 	
 	BaseSearchDto<List<UserDto>> findAll(BaseSearchDto<List<UserDto>> searchDto);
+
+	UserDto getByAccountId(String id);
+
+	UserFullDto getFullById(String id);
 
 	UserDto insert(UserDto userDto);
 	
@@ -24,5 +29,4 @@ public interface IUserService {
 	boolean isExistPhoneIgnore(String phone, String userId);
 	
 	boolean isExistEmailIgnore(String email, String userId);
-	
 }

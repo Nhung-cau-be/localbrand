@@ -48,8 +48,8 @@ public class CustomerServiceImpl implements ICustomerService {
 	
 	@Autowired
 	private ICustomerTypeRepository customerTypeRepository;
-	
-	final String secretKey = "locabrand!";
+
+	final String secretKey = "localbrand";
 
 	@Override
 	public List<CustomerDto> getAll() {
@@ -104,6 +104,12 @@ public class CustomerServiceImpl implements ICustomerService {
 	}
 
 	@Override
+	public CustomerDto getByAccountId(String id) {
+		Customer customer = customerRepository.getByAccountId(id);
+		return ICustomerDtoMapper.INSTANCE.toCustomerDto(customer);
+	}
+
+	@Override
 	public CustomerDto insert(CustomerDto customerDto) {
 		try {
 			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
@@ -120,7 +126,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			Account account = new Account();
 		    account.setId(UUID.randomUUID().toString());
 		    account.setUsername(customerDto.getAccount().getUsername());
-		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);  
+		    String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
 		    account.setPassword(encryptedpassword);
 		    account.setType(AccountTypeEnum.CUSTOMER);
 		   
@@ -144,14 +150,17 @@ public class CustomerServiceImpl implements ICustomerService {
 	@Override
 	public CustomerDto update(CustomerDto customerDto ) {
 		try {
-			Customer customer = ICustomerDtoMapper.INSTANCE.toCustomer(customerDto);
-      
-			  String encryptedpassword = AES.encrypt(customerDto.getAccount().getPassword(), secretKey);
-			  customer.getAccount().setPassword(encryptedpassword);
-			  accountRepository.save(customer.getAccount());
-			  customerRepository.save(customer);			
-			
-			return customerDto;
+			Customer existingCustomer = customerRepository.findById(customerDto.getId()).orElse(null);
+
+	        if (existingCustomer != null) {
+	            existingCustomer.setName(customerDto.getName());
+	            accountRepository.save(existingCustomer.getAccount());
+	            customerRepository.save(existingCustomer);
+
+	            return customerDto;
+	        } else {
+	            return null;
+	        }
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;

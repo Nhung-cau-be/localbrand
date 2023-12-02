@@ -19,23 +19,41 @@ public class ProductDao extends GenericDao implements IProductDao {
 
         Session session = getSession();
 
-        String productQuery = "select * from product e ";
+        String productQuery = "select p.* from product p left join product_group pg on p.product_group_id = pg.id";
         var countTotalRecords = "select count(*) from ";
 
         List<String> conditions = new ArrayList<>();
         String code = search.get("code") != null ? (String) search.get("code") : null;
         if (code != null && !code.isEmpty()) {
-            conditions.add("(e.code LIKE :code or e.name LIKE :code)");
+            conditions.add("(p.code LIKE :code or p.name LIKE :code)");
             search.put("code", "%" + code + "%");
         }
 
         String productGroupId = search.get("productGroupId") != null ? (String) search.get("productGroupId") : null;
         if (productGroupId != null && !productGroupId.isEmpty()) {
-            conditions.add("e.product_group_id = :productGroupId");
+            conditions.add("p.product_group_id = :productGroupId");
         }
 
+        String categoryId = search.get("categoryId") != null ? (String) search.get("categoryId") : null;
+        if (categoryId != null && !categoryId.isEmpty()) {
+            conditions.add("pg.category_id = :categoryId");
+        }
+
+        List<String> productIds = search.get("productIds") != null ? (List<String>) search.get("productIds") : null;
+        if (productIds != null && !productIds.isEmpty()) {
+            conditions.add("p.id IN :productIds");
+        }
+        String minPrice = search.get("minPrice") != null ? (String) search.get("minPrice") : null;
+        String maxPrice = search.get("maxPrice") != null ? (String) search.get("maxPrice") : null;
+        if (minPrice != null && maxPrice != null) {
+            conditions.add("p.price BETWEEN :minPrice AND :maxPrice");
+        }
         String productWhereStr = conditions.size() > 0 ? "where " + String.join(" and ", conditions) : "";
-        productQuery = productQuery + " " + productWhereStr;
+
+        String sortBy = search.get("sortBy") != null ? (String) search.get("sortBy") : null;
+        String orderByStr = sortBy != null && !sortBy.isBlank() ? "ORDER BY " + sortBy + ((Boolean) search.get("sortAsc") ? " ASC": " DESC") : "";
+
+        productQuery = productQuery + " " + productWhereStr + " " + orderByStr;
         Query<Product> query = session.createNativeQuery(productQuery, Product.class);
         Query countQuery = session.createNativeQuery(countTotalRecords + "(" + productQuery + " ) as r");
         query.setProperties(search);

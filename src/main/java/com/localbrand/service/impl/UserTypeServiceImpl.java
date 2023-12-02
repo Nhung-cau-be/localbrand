@@ -11,13 +11,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.localbrand.dal.repository.IUserTypeRepository;
-import com.localbrand.dal.entity.Category;
+import com.localbrand.dal.entity.UserPermission;
 import com.localbrand.dal.entity.UserType;
+import com.localbrand.dal.repository.IUserPermissionRepository;
 import com.localbrand.dal.repository.IUserRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
-import com.localbrand.dtos.response.CategoryDto;
 import com.localbrand.dtos.response.UserTypeDto;
-import com.localbrand.mappers.ICategoryDtoMapper;
+import com.localbrand.enums.PermissionEnum;
 import com.localbrand.mappers.IUserTypeDtoMapper;
 import com.localbrand.service.IUserTypeService;
 
@@ -30,6 +30,8 @@ public class UserTypeServiceImpl implements IUserTypeService {
 	@Autowired
 	private IUserRepository userRepository;
 	
+	@Autowired
+    private IUserPermissionRepository userPermissionRepository;
 	
 	@Override
 	public List<UserTypeDto> getAll() {
@@ -72,7 +74,9 @@ public class UserTypeServiceImpl implements IUserTypeService {
 			userTypeDto.setId(UUID.randomUUID().toString());
 			UserType userType = IUserTypeDtoMapper.INSTANCE.toUserType(userTypeDto);
 			
-			userTypeRepository.save(userType);			
+			userTypeRepository.save(userType);
+		
+			createUserTypeDefaultPermission(userType);
 			
 			return userTypeDto;
 		} catch (Exception e) {
@@ -99,6 +103,8 @@ public class UserTypeServiceImpl implements IUserTypeService {
 	@Override
 	public boolean deleteById(String id) {
 		try {
+			userPermissionRepository.deleteByUserTypeId(id);
+			
 			userTypeRepository.deleteById(id);
 			
 			return true;
@@ -107,7 +113,14 @@ public class UserTypeServiceImpl implements IUserTypeService {
 			return false;
 		}
 	}
-
+	@Override
+	public void createUserTypeDefaultPermission(UserType userType) {
+        UserPermission defaultPermission = new UserPermission();
+        defaultPermission.setId(UUID.randomUUID().toString());
+        defaultPermission.setUserType(userType);
+        defaultPermission.setPermission(PermissionEnum.PRODUCT_MANAGEMENT);
+        userPermissionRepository.save(defaultPermission);
+    }
 	@Override
 	public boolean isExistName(String name) {
 		return userTypeRepository.countByName(name) > 0;

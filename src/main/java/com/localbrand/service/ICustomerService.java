@@ -10,6 +10,8 @@ public interface ICustomerService {
 	List<CustomerDto> getAll();
 	
 	CustomerDto getById(String id);
+
+	CustomerDto getByAccountId(String id);
 	
 	CustomerDto insert(CustomerDto customerDto);
 	
@@ -28,6 +30,4 @@ public interface ICustomerService {
 	BaseSearchDto<List<CustomerDto>> findAll(BaseSearchDto<List<CustomerDto>> searchDto);
 	
 	CustomerSearchDto search(CustomerSearchDto searchDto);
-
-
 }

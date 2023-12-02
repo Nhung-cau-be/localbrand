@@ -2,7 +2,12 @@ package com.localbrand.service.impl;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.localbrand.dal.entity.UserPermission;
+import com.localbrand.dal.repository.IUserPermissionRepository;
+import com.localbrand.dtos.response.UserFullDto;
+import com.localbrand.enums.PermissionEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,15 +17,12 @@ import org.springframework.stereotype.Service;
 
 import com.localbrand.AES;
 import com.localbrand.dal.entity.Account;
-import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.User;
 import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.IUserRepository;
 import com.localbrand.dtos.request.BaseSearchDto;
-import com.localbrand.dtos.response.CustomerDto;
 import com.localbrand.dtos.response.UserDto;
 import com.localbrand.enums.AccountTypeEnum;
-import com.localbrand.mappers.ICustomerDtoMapper;
 import com.localbrand.mappers.IUserDtoMapper;
 import com.localbrand.service.IUserService;
 
@@ -29,11 +31,12 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	private IUserRepository userRepository;
-	
 	@Autowired
 	private IAccountRepository accountRepository;
+	@Autowired
+	private IUserPermissionRepository userPermissionRepository;
 	
-	final String secretKey = "locabrand!";
+	final String secretKey = "localbrand";
 	
 	
 	@Override
@@ -72,6 +75,22 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
+	public UserDto getByAccountId(String accountId) {
+		return IUserDtoMapper.INSTANCE.toUserDto(userRepository.getByAccountId(accountId));
+	}
+
+	@Override
+	public UserFullDto getFullById(String id) {
+		User user = userRepository.findById(id).orElse(null);
+		UserFullDto userFullDto = IUserDtoMapper.INSTANCE.toUserFullDto(user);
+
+		List<PermissionEnum> permissions = userPermissionRepository.getByUserTypeId(userFullDto.getUserType().getId()).stream().map(UserPermission::getPermission).collect(Collectors.toList());
+		userFullDto.getUserType().setPermissions(permissions);
+
+		return userFullDto;
+	}
+
+	@Override
 	public UserDto insert(UserDto userDto) {
 		try {
 			User user = IUserDtoMapper.INSTANCE.toUser(userDto);
@@ -80,16 +99,17 @@ public class UserServiceImpl implements IUserService {
 			Account account = new Account();
 		    account.setId(UUID.randomUUID().toString());
 		    account.setUsername(userDto.getAccount().getUsername());
-		    String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);  
+		    String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);
 		    account.setPassword(encryptedpassword);
 		    account.setType(AccountTypeEnum.USER);
 		   
 		    user.setAccount(account);
+
+			accountRepository.save(account);
+			
 		    User newUser = userRepository.save(user);
 		    
 			UserDto newUserDto = IUserDtoMapper.INSTANCE.toUserDto(newUser);
-			accountRepository.save(account);
-			
 			return newUserDto;
 		} 
 		catch (Exception e) {
@@ -101,14 +121,17 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public UserDto update(UserDto userDto) {
 		try {
-			User user = IUserDtoMapper.INSTANCE.toUser(userDto);
-			
-			String encryptedpassword = AES.encrypt(userDto.getAccount().getPassword(), secretKey);
-			user.getAccount().setPassword(encryptedpassword);
-			accountRepository.save(user.getAccount());
-			userRepository.save(user);			
-			
-			return userDto;
+			User existinguser = userRepository.findById(userDto.getId()).orElse(null);
+
+	        if (existinguser != null) {
+	            existinguser.setName(userDto.getName());
+	            accountRepository.save(existinguser.getAccount());
+	            userRepository.save(existinguser);
+
+	            return userDto;
+	        } else {
+	            return null;
+	        }
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;
