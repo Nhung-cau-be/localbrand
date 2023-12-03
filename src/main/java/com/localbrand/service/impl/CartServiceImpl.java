@@ -3,6 +3,7 @@ package com.localbrand.service.impl;
 import com.localbrand.dal.entity.*;
 import com.localbrand.dal.repository.*;
 import com.localbrand.dtos.response.*;
+import com.localbrand.enums.OrderStatusEnum;
 import com.localbrand.mappers.*;
 import com.localbrand.service.ICartService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,9 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -32,6 +37,10 @@ public class CartServiceImpl implements ICartService {
     private IProductAttributeValueRepository productAttributeValueRepository;
     @Autowired
     private IProductAttributeDetailRepository productAttributeDetailRepository;
+    @Autowired
+    private IOrderRepository orderRepository;
+    @Autowired
+    private IOrderItemRepository orderItemRepository;
 
     @Override
     public CartFullDto getByCustomerId(HttpServletRequest request, String customerId) {
@@ -60,5 +69,78 @@ public class CartServiceImpl implements ICartService {
         cartFullDto.setCustomer(ICustomerDtoMapper.INSTANCE.toCustomerDto(customer));
         cartFullDto.setItems(cartItemDtos);
         return cartFullDto;
+    }
+
+    @Override
+    @Transactional
+    public CartFullDto createOrder(CartFullDto cartFullDto) {
+        try {
+            if (cartFullDto == null)
+                return null;
+
+            OrderFullDto orderFullDto = new OrderFullDto();
+            orderFullDto.setId(UUID.randomUUID().toString());
+            orderFullDto.setCode(LocalDateTime.now().toString());
+            orderFullDto.setCustomer(cartFullDto.getCustomer());
+            orderFullDto.setCustomerName(cartFullDto.getCustomer().getName());
+            orderFullDto.setPhone(cartFullDto.getCustomer().getPhone());
+            orderFullDto.setAddress(cartFullDto.getCustomer().getAddress());
+            orderFullDto.setEmail(cartFullDto.getCustomer().getEmail());
+            orderFullDto.setSubtotal(subtotal(cartFullDto.getItems()));
+            orderFullDto.setDiscount(discount(subtotal(cartFullDto.getItems()), cartFullDto.getCustomer()));
+            orderFullDto.setTotal(total(subtotal(cartFullDto.getItems()), discount(subtotal(cartFullDto.getItems()), cartFullDto.getCustomer())));
+            orderFullDto.setNote(cartFullDto.getOrderNote());
+            orderFullDto.setStatus(OrderStatusEnum.INPROGRESS);
+            orderRepository.save(IOrderDtoMapper.INSTANCE.toOrder(orderFullDto));
+
+            saveOrderItem(cartFullDto.getItems(), orderFullDto);
+
+            return cartFullDto;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return null;
+        }
+    }
+
+    @Transactional
+    private void saveOrderItem(List<CartItemFullDto> cartItemFullDtos, OrderFullDto orderFullDto) {
+        List<OrderItemFullDto> orderItemFullDtos = new ArrayList<>();
+        List<String> cartItemIds = new ArrayList<>();
+        for (CartItemFullDto cartItemFullDto : cartItemFullDtos) {
+            OrderItemFullDto orderItemFullDto = new OrderItemFullDto();
+            orderItemFullDto.setId(UUID.randomUUID().toString());
+            orderItemFullDto.setOrder(orderFullDto);
+            orderItemFullDto.setProductSKU(cartItemFullDto.getProductSKU());
+            orderItemFullDto.setQuantity(cartItemFullDto.getQuantity());
+            orderItemFullDto.setPrice(cartItemFullDto.getProductSKU().getProduct().getPrice());
+            if (cartItemFullDto.getProductSKU().getProduct().getDiscountPrice() != null)
+                orderItemFullDto.setDiscountPrice(cartItemFullDto.getProductSKU().getProduct().getDiscountPrice());
+
+            orderItemFullDtos.add(orderItemFullDto);
+            cartItemIds.add(cartItemFullDto.getId());
+            productSKURepository.updateQuantityById(cartItemFullDto.getProductSKU().getId(), cartItemFullDto.getQuantity());
+        }
+        orderItemRepository.saveAll(IOrderItemDtoMapper.INSTANCE.toOrderItems(orderItemFullDtos));
+        cartItemRepository.deleteByIds(cartItemIds);
+    }
+
+    private Long subtotal(List<CartItemFullDto> cartItemFullDtos) {
+        long subtotal = 0;
+        for(CartItemFullDto cartItemFullDto : cartItemFullDtos)
+            subtotal += cartItemFullDto.getProductSKU().getProduct().getPrice()*cartItemFullDto.getQuantity();
+
+        return subtotal;
+    }
+
+    private Long discount(Long subtotal, CustomerDto customerDto) {
+        Float discountPercent = customerDto.getCustomerType().getDiscountPercent();
+        Long discountPrice =  (long) (subtotal*discountPercent/100);
+        Long roundDiscountPrice = (long) Math.round(discountPrice);
+
+        return roundDiscountPrice;
+    }
+
+    private Long total(Long subtotal, Long discount) {
+        return subtotal - discount;
     }
 }

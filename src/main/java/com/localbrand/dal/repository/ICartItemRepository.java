@@ -25,4 +25,12 @@ public interface ICartItemRepository extends JpaRepository<CartItem, String> {
     @Query("update CartItem t set t.quantity = t.quantity + :quantity " +
             "where t.cart.id = :cartId and t.productSKU.id = :productSKUId")
     void updateQuantityByCartIdAndProductSKUId(@Param("cartId") String cartId, @Param("productSKUId") String productSKUId, @Param("quantity") int quantity);
+
+    @Modifying
+    @Query("delete from CartItem t where t.id in (:ids)")
+    void deleteByIds(@Param("ids") List<String> ids);
+
+    @Query("select count(t) from CartItem t where t.cart.id = :cartId")
+    int countByCartId(@Param("cartId") String cartId);
+
 }

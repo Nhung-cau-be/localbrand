@@ -11,4 +11,6 @@ public class CartFullDto {
     private CustomerDto customer;
     @Valid
     private List<CartItemFullDto> items;
+    private String orderNote;
 }
+

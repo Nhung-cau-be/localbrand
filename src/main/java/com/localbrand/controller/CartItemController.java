@@ -34,6 +34,20 @@ public class CartItemController {
         return res;
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@Valid @RequestBody CartItemDto cartItemDto) {
+        List<String> msg = updateValidation(cartItemDto);
+        if (msg.size() > 0) {
+            return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
+        }
+
+        CartItemDto result = cartItemService.update(cartItemDto);
+        ResponseEntity<?> res = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật chi tiết giỏ hàng thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật chi tiết giỏ hàng thất bại"), HttpStatus.BAD_REQUEST.value(), ""));
+
+        return res;
+    }
+
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteById(@RequestParam String id) {
         boolean result = cartItemService.deleteById(id);
@@ -51,6 +65,18 @@ public class CartItemController {
 
         if (!cartItemService.checkCartQuantity(customerId, cartItemDto))
             result.add("Số lượng sản phẩm sau khi thêm trong giỏ hàng vượt quá số sản phẩm trong kho");
+
+        return result;
+    }
+
+    private List<String> updateValidation(CartItemDto cartItemDto) {
+        List<String> result = new ArrayList<>();
+
+        if (cartItemDto.getId() == null)
+            result.add("Vui lòng thêm ID chi tiết giỏ hàng");
+
+        if (cartItemDto.getCart() == null && cartItemDto.getCart().getId() == null)
+            result.add("Vui lòng thêm chi tiết giỏ hàng");
 
         return result;
     }
