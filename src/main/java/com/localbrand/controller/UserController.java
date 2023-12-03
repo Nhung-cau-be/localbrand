@@ -96,7 +96,6 @@ public class UserController {
 			return res;
 	}
 
-
 	@DeleteMapping("delete")
 	public ResponseEntity<?> deleteById(@RequestParam String id) {
 		boolean result = userService.deleteById(id);			

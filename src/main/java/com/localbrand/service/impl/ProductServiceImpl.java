@@ -3,10 +3,7 @@ package com.localbrand.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.localbrand.dal.dao.IProductDao;
 import com.localbrand.dal.entity.*;
-import com.localbrand.dal.repository.IProductAttributeDetailRepository;
-import com.localbrand.dal.repository.IProductImageRepository;
-import com.localbrand.dal.repository.IProductRepository;
-import com.localbrand.dal.repository.IProductSKURepository;
+import com.localbrand.dal.repository.*;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.request.ProductSearchDto;
 import com.localbrand.dtos.response.*;
@@ -36,6 +33,10 @@ public class ProductServiceImpl implements IProductService {
     private IProductAttributeDetailRepository productAttributeDetailRepository;
     @Autowired
     private IProductSKURepository productSKURepository;
+    @Autowired
+    private IProductAttributeValueRepository productAttributeValueRepository;
+    @Autowired
+    private IProductAttributeRepository productAttributeRepository;
     @Autowired
     private IProductDao productDao;
 

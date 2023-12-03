@@ -58,8 +58,24 @@ public class CartItemServiceImpl implements ICartItemService {
     }
 
     @Override
+    public CartItemDto update(CartItemDto cartItemDto) {
+        try {
+            CartItem cartItem = ICartItemDtoMapper.INSTANCE.toCartItem(cartItemDto);
+            cartItemRepository.save(cartItem);
+
+            return cartItemDto;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    @Override
     public boolean checkCartQuantity(String customerId, CartItemDto cartItemDto) {
         Cart cart = cartRepository.getByCustomerId(customerId);
+        if (cart == null)
+            return true;
+
         CartItem cartItem = cartItemRepository.getByCartIdAndProductSKUId(cart.getId(),cartItemDto.getProductSKU().getId());
         return cartItem != null ? ((cartItem.getQuantity() + cartItemDto.getQuantity()) <= cartItemDto.getProductSKU().getQuantity())
                 : (cartItemDto.getQuantity() <= cartItemDto.getProductSKU().getQuantity());
