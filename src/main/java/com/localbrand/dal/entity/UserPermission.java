@@ -25,6 +25,7 @@ public class UserPermission {
     private UserType userType;
 	
 	@Enumerated (EnumType.STRING)
+    @Column(length = 50)
     private PermissionEnum permission;
 
 }

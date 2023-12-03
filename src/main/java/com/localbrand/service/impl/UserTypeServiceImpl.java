@@ -1,8 +1,13 @@
 package com.localbrand.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.localbrand.dtos.response.UserTypeFullDto;
+import com.localbrand.mappers.IUserPermissionDtoMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,7 +51,19 @@ public class UserTypeServiceImpl implements IUserTypeService {
 		UserType userType = userTypeRepository.findById(id).orElse(null);
 		return IUserTypeDtoMapper.INSTANCE.toUserTypeDto(userType);
 	}
-	
+
+	@Override
+	public UserTypeFullDto getFullById(String id) {
+		UserType userType = userTypeRepository.findById(id).orElse(null);
+		if(userType == null)
+			return null;
+
+		UserTypeFullDto userTypeFullDto = IUserTypeDtoMapper.INSTANCE.toUserTypeFullDto(userType);
+		userTypeFullDto.setPermissions(userPermissionRepository.getByUserTypeId(id).stream().map(UserPermission::getPermission).collect(Collectors.toList()));
+
+		return userTypeFullDto;
+	}
+
 	@Override
 	public BaseSearchDto<List<UserTypeDto>> findAll(BaseSearchDto<List<UserTypeDto>> searchDto) {
 		if (searchDto == null || searchDto.getCurrentPage() == -1 || searchDto.getRecordOfPage() == 0) {
@@ -69,14 +86,15 @@ public class UserTypeServiceImpl implements IUserTypeService {
 	}
 
 	@Override
-	public UserTypeDto insert(UserTypeDto userTypeDto) {
+	@Transactional
+	public UserTypeFullDto insert(UserTypeFullDto userTypeDto) {
 		try {
 			userTypeDto.setId(UUID.randomUUID().toString());
 			UserType userType = IUserTypeDtoMapper.INSTANCE.toUserType(userTypeDto);
 			
 			userTypeRepository.save(userType);
 		
-			createUserTypeDefaultPermission(userType);
+			savePermissions(userTypeDto);
 			
 			return userTypeDto;
 		} catch (Exception e) {
@@ -86,11 +104,13 @@ public class UserTypeServiceImpl implements IUserTypeService {
 	}
 
 	@Override
-	public UserTypeDto update(UserTypeDto userTypeDto) {
+	public UserTypeFullDto update(UserTypeFullDto userTypeDto) {
 		try {
 			UserType userType = IUserTypeDtoMapper.INSTANCE.toUserType(userTypeDto);
 			
-			userTypeRepository.save(userType);			
+			userTypeRepository.save(userType);
+
+			savePermissions(userTypeDto);
 			
 			return userTypeDto;
 		} catch (Exception e) {
@@ -113,14 +133,7 @@ public class UserTypeServiceImpl implements IUserTypeService {
 			return false;
 		}
 	}
-	@Override
-	public void createUserTypeDefaultPermission(UserType userType) {
-        UserPermission defaultPermission = new UserPermission();
-        defaultPermission.setId(UUID.randomUUID().toString());
-        defaultPermission.setUserType(userType);
-        defaultPermission.setPermission(PermissionEnum.PRODUCT_MANAGEMENT);
-        userPermissionRepository.save(defaultPermission);
-    }
+
 	@Override
 	public boolean isExistName(String name) {
 		return userTypeRepository.countByName(name) > 0;
@@ -136,4 +149,21 @@ public class UserTypeServiceImpl implements IUserTypeService {
 		return userRepository.countByUserTypeId(id) > 0;
 	}
 
+	@Transactional
+	private void savePermissions(UserTypeFullDto userTypeFullDto) {
+		UserType userType = IUserTypeDtoMapper.INSTANCE.toUserType(userTypeFullDto);
+		List<PermissionEnum> permissions = userTypeFullDto.getPermissions();
+		userPermissionRepository.deleteByUserTypeId(userTypeFullDto.getId());
+
+		List<UserPermission> userPermissions = new ArrayList<>();
+		permissions.forEach(permission -> {
+			UserPermission userPermission = new UserPermission();
+			userPermission.setId(UUID.randomUUID().toString());
+			userPermission.setUserType(userType);
+			userPermission.setPermission(permission);
+
+			userPermissions.add(userPermission);
+		});
+		userPermissionRepository.saveAll(userPermissions);
+	}
 }
