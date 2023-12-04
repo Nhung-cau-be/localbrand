@@ -29,7 +29,7 @@ public class Product {
 	private Integer discountPrice;
 	@Column(name = "discount_percent")
 	private Integer discountPercent;
-	@Column
+	@Column(length = 1024)
 	private String describe;
 	@Column(name = "is_deleted")
 	private Boolean isDeleted;
