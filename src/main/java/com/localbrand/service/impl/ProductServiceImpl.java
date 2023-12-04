@@ -114,8 +114,8 @@ public class ProductServiceImpl implements IProductService {
                     )));
 
             List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByProductId(id);
-            List<ProductAttributeValue> productAttributeValues = productAttributeDetails.stream().map(ProductAttributeDetail::getProductAttributeValue).collect(Collectors.toList());
-            productFullDto.setAttributeValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(productAttributeValues));
+            Set<ProductAttributeValue> productAttributeValues = productAttributeDetails.stream().map(ProductAttributeDetail::getProductAttributeValue).collect(Collectors.toSet());
+            productFullDto.setAttributeValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(productAttributeValues.stream().toList()));
 
             return productFullDto;
         } catch (Exception ex) {
@@ -210,6 +210,9 @@ public class ProductServiceImpl implements IProductService {
             productSKU.setQuantity(0);
             productSKU.setProduct(product);
             productSKURepository.save(productSKU);
+
+            productFullDto.setProductSKUs(List.of(IProductSKUDtoMapper.INSTANCE.toProductSKUFullDto(productSKU)));
+            return productFullDto;
         }
 
         int totalVariant = 1;
