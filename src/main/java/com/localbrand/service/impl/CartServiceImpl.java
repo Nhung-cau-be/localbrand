@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -86,7 +87,7 @@ public class CartServiceImpl implements ICartService {
 
             OrderFullDto orderFullDto = new OrderFullDto();
             orderFullDto.setId(UUID.randomUUID().toString());
-            orderFullDto.setCode(LocalDateTime.now().toString());
+            orderFullDto.setCode(createOrderCode());
             orderFullDto.setCustomer(cartFullDto.getCustomer());
             orderFullDto.setCustomerName(cartFullDto.getCustomer().getName());
             orderFullDto.setPhone(cartFullDto.getCustomer().getPhone());
@@ -128,6 +129,12 @@ public class CartServiceImpl implements ICartService {
         }
         orderItemRepository.saveAll(IOrderItemDtoMapper.INSTANCE.toOrderItems(orderItemFullDtos));
         cartItemRepository.deleteByIds(cartItemIds);
+    }
+
+    private String createOrderCode() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return now.format(formatter);
     }
 
     private Long subtotal(List<CartItemFullDto> cartItemFullDtos) {
