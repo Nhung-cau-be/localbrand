@@ -2326,19 +2326,19 @@ INSERT INTO `product_attribute_value` VALUES ('d646c495-a9b0-42fb-b51d-afca28c62
 INSERT INTO `product_attribute_value` VALUES ('d646c495-a9b0-42fb-b51d-afca28c6209d','XAMNHAT','Xám Nhạt', '58',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
 INSERT INTO `product_attribute_value` VALUES ('2a4f3b66-a363-4934-a489-3b9414ef9ee7','XANHXAM','Xanh Xám', '59',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
 INSERT INTO `product_attribute_value` VALUES ('98ffb6c3-c3b0-47d1-8840-b50baedc2275','XANHTRANG','Xanh Trắng', '60',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('8d1702f5-ed74-4578-ba16-b34b3a26e7c7','S','S', '61',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('bf36d062-37ad-46ac-b817-2263302db249','M','M', '62',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('877bbb37-e646-4208-8c4c-257df8c6734d','L','L', '63',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('5cc9f603-ef50-4f4b-8094-97ad3a7fbc64','XL','XL', '64',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('d9408268-cb1e-4289-b562-7bf1026f8d55','29','29', '65',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('8192f288-6541-4695-b25d-35720ac9a112','30','30', '66',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('eef759f6-10c4-497b-8db2-4e1ad046be0f','31','31', '67',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('dee8cd50-d524-49fe-aa9c-99298cd21e67','32','32', '68',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('8587fd72-256e-462b-9eea-4b8dc0f8fea4','33','33', '69',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('e93b9970-5361-44fd-9383-0d3ad1f4044a','40','40', '70',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('dc9e60bd-5c33-4451-a5d7-7de0f14c5694','41','41', '71',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('c2beb085-d9b7-4748-969e-7c57cf692594','42','42', '72',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
-INSERT INTO `product_attribute_value` VALUES ('0c69ec48-06f4-4be8-b52b-05f0508ef9e8','43','43', '73',NULL,'c24e1ea6-732c-4d1b-9b68-8b00b0441289');
+INSERT INTO `product_attribute_value` VALUES ('8d1702f5-ed74-4578-ba16-b34b3a26e7c7','S','S', '61',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('bf36d062-37ad-46ac-b817-2263302db249','M','M', '62',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('877bbb37-e646-4208-8c4c-257df8c6734d','L','L', '63',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('5cc9f603-ef50-4f4b-8094-97ad3a7fbc64','XL','XL', '64',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('d9408268-cb1e-4289-b562-7bf1026f8d55','29','29', '65',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('8192f288-6541-4695-b25d-35720ac9a112','30','30', '66',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('eef759f6-10c4-497b-8db2-4e1ad046be0f','31','31', '67',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('dee8cd50-d524-49fe-aa9c-99298cd21e67','32','32', '68',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('8587fd72-256e-462b-9eea-4b8dc0f8fea4','33','33', '69',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('e93b9970-5361-44fd-9383-0d3ad1f4044a','40','40', '70',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('dc9e60bd-5c33-4451-a5d7-7de0f14c5694','41','41', '71',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('c2beb085-d9b7-4748-969e-7c57cf692594','42','42', '72',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
+INSERT INTO `product_attribute_value` VALUES ('0c69ec48-06f4-4be8-b52b-05f0508ef9e8','43','43', '73',NULL,'5ba4c891-64e6-4adb-a41d-a54c7a7d9647');
 
 
 INSERT INTO `product_sku` VALUES ('fb99f002-f0e6-4707-95ec-84b9dec60cda','00221031','8','0f6e6598-8d48-426d-8f1f-47a02a5c232f');

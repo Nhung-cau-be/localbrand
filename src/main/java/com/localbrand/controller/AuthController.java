@@ -81,6 +81,13 @@ public class AuthController {
 		}
 
 		CustomerDto customerDto = customerService.getByAccountId(accountDto.getId());
+		if(customerDto == null) {
+			return ResponseEntity.badRequest().body(new ResponseDto(
+					List.of("Đăng nhập thất bại"),
+					HttpStatus.BAD_GATEWAY.value(),
+					""
+			));
+		}
 
 		return ResponseEntity.ok(new ResponseDto(
 				List.of("Đăng nhập thành công"),
