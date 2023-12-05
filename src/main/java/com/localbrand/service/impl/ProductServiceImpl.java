@@ -80,6 +80,8 @@ public class ProductServiceImpl implements IProductService {
                 map.put("productIds", productIds);
             }
 
+            searchDto.setMinPrice(searchDto.getMinPrice() == null ? 0 : searchDto.getMinPrice());
+            searchDto.setMaxPrice(searchDto.getMaxPrice() == null ? 1000000 : searchDto.getMaxPrice());
             List<Product> products = productRepository.findAll();
             products = products.stream().filter(product -> {
                 Integer price = product.getDiscountPrice() == null ? product.getPrice() : product.getDiscountPrice();
