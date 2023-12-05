@@ -139,8 +139,11 @@ public class CartServiceImpl implements ICartService {
 
     private Long subtotal(List<CartItemFullDto> cartItemFullDtos) {
         long subtotal = 0;
-        for(CartItemFullDto cartItemFullDto : cartItemFullDtos)
-            subtotal += cartItemFullDto.getProductSKU().getProduct().getPrice()*cartItemFullDto.getQuantity();
+        for(CartItemFullDto cartItemFullDto : cartItemFullDtos) {
+            ProductDto productDto = cartItemFullDto.getProductSKU().getProduct();
+            long price = (productDto.getDiscountPrice() != null) ? productDto.getDiscountPrice() : productDto.getPrice();
+            subtotal += price*cartItemFullDto.getQuantity();
+        }
 
         return subtotal;
     }

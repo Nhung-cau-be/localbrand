@@ -42,8 +42,8 @@ public class CartItemController {
         }
 
         CartItemDto result = cartItemService.update(cartItemDto);
-        ResponseEntity<?> res = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật chi tiết giỏ hàng thành công"), HttpStatus.OK.value(), result))
-                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật chi tiết giỏ hàng thất bại"), HttpStatus.BAD_REQUEST.value(), ""));
+        ResponseEntity<?> res = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Cập nhật sản phẩm thành công"), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Cập nhật sản phẩm thất bại"), HttpStatus.BAD_REQUEST.value(), ""));
 
         return res;
     }
