@@ -14,7 +14,7 @@ public class CartItem {
     @ManyToOne
     @JoinColumn (name = "cart_id")
     private Cart cart;
-    @OneToOne
+    @ManyToOne
     @JoinColumn (name = "product_sku_id")
     private ProductSKU productSKU;
     @Column

@@ -14,4 +14,8 @@ public interface IOrderItemDtoMapper {
     OrderItem toOrderItem(OrderItemFullDto orderItemFullDto);
 
     List<OrderItem> toOrderItems(List<OrderItemFullDto> orderItemFullDtos);
+
+    OrderItemFullDto toOrderItemFullDto(OrderItem orderItem);
+
+    List<OrderItemFullDto> toOrderItemFullDtos(List<OrderItem> orderItems);
 }
