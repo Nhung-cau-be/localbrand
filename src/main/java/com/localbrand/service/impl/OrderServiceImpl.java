@@ -117,23 +117,13 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<OrderFullDto> getOrdersFullByCustomerId(String customerId) {
-        List<OrderFullDto> orderFullDtos = IOrderDtoMapper.INSTANCE.toOrderFullDtos(orderRepository.getByCustomerId(customerId));
+    public List<OrderDto> getOrdersByCustomerId(String customerId) {
+        List<OrderDto> orderDtos = IOrderDtoMapper.INSTANCE.toOrderDtos(orderRepository.getByCustomerId(customerId));
 
-        if (orderFullDtos == null)
+        if (orderDtos == null)
             return null;
 
-        orderFullDtos.forEach(orderFullDto -> {
-            orderFullDto.setItems(IOrderItemDtoMapper.INSTANCE.toOrderItemFullDtos(orderItemRepository.getByOrderId(orderFullDto.getId())));
-            orderFullDto.getItems().forEach(item -> {
-                item.setProductSKU(IProductSKUDtoMapper.INSTANCE.toProductSKUFullDto(productSKURepository.getById(item.getProductSKU().getId())));
-                List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByProductSKUId(item.getProductSKU().getId());
-                List<ProductAttributeValue> productAttributeValues = productAttributeDetails.stream().map(ProductAttributeDetail::getProductAttributeValue).collect(Collectors.toList());
-                item.getProductSKU().setAttributeValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(productAttributeValues));
-            });
-        });
-
-        return orderFullDtos;
+        return orderDtos;
     }
 
     @Override

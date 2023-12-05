@@ -132,9 +132,9 @@ public class CartServiceImpl implements ICartService {
     }
 
     private String createOrderCode() {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return now.format(formatter);
+        int totalOrders = orderRepository.countOrders();
+        String code = "HĐ" + (totalOrders + 1);
+        return code;
     }
 
     private Long subtotal(List<CartItemFullDto> cartItemFullDtos) {

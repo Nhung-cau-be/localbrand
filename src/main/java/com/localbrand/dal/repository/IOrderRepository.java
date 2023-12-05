@@ -13,4 +13,7 @@ import java.util.List;
 public interface IOrderRepository extends JpaRepository<Order, String> {
     @Query("select t from Order t where t.customer.id = :customerId")
     List<Order> getByCustomerId(@Param("customerId") String customerId);
+
+    @Query("select count(t.id) from Order t")
+    int countOrders();
 }
