@@ -10,8 +10,8 @@ public class ProductSearchDto extends BaseSearchDto<List<ProductDto>> {
     private String code;
     private String productGroupId;
     private String productId;
-    private String categoryId;
+    private List<String> categoryIds;
     private List<String> attributeValueIds;
-    private String minPrice;
-    private String maxPrice;
+    private Integer minPrice;
+    private Integer maxPrice;
 }

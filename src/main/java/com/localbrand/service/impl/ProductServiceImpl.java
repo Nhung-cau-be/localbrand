@@ -80,6 +80,15 @@ public class ProductServiceImpl implements IProductService {
                 map.put("productIds", productIds);
             }
 
+            List<Product> products = productRepository.findAll();
+            products = products.stream().filter(product -> {
+                Integer price = product.getDiscountPrice() == null ? product.getPrice() : product.getDiscountPrice();
+                return searchDto.getMinPrice() <= price && searchDto.getMaxPrice() >= price;
+            }).collect(Collectors.toList());
+            Set<String> productIds = map.get("productIds") == null ? new HashSet<>() : (Set<String>) map.get("productIds");
+            productIds.addAll(products.stream().map(Product::getId).collect(Collectors.toSet()));
+            map.put("productIds", productIds.stream().toList());
+
             var result = productDao.search(map);
             var productDtoList = IProductDtoMapper.INSTANCE.toProductDtos(result.getResult());
 

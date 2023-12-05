@@ -34,19 +34,14 @@ public class ProductDao extends GenericDao implements IProductDao {
             conditions.add("p.product_group_id = :productGroupId");
         }
 
-        String categoryId = search.get("categoryId") != null ? (String) search.get("categoryId") : null;
-        if (categoryId != null && !categoryId.isEmpty()) {
-            conditions.add("pg.category_id = :categoryId");
+        List<String> categoryIds = search.get("categoryIds") != null ? (List<String>) search.get("categoryIds") : null;
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            conditions.add("pg.category_id IN :categoryIds");
         }
 
         List<String> productIds = search.get("productIds") != null ? (List<String>) search.get("productIds") : null;
         if (productIds != null && !productIds.isEmpty()) {
             conditions.add("p.id IN :productIds");
-        }
-        String minPrice = search.get("minPrice") != null ? (String) search.get("minPrice") : null;
-        String maxPrice = search.get("maxPrice") != null ? (String) search.get("maxPrice") : null;
-        if (minPrice != null && maxPrice != null) {
-            conditions.add("p.price BETWEEN :minPrice AND :maxPrice");
         }
         String productWhereStr = conditions.size() > 0 ? "where " + String.join(" and ", conditions) : "";
 
