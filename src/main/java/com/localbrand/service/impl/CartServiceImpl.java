@@ -133,7 +133,7 @@ public class CartServiceImpl implements ICartService {
 
     private String createOrderCode() {
         int totalOrders = orderRepository.countOrders();
-        String code = "HĐ" + (totalOrders + 1);
+        String code = "HD" + (totalOrders + 1);
         return code;
     }
 
