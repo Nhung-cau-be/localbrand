@@ -7,10 +7,7 @@ import com.localbrand.dal.repository.*;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.request.OrderSearchDto;
 import com.localbrand.dtos.request.ProductSearchDto;
-import com.localbrand.dtos.response.OrderDto;
-import com.localbrand.dtos.response.OrderFullDto;
-import com.localbrand.dtos.response.ProductDto;
-import com.localbrand.dtos.response.ProductFullDto;
+import com.localbrand.dtos.response.*;
 import com.localbrand.mappers.*;
 import com.localbrand.service.IOrderService;
 import org.slf4j.Logger;
@@ -44,6 +41,8 @@ public class OrderServiceImpl implements IOrderService {
     private IProductAttributeDetailRepository productAttributeDetailRepository;
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private ICustomerRepository customerRepository;
 
     @Override
     public List<OrderDto> getAll() {
@@ -115,6 +114,26 @@ public class OrderServiceImpl implements IOrderService {
             logger.error(ex.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public List<OrderFullDto> getOrdersFullByCustomerId(String customerId) {
+        List<OrderFullDto> orderFullDtos = IOrderDtoMapper.INSTANCE.toOrderFullDtos(orderRepository.getByCustomerId(customerId));
+
+        if (orderFullDtos == null)
+            return null;
+
+        orderFullDtos.forEach(orderFullDto -> {
+            orderFullDto.setItems(IOrderItemDtoMapper.INSTANCE.toOrderItemFullDtos(orderItemRepository.getByOrderId(orderFullDto.getId())));
+            orderFullDto.getItems().forEach(item -> {
+                item.setProductSKU(IProductSKUDtoMapper.INSTANCE.toProductSKUFullDto(productSKURepository.getById(item.getProductSKU().getId())));
+                List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByProductSKUId(item.getProductSKU().getId());
+                List<ProductAttributeValue> productAttributeValues = productAttributeDetails.stream().map(ProductAttributeDetail::getProductAttributeValue).collect(Collectors.toList());
+                item.getProductSKU().setAttributeValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(productAttributeValues));
+            });
+        });
+
+        return orderFullDtos;
     }
 
     @Override

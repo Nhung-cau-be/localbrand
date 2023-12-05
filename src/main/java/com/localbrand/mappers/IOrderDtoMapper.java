@@ -18,5 +18,7 @@ public interface IOrderDtoMapper {
 
     OrderFullDto toOrderFullDto(Order order);
 
+    List<OrderFullDto> toOrderFullDtos(List<Order> orders);
+
     Order toOrder (OrderFullDto orderFullDto);
 }

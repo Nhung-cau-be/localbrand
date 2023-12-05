@@ -43,6 +43,15 @@ public class OrderController {
         return res;
     }
 
+    @GetMapping("get-orders-full-by-customer/{customerId}")
+    public ResponseEntity<?> getOrdersFullByCustomerId( @PathVariable String customerId) {
+        List<OrderFullDto> result = orderService.getOrdersFullByCustomerId(customerId);
+
+        ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Khách hàng chưa có đơn hàng"), HttpStatus.BAD_REQUEST.value(), ""));
+        return res;
+    }
+
     @PutMapping("/update")
     public ResponseEntity<?> update(@Valid @RequestBody OrderFullDto orderFullDto) {
         List<String> msg = updateValidation(orderFullDto);

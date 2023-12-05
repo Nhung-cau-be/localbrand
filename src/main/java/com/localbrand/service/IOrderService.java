@@ -19,5 +19,7 @@ public interface IOrderService {
 
     OrderFullDto getFullById(String id);
 
+    List<OrderFullDto> getOrdersFullByCustomerId(String customerId);
+
     OrderFullDto update(OrderFullDto orderFullDto);
 }
