@@ -22,4 +22,5 @@ public class OrderDto {
     private Date createdDate;
     private String note;
     private OrderStatusEnum status;
+    private Integer quantity;
 }

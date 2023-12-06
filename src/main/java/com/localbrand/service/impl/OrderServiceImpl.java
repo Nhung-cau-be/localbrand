@@ -6,7 +6,6 @@ import com.localbrand.dal.entity.*;
 import com.localbrand.dal.repository.*;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.request.OrderSearchDto;
-import com.localbrand.dtos.request.ProductSearchDto;
 import com.localbrand.dtos.response.*;
 import com.localbrand.mappers.*;
 import com.localbrand.service.IOrderService;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,6 +80,16 @@ public class OrderServiceImpl implements IOrderService {
 
             searchDto.setTotalRecords(result.getTotalRecords());
             searchDto.setResult(orderDtos);
+
+            searchDto.getResult().forEach(order -> {
+                List<OrderItem> orderItems = orderItemRepository.getByOrderId(order.getId());
+
+                int count = 0;
+                for (OrderItem orderItem : orderItems)
+                    count += orderItem.getQuantity();
+
+                order.setQuantity(count);
+            });
 
             return searchDto;
         } catch (Exception e) {

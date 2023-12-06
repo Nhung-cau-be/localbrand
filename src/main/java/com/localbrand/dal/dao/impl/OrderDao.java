@@ -20,14 +20,19 @@ public class OrderDao extends GenericDao implements IOrderDao {
 
         Session session = getSession();
 
-        String orderQuery = "select * from order e ";
+        String orderQuery = "select * from `order` e ";
         var countTotalRecords = "select count(*) from ";
 
         List<String> conditions = new ArrayList<>();
         String code = search.get("code") != null ? (String) search.get("code") : null;
         if (code != null && !code.isEmpty()) {
-            conditions.add("(p.code LIKE :code or p.name LIKE :code)");
+            conditions.add("(e.code LIKE :code or e.name LIKE :code)");
             search.put("code", "%" + code + "%");
+        }
+
+        String createdDate = search.get("createdDate") != null ? (String) search.get("createdDate") : null;
+        if (createdDate != null && !createdDate.isEmpty()) {
+            conditions.add("DATE(e.created_date) = :createdDate");
         }
 
         String orderWhereStr = conditions.size() > 0 ? "where " + String.join(" and ", conditions) : "";
