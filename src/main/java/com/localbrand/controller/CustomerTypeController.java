@@ -7,15 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.localbrand.dal.entity.Customer;
 import com.localbrand.dal.entity.CustomerType;
@@ -43,12 +35,22 @@ public class CustomerTypeController {
 		List<CustomerTypeDto> result = customerTypeService.getAll();
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
     }
+
 	@PostMapping("")
 	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<CustomerTypeDto>> searchDto) {
 		BaseSearchDto<List<CustomerTypeDto>> result = customerTypeService.findAll(searchDto);
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
-	
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getById(@PathVariable String id) {
+		CustomerTypeDto result = customerTypeService.findById(id);
+
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Loại khách hàng không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));
+		return res;
+	}
+
 	@PostMapping("/insert")
     public ResponseEntity<?> insert(@RequestBody CustomerTypeDto customerTypeDto) {
 		 List<String> msg = insertValidation(customerTypeDto);
