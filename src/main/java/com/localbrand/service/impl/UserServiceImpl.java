@@ -124,7 +124,7 @@ public class UserServiceImpl implements IUserService {
 			User existinguser = userRepository.findById(userDto.getId()).orElse(null);
 
 	        if (existinguser != null) {
-	            existinguser.setName(userDto.getName());
+	            existinguser.setBirthdate(userDto.getBirthdate());
 	            accountRepository.save(existinguser.getAccount());
 	            userRepository.save(existinguser);
 
