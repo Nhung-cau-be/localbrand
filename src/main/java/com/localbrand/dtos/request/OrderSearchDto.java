@@ -10,4 +10,5 @@ import java.util.List;
 public class OrderSearchDto extends BaseSearchDto<List<OrderDto>> {
     private String code;
     private String createdDate;
+    private Boolean getCancel;
 }

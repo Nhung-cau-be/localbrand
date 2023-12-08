@@ -2,15 +2,13 @@ package com.localbrand.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.localbrand.dal.dao.IOrderDao;
-import com.localbrand.dal.entity.Order;
-import com.localbrand.dal.entity.OrderItem;
-import com.localbrand.dal.entity.ProductAttributeDetail;
-import com.localbrand.dal.entity.ProductAttributeValue;
+import com.localbrand.dal.entity.*;
 import com.localbrand.dal.repository.*;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.request.OrderSearchDto;
 import com.localbrand.dtos.response.OrderDto;
 import com.localbrand.dtos.response.OrderFullDto;
+import com.localbrand.enums.OrderStatusEnum;
 import com.localbrand.mappers.*;
 import com.localbrand.service.IOrderService;
 import org.slf4j.Logger;
@@ -26,10 +24,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +47,8 @@ public class OrderServiceImpl implements IOrderService {
     private IUserRepository userRepository;
     @Autowired
     private ICustomerRepository customerRepository;
+    @Autowired
+    private ICustomerTypeRepository customerTypeRepository;
 
     @Override
     public List<OrderDto> getAll() {
@@ -213,6 +210,37 @@ public class OrderServiceImpl implements IOrderService {
             orderFullDto.setUserName(orderFullDto.getUser().getName());
             Order order = IOrderDtoMapper.INSTANCE.toOrder(orderFullDto);
             orderRepository.save(order);
+
+            if (orderFullDto.getStatus() == OrderStatusEnum.COMPLETED) {
+                Customer customer = customerRepository.getById(orderFullDto.getCustomer().getId());
+
+                Integer newMembershipPoint = Math.toIntExact(customer.getMembershipPoint() + orderFullDto.getTotal()/100000);
+                customer.setMembershipPoint(newMembershipPoint);
+
+                List<CustomerType> customerTypes = customerTypeRepository.findAll();
+                Collections.sort(customerTypes, Comparator.comparing(CustomerType::getStandardPoint));
+
+                if (customerTypes.get(customerTypes.size()-1).getStandardPoint() < customer.getMembershipPoint()) {
+                    customer.setCustomerType(customerTypes.get(customerTypes.size()-1));
+                } else {
+                    for (int i = customerTypes.size() - 1; i > 0; i--) {
+                        if ((customerTypes.get(i-1).getStandardPoint() < customer.getMembershipPoint()) && (customerTypes.get(i).getStandardPoint() > customer.getMembershipPoint()))
+                            customer.setCustomerType(customerTypes.get(i-1));
+                    }
+                }
+
+                customerRepository.save(customer);
+            }
+
+            if (orderFullDto.getStatus() == OrderStatusEnum.CANCEL) {
+                List<OrderItem> orderItems = orderItemRepository.getByOrderId(orderFullDto.getId());
+
+                for(OrderItem orderItem : orderItems) {
+                    ProductSKU productSKU = productSKURepository.getById(orderItem.getProductSKU().getId());
+                    productSKU.setQuantity(productSKU.getQuantity()+orderItem.getQuantity());
+                    productSKURepository.save(productSKU);
+                }
+            }
 
             return orderFullDto;
         } catch (Exception e) {
