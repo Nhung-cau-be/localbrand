@@ -43,6 +43,12 @@ public class ProductController {
 		return res;
 	}
 
+	@GetMapping("/top-5-products")
+	public ResponseEntity<?> getTop5Products() {
+		List<ProductDto> result = productService.getTop5Products();
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+	}
+
 	@PostMapping("/insert")
 	public ResponseEntity<?> insert(@Valid @RequestBody ProductFullDto productFullDto) {
 		List<String> msg = insertValidation(productFullDto);

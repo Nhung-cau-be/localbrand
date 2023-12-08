@@ -29,4 +29,5 @@ public class CustomerDto {
 	@NotBlank(message = "Vui lòng nhập email khách hàng")
 	private String email;
 	private Integer membershipPoint;
+	private Integer orderQuantity;
 }

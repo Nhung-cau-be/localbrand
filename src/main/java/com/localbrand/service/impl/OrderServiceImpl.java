@@ -2,11 +2,15 @@ package com.localbrand.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.localbrand.dal.dao.IOrderDao;
-import com.localbrand.dal.entity.*;
+import com.localbrand.dal.entity.Order;
+import com.localbrand.dal.entity.OrderItem;
+import com.localbrand.dal.entity.ProductAttributeDetail;
+import com.localbrand.dal.entity.ProductAttributeValue;
 import com.localbrand.dal.repository.*;
 import com.localbrand.dtos.request.BaseSearchDto;
 import com.localbrand.dtos.request.OrderSearchDto;
-import com.localbrand.dtos.response.*;
+import com.localbrand.dtos.response.OrderDto;
+import com.localbrand.dtos.response.OrderFullDto;
 import com.localbrand.mappers.*;
 import com.localbrand.service.IOrderService;
 import org.slf4j.Logger;
@@ -17,6 +21,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -132,6 +143,67 @@ public class OrderServiceImpl implements IOrderService {
             return null;
 
         return orderDtos;
+    }
+
+    @Override
+    public List<Integer> getRevenuesThisWeek(boolean isLastWeek) {
+        List<Integer> revenues = new ArrayList<>();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // Get today's date
+        LocalDate today = LocalDate.now();
+
+        // Get Monday of current week
+        LocalDate day = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        if(isLastWeek)
+            day = day.minusDays(7);
+
+        for(int i = 0; i < 7; i++) {
+            day = day.plusDays(1);
+            String dayString = day.format(dateTimeFormatter);
+            List<Order> orders = orderRepository.getByCreatedDate(java.sql.Date.valueOf(day));
+
+            int sum = 0;
+            for(Order order : orders) {
+                sum += order.getTotal();
+            }
+
+            revenues.add(sum);
+        }
+
+        return revenues;
+    }
+
+    @Override
+    public List<Integer> getRevenuesByMonth() {
+        List<Integer> revenues = new ArrayList<>();
+        for(int i = 1; i <= 12; i++) {
+            List<Order> orders = orderRepository.getByCreatedMonth(i, LocalDate.now().getYear());
+
+            int sum = 0;
+            for(Order order : orders)
+                sum += order.getTotal();
+
+            revenues.add(sum);
+        }
+        return revenues;
+    }
+
+    @Override
+    public List<OrderFullDto> getOrderFullsThisMonth() {
+        List<Order> orders = orderRepository.getByCreatedMonth(LocalDate.now().getMonthValue(), LocalDate.now().getYear());
+        List<OrderFullDto> orderFullDtos = IOrderDtoMapper.INSTANCE.toOrderFullDtos(orders);
+
+        orderFullDtos.forEach(orderFullDto ->  {
+            orderFullDto.setItems(IOrderItemDtoMapper.INSTANCE.toOrderItemFullDtos(orderItemRepository.getByOrderId(orderFullDto.getId())));
+            orderFullDto.getItems().forEach(item -> {
+                item.setProductSKU(IProductSKUDtoMapper.INSTANCE.toProductSKUFullDto(productSKURepository.getById(item.getProductSKU().getId())));
+                List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByProductSKUId(item.getProductSKU().getId());
+                List<ProductAttributeValue> productAttributeValues = productAttributeDetails.stream().map(ProductAttributeDetail::getProductAttributeValue).collect(Collectors.toList());
+                item.getProductSKU().setAttributeValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(productAttributeValues));
+            });
+        });
+
+        return orderFullDtos;
     }
 
     @Override

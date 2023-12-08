@@ -52,6 +52,42 @@ public class OrderController {
         return res;
     }
 
+    @GetMapping("/get-revenues-this-week")
+    public ResponseEntity<?> getRevenuesThisWeek() {
+        List<Integer> result = orderService.getRevenuesThisWeek(false);
+
+        ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Lấy doanh thu tuần thất bại"), HttpStatus.BAD_REQUEST.value(), ""));
+        return res;
+    }
+
+    @GetMapping("/get-revenues-last-week")
+    public ResponseEntity<?> getRevenuesLastWeek() {
+        List<Integer> result = orderService.getRevenuesThisWeek(true);
+
+        ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Lấy doanh thu tuần thất bại"), HttpStatus.BAD_REQUEST.value(), ""));
+        return res;
+    }
+
+    @GetMapping("/get-revenues-by-month")
+    public ResponseEntity<?> getRevenuesByMonth() {
+        List<Integer> result = orderService.getRevenuesByMonth();
+
+        ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Lấy doanh thu theo tháng thất bại"), HttpStatus.BAD_REQUEST.value(), ""));
+        return res;
+    }
+
+    @GetMapping("/get-orders-full-this-month")
+    public ResponseEntity<?> getOrderFullsThisMonth() {
+        List<OrderFullDto> result = orderService.getOrderFullsThisMonth();
+
+        ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Lấy doanh thu theo tháng thất bại"), HttpStatus.BAD_REQUEST.value(), ""));
+        return res;
+    }
+
     @PutMapping("/update")
     public ResponseEntity<?> update(@Valid @RequestBody OrderFullDto orderFullDto) {
         List<String> msg = updateValidation(orderFullDto);

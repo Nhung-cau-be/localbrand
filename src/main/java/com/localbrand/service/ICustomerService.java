@@ -12,6 +12,8 @@ public interface ICustomerService {
 	CustomerDto getById(String id);
 
 	CustomerDto getByAccountId(String id);
+
+	List<CustomerDto> getTop5Buyer();
 	
 	CustomerDto insert(CustomerDto customerDto);
 	

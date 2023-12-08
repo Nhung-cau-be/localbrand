@@ -1,10 +1,12 @@
 package com.localbrand.service.impl;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
+import com.localbrand.dal.entity.*;
+import com.localbrand.dal.repository.IOrderRepository;
+import com.localbrand.dtos.response.OrderDto;
 import jakarta.transaction.Transactional;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +19,6 @@ import com.localbrand.AES;
 import com.localbrand.dal.dao.ICustomerDao;
 import com.localbrand.dal.dao.IProductDao;
 import com.localbrand.dal.dao.impl.CustomerDao;
-import com.localbrand.dal.entity.Account;
-import com.localbrand.dal.entity.Customer;
-import com.localbrand.dal.entity.CustomerType;
-import com.localbrand.dal.entity.Provider;
 import com.localbrand.dal.repository.IAccountRepository;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.ICustomerTypeRepository;
@@ -46,6 +44,8 @@ public class CustomerServiceImpl implements ICustomerService {
 	
 	@Autowired
     private ICustomerDao customerDao;
+	@Autowired
+	private IOrderRepository orderRepository;
 	
 	@Autowired
 	private ICustomerTypeRepository customerTypeRepository;
@@ -108,6 +108,38 @@ public class CustomerServiceImpl implements ICustomerService {
 	public CustomerDto getByAccountId(String id) {
 		Customer customer = customerRepository.getByAccountId(id);
 		return ICustomerDtoMapper.INSTANCE.toCustomerDto(customer);
+	}
+
+	@Override
+	public List<CustomerDto> getTop5Buyer() {
+		try {
+
+			List<Order> orders = orderRepository.getAll();
+			Set<CustomerDto> customerDtos = new HashSet<>();
+			Map<String, Integer> countCustomer = new HashMap<>();
+
+			for(Order order : orders) {
+				CustomerDto customerDto = getById(order.getCustomer().getId());
+				if(customerDto != null) {
+					customerDto.setOrderQuantity(
+							customerDto.getOrderQuantity() == null ? 1 : customerDto.getOrderQuantity() + 1
+					);
+				}
+				customerDtos.add(customerDto);
+			}
+			List<CustomerDto> customerDtoList = customerDtos.stream().toList();
+			customerDtoList.sort(new Comparator<CustomerDto>() {
+				@Override
+				public int compare(CustomerDto o1, CustomerDto o2) {
+					return o1.getOrderQuantity().compareTo(o2.getOrderQuantity());
+				}
+			});
+
+			return customerDtoList.subList(0, Math.max(customerDtoList.size(), 5));
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			return null;
+		}
 	}
 
 	@Transactional
