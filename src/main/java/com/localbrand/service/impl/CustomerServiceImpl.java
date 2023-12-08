@@ -156,7 +156,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			customerDtos.sort(new Comparator<CustomerDto>() {
 				@Override
 				public int compare(CustomerDto o1, CustomerDto o2) {
-					return o1.getOrderQuantity().compareTo(o2.getOrderQuantity());
+					return o2.getOrderQuantity().compareTo(o1.getOrderQuantity());
 				}
 			});
 
