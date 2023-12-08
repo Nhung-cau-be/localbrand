@@ -72,12 +72,6 @@ public class ProductServiceImpl implements IProductService {
             var oMapper = new ObjectMapper();
             Map<String, Object> map = oMapper.convertValue(searchDto, Map.class);
 
-            if(searchDto.getAttributeValueIds() != null && !searchDto.getAttributeValueIds().isEmpty()) {
-                List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByAttributeValueIds(searchDto.getAttributeValueIds());
-                List<String> productIds = productAttributeDetails.stream().map(ProductAttributeDetail::getProductSKU).map(ProductSKU::getProduct).map(Product::getId).collect(Collectors.toSet()).stream().toList();
-                map.put("productIds", productIds);
-            }
-
             searchDto.setMinPrice(searchDto.getMinPrice() == null ? 0 : searchDto.getMinPrice());
             searchDto.setMaxPrice(searchDto.getMaxPrice() == null ? 1000000 : searchDto.getMaxPrice());
             List<Product> products = productRepository.findAll();
@@ -85,9 +79,17 @@ public class ProductServiceImpl implements IProductService {
                 Integer price = product.getDiscountPrice() == null ? product.getPrice() : product.getDiscountPrice();
                 return searchDto.getMinPrice() <= price && searchDto.getMaxPrice() >= price;
             }).collect(Collectors.toList());
-            Set<String> productIds = map.get("productIds") == null ? new HashSet<>() : (Set<String>) map.get("productIds");
-            productIds.addAll(products.stream().map(Product::getId).collect(Collectors.toSet()));
-            map.put("productIds", productIds.stream().toList());
+            Set<String> productIdSets = new HashSet<>();
+            productIdSets.addAll(products.stream().map(Product::getId).collect(Collectors.toSet()));
+            List<String> productIds= productIdSets.stream().toList();
+
+            if(searchDto.getAttributeValueIds() != null && !searchDto.getAttributeValueIds().isEmpty()) {
+                List<ProductAttributeDetail> productAttributeDetails = productAttributeDetailRepository.getByAttributeValueIds(searchDto.getAttributeValueIds());
+                List<String> productIdAttrs = productAttributeDetails.stream().map(ProductAttributeDetail::getProductSKU).map(ProductSKU::getProduct).map(Product::getId).collect(Collectors.toSet()).stream().toList();
+                productIds = productIds.stream().filter(id -> productIdAttrs.contains(id)).collect(Collectors.toList());
+            }
+
+            map.put("productIds", productIds);
 
             var result = productDao.search(map);
             var productDtoList = IProductDtoMapper.INSTANCE.toProductDtos(result.getResult());
@@ -100,6 +102,7 @@ public class ProductServiceImpl implements IProductService {
             logger.error(e.getMessage());
             searchDto.setResult(null);
             searchDto.setTotalRecords(0);
+            searchDto.setPagingRange(0);
 
             return searchDto;
         }
