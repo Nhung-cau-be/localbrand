@@ -17,6 +17,9 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "product_group_id")
 	private ProductGroup productGroup;
+	@ManyToOne
+	@JoinColumn(name = "collection_id")
+	private Collection collection;
 	@Column(updatable = false, nullable = false)
 	private String code;
 	@Column

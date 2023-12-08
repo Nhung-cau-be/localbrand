@@ -44,10 +44,11 @@ public class CustomerController {
 	private IAccountService accountService;
 	
 	@GetMapping("")
-	 public ResponseEntity<?> getAll() {
+	public ResponseEntity<?> getAll() {
 		List<CustomerDto> result = customerService.getAll();
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
-   }
+	}
+
 	@PostMapping("/search")
 	public ResponseEntity<?> search(@RequestBody CustomerSearchDto searchDto) {
 		CustomerSearchDto search = customerService.search(searchDto);
@@ -66,6 +67,12 @@ public class CustomerController {
 	@PostMapping("")
 	public ResponseEntity<?> findAll(@RequestBody BaseSearchDto<List<CustomerDto>> searchDto) {
 		BaseSearchDto<List<CustomerDto>> result = customerService.findAll(searchDto);
+		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
+	}
+
+	@GetMapping("/top-5-buyer")
+	public ResponseEntity<?> getTop5Buyer() {
+		List<CustomerDto> result = customerService.getTop5Buyer();
 		return ResponseEntity.ok(new ResponseDto(List.of(""), HttpStatus.OK.value(), result));
 	}
 

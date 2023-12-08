@@ -21,5 +21,11 @@ public interface IOrderService {
 
     List<OrderDto> getOrdersByCustomerId(String customerId);
 
+    List<Integer> getRevenuesThisWeek(boolean isLastWeek);
+
+    List<Integer> getRevenuesByMonth();
+
+    List<OrderFullDto> getOrderFullsThisMonth();
+
     OrderFullDto update(OrderFullDto orderFullDto);
 }

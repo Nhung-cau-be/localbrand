@@ -34,9 +34,7 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     private IProductSKURepository productSKURepository;
     @Autowired
-    private IProductAttributeValueRepository productAttributeValueRepository;
-    @Autowired
-    private IProductAttributeRepository productAttributeRepository;
+    private IOrderItemRepository orderItemRepository;
     @Autowired
     private IProductDao productDao;
 
@@ -129,6 +127,51 @@ public class ProductServiceImpl implements IProductService {
             productFullDto.setAttributeValues(IProductAttributeValueDtoMapper.INSTANCE.toProductAttributeValueDtos(productAttributeValues.stream().toList()));
 
             return productFullDto;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductDto> getByCollectionId(String id) {
+        try {
+            List<Product> products = productRepository.getByCollectionId(id);
+
+            if (products == null)
+                return null;
+
+            List<ProductDto> productDtos = IProductDtoMapper.INSTANCE.toProductDtos(products);
+            return productDtos;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return null;
+        }
+    }
+    public List<ProductDto> getTop5Products() {
+        try {
+            List<OrderItem> orderItems = orderItemRepository.getAllWithoutCancelOrder();
+            Set<ProductDto> productDtos = new HashSet<>();
+            Map<String, Integer> countCustomer = new HashMap<>();
+
+            for(OrderItem orderItem : orderItems) {
+                ProductDto productDto = IProductDtoMapper.INSTANCE.toProductDto(productRepository.findById(orderItem.getProductSKU().getProduct().getId()).orElse(null));
+                if(productDto != null) {
+                    productDto.setOrderQuantity(
+                            productDto.getOrderQuantity() == null ? 1 : productDto.getOrderQuantity() + 1
+                    );
+                }
+                productDtos.add(productDto);
+            }
+            List<ProductDto> productDtoList = productDtos.stream().toList();
+            productDtoList.sort(new Comparator<ProductDto>() {
+                @Override
+                public int compare(ProductDto o1, ProductDto o2) {
+                    return o1.getOrderQuantity().compareTo(o2.getOrderQuantity());
+                }
+            });
+
+            return productDtoList.subList(0, Math.max(productDtoList.size(), 5));
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             return null;
