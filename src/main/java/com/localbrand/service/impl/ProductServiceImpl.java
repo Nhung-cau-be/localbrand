@@ -136,6 +136,22 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    public List<ProductDto> getByCollectionId(String id) {
+        try {
+            List<Product> products = productRepository.getByCollectionId(id);
+
+            if (products == null)
+                return null;
+
+            List<ProductDto> productDtos = IProductDtoMapper.INSTANCE.toProductDtos(products);
+            return productDtos;
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return null;
+        }
+    }
+
+    @Override
     @Transactional
     public ProductFullDto insert(ProductFullDto productFullDto) {
         try {

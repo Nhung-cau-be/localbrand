@@ -9,6 +9,7 @@ import java.util.List;
 public class ProductFullDto {
 	private String id;
 	private ProductGroupDto productGroup;
+	private CollectionDto collection;
 	private String code;
 	private String name;
 	private String mainImageUrl;

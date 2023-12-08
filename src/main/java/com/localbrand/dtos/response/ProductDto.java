@@ -8,6 +8,7 @@ import java.util.Date;
 public class ProductDto {
 	private String id;
 	private ProductGroupDto productGroup;
+	private CollectionDto collection;
 	private String code;
 	private String name;
 	private String mainImageUrl;

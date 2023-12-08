@@ -17,6 +17,8 @@ public interface IProductService {
 
 	ProductFullDto getFullById(String id);
 
+	List<ProductDto> getByCollectionId(String id);
+
 	ProductFullDto insert(ProductFullDto productFullDto);
 
 	ProductFullDto update(ProductFullDto productFullDto);
