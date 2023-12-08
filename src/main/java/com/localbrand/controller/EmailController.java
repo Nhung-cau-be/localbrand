@@ -33,8 +33,18 @@ public class EmailController {
     private OTPServiceImpl otpService;
 	
 	@PostMapping("/send-email")
-	public void sendEmail(@RequestBody EmailDto emailDto) { 
-		emailService.sendEmail(emailDto.getTo(), emailDto.getSubject(), emailDto.getText());
+	public ResponseEntity<?> sendEmail(@RequestBody EmailDto emailDto) { 
+		try {
+            String to = emailDto.getTo();
+            String subject = emailDto.getSubject();
+            String htmlContent = emailDto.getText();
+
+            emailService.sendEmail(to, subject, htmlContent);
+
+            return ResponseEntity.ok("Email sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error sending email: " + e.getMessage());
+        }
 	}
 	
 	@GetMapping("/send-otp/{email}")

@@ -3,6 +3,7 @@ package com.localbrand.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.localbrand.dal.entity.Category;
@@ -11,6 +12,8 @@ import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dal.repository.IOTPRepository;
 import com.localbrand.mappers.ICategoryDtoMapper;
 import com.localbrand.service.IEmailService;
+
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailServiceImpl implements IEmailService {
@@ -27,10 +30,12 @@ public class EmailServiceImpl implements IEmailService {
 	public void sendEmail(String to, String subject, String text)
 	{
         try {
-    		SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(text);
+        	MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(text, true); 
             javaMailSender.send(message);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
