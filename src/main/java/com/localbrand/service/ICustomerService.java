@@ -17,6 +17,10 @@ public interface ICustomerService {
 	
 	CustomerDto update(CustomerDto customerDto);
 	
+	CustomerDto resetPassword(String email, String newPassword);
+	
+	CustomerDto findByEmail(String email);
+	
 	boolean deleteById(String id);
 	
 	boolean isExistPhone(String phone);

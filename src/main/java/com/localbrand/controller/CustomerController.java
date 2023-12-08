@@ -4,7 +4,7 @@ package com.localbrand.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,7 +83,20 @@ public class CustomerController {
 		
 		return res;
 	}
-	
+
+	@PutMapping("/reset-password")
+	public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> requestBody) {
+	    String email = requestBody.get("email");
+	    String newPassword = requestBody.get("newPassword");
+
+	    CustomerDto result = customerService.resetPassword(email, newPassword);
+
+	    ResponseEntity<?> res = result != null
+	            ? ResponseEntity.ok(new ResponseDto(Arrays.asList("Đặt lại mật khẩu thành công"), HttpStatus.OK.value(), result))
+	            : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Đặt lại mật khẩu thất bại"), HttpStatus.BAD_REQUEST.value(), null));
+
+	    return res;
+	}
 
 	@PutMapping("/update")
 	public ResponseEntity<?> update(@RequestBody CustomerDto customerDto) {

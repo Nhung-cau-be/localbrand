@@ -24,7 +24,7 @@ public class OTPServiceImpl implements IOTPService{
         try {
         	Random random = new Random();
             int otpCode = 100000 + random.nextInt(900000);
-            LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(1);
+            LocalDateTime expirationTime = LocalDateTime.now().plusMinutes(5);
             
             OTP otp = new OTP();
             otp.setId(UUID.randomUUID().toString());
