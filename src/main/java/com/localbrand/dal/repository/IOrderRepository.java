@@ -15,7 +15,7 @@ public interface IOrderRepository extends JpaRepository<Order, String> {
     @Query("select t from Order t where t.customer.id = :customerId")
     List<Order> getByCustomerId(@Param("customerId") String customerId);
 
-    @Query("select t from Order t where t.createdDate = ?1")
+    @Query("select t from Order t where DATE(t.createdDate) = ?1")
     List<Order> getByCreatedDate(Date createdDate);
 
     @Query("select count(t.id) from Order t")

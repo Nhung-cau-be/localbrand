@@ -151,27 +151,27 @@ public class ProductServiceImpl implements IProductService {
     public List<ProductDto> getTop5Products() {
         try {
             List<OrderItem> orderItems = orderItemRepository.getAllWithoutCancelOrder();
-            Set<ProductDto> productDtos = new HashSet<>();
+            List<ProductDto> productDtos = new ArrayList<>();
             Map<String, Integer> countCustomer = new HashMap<>();
 
             for(OrderItem orderItem : orderItems) {
-                ProductDto productDto = IProductDtoMapper.INSTANCE.toProductDto(productRepository.findById(orderItem.getProductSKU().getProduct().getId()).orElse(null));
-                if(productDto != null) {
-                    productDto.setOrderQuantity(
-                            productDto.getOrderQuantity() == null ? 1 : productDto.getOrderQuantity() + 1
-                    );
+                ProductDto productDto = productDtos.stream().filter(product -> product.getId().equals(orderItem.getProductSKU().getProduct().getId())).findFirst().orElse(null);
+                if(productDto == null) {
+                    productDto = IProductDtoMapper.INSTANCE.toProductDto(productRepository.findById(orderItem.getProductSKU().getProduct().getId()).orElse(null));
+                    productDto.setOrderQuantity(orderItem.getQuantity());
+                    productDtos.add(productDto);
+                } else {
+                    productDto.setOrderQuantity(productDto.getOrderQuantity() + orderItem.getQuantity());
                 }
-                productDtos.add(productDto);
             }
-            List<ProductDto> productDtoList = productDtos.stream().toList();
-            productDtoList.sort(new Comparator<ProductDto>() {
+            productDtos.sort(new Comparator<ProductDto>() {
                 @Override
                 public int compare(ProductDto o1, ProductDto o2) {
-                    return o1.getOrderQuantity().compareTo(o2.getOrderQuantity());
+                    return o2.getOrderQuantity().compareTo(o1.getOrderQuantity());
                 }
             });
 
-            return productDtoList.subList(0, Math.max(productDtoList.size(), 5));
+            return productDtos.subList(0, Math.min(productDtos.size(), 5));
         } catch (Exception ex) {
             logger.error(ex.getMessage());
             return null;
