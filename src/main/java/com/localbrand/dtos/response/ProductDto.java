@@ -20,4 +20,5 @@ public class ProductDto {
 	private ProviderDto provider;
 	private Date createdDate;
 	private Date updatedDate;
+	private Integer orderQuantity;
 }
