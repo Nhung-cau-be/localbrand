@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 @Service
 public class CustomerServiceImpl implements ICustomerService {
 	private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
+	
 	@Autowired
 	private ICustomerRepository customerRepository;
 	
@@ -52,6 +53,31 @@ public class CustomerServiceImpl implements ICustomerService {
 
 	final String secretKey = "localbrand";
 
+	@Override
+	public CustomerDto findByEmail(String email) {
+		Customer customer = customerRepository.findByEmail(email);
+		return ICustomerDtoMapper.INSTANCE.toCustomerDto(customer);
+	}
+	
+	@Override
+	public CustomerDto resetPassword(String email, String newPassword) {
+		try {
+			Customer customer = customerRepository.findByEmail(email);
+			if(customer ==null) {
+				return null;
+			}
+			CustomerDto customerDto = ICustomerDtoMapper.INSTANCE.toCustomerDto(customer);
+	        String encryptedPassword = AES.encrypt(newPassword, secretKey);
+	        customer.getAccount().setPassword(encryptedPassword);
+	       	
+	        customerRepository.save(customer);
+	        return customerDto;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
 	@Override
 	public List<CustomerDto> getAll() {
 		List<Customer> customers = customerRepository.findAll();

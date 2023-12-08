@@ -15,6 +15,8 @@ public interface ICustomerRepository extends JpaRepository<Customer, String> {
 	@Query("SELECT c FROM Customer c WHERE c.account.id = ?1")
 	Customer getByAccountId(String id);
 	
+	Customer findByEmail(String email);
+	
 	@Query("SELECT COUNT(c) FROM Customer c WHERE c.phone = :phone")
 	int countByPhone(String phone);
 	
@@ -32,4 +34,6 @@ public interface ICustomerRepository extends JpaRepository<Customer, String> {
 	@Query("SELECT c FROM Customer c WHERE c.customerType.id = :customerTypeId")
     List<Customer> findByCustomerType(@Param("customerTypeId") String customerTypeId);
 
+	
+	
 }

@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.Arrays;
 import com.localbrand.dal.entity.OTP;
 import com.localbrand.dal.repository.ICustomerRepository;
 import com.localbrand.dtos.response.EmailDto;
+import com.localbrand.dtos.response.ResponseDto;
 import com.localbrand.service.IEmailService;
 import com.localbrand.service.impl.OTPServiceImpl;
 
@@ -32,31 +33,43 @@ public class EmailController {
     private OTPServiceImpl otpService;
 	
 	@PostMapping("/send-email")
-	public void sendEmail(@RequestBody EmailDto emailDto) { 
-		emailService.sendEmail(emailDto.getTo(), emailDto.getSubject(), emailDto.getText());
+	public ResponseEntity<?> sendEmail(@RequestBody EmailDto emailDto) { 
+		try {
+            String to = emailDto.getTo();
+            String subject = emailDto.getSubject();
+            String htmlContent = emailDto.getText();
+
+            emailService.sendEmail(to, subject, htmlContent);
+
+            return ResponseEntity.ok("Email sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error sending email: " + e.getMessage());
+        }
 	}
 	
 	@GetMapping("/send-otp/{email}")
     public void sendOTP(@PathVariable String email) {
-		int checkIfEmailExists = customerRepository.countByEmail(email);
-        if (checkIfEmailExists != 0) {
-			System.out.println("Da tim thay email");
-        	
-			emailService.deleteExistingEmail(email);
-	    	OTP otp = otpService.generateOTP(email);
-	        emailService.sendOTPEmail(email, otp.getOtpCode());	
-        }
-        else {
-			System.out.println("Khong tim thay email");
-		}
+		System.out.println("Da tim thay email");
+		emailService.deleteExistingEmail(email);
+	    OTP otp = otpService.generateOTP(email);
+	    emailService.sendOTPEmail(email, otp.getOtpCode());	
 	}
 	
 	@GetMapping("/verify-otp")
     public ResponseEntity<?> verifyOTP(@RequestParam String email, @RequestParam int otpCode) {
-        if (otpService.validateOTP(email, otpCode)) {
-            return ResponseEntity.ok("OTP verified successfully");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
-        }
+        boolean validOTP = otpService.validateOTP(email, otpCode);
+        System.out.println(validOTP);
+        ResponseEntity<?> res  = validOTP == true ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), validOTP))
+                 : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("OTP không chính xác !"), HttpStatus.BAD_REQUEST.value(), ""));
+        System.out.println(res);
+    	return res;
     }
+	
+	@GetMapping("/exist-email")
+	public ResponseEntity<?> existEmail(@RequestParam String email) {
+		int checkIfEmailExists = customerRepository.countByEmail(email);
+		ResponseEntity<?> res  = checkIfEmailExists != 0 ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), checkIfEmailExists))
+                : ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Không tìm thấy email !"), HttpStatus.BAD_REQUEST.value(), ""));
+		return res;
+	}
 }

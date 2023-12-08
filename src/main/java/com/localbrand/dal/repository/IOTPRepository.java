@@ -13,6 +13,7 @@ import com.localbrand.dal.entity.OTP;
 @Repository
 public interface IOTPRepository extends JpaRepository<OTP, String>{
 	
+	
 	@Query("SELECT o FROM OTP o WHERE o.email = :email AND o.expirationTime > :currentDateTime")
 	Optional<OTP> findValidOTP(@Param("email") String email, @Param("currentDateTime") LocalDateTime currentDateTime);
 	
