@@ -43,6 +43,15 @@ public class ProductController {
 		return res;
 	}
 
+	@GetMapping("get-by-collection-id/{id}")
+	public ResponseEntity<?> getByCollectionId( @PathVariable String id) {
+		List<ProductDto> result = productService.getByCollectionId(id);
+
+		ResponseEntity<?> res  = result != null ? ResponseEntity.ok(new ResponseDto(Arrays.asList(""), HttpStatus.OK.value(), result))
+				: ResponseEntity.badRequest().body(new ResponseDto(Arrays.asList("Sản phẩm không tồn tại"), HttpStatus.BAD_REQUEST.value(), ""));
+		return res;
+	}
+  
 	@GetMapping("/top-5-products")
 	public ResponseEntity<?> getTop5Products() {
 		List<ProductDto> result = productService.getTop5Products();
