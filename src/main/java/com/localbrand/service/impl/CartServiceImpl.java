@@ -124,9 +124,17 @@ public class CartServiceImpl implements ICartService {
             for (CartItemFullDto item : cartFullDto.getItems()) {
                 htmlTable.append("<tr>");
                 htmlTable.append("<td>").append(item.getProductSKU().getProduct().getName()).append("<br/>&nbsp;").append(formatAttributeValues(item.getProductSKU().getAttributeValues())).append("</td>");
-                htmlTable.append("<td>").append(NumberFormat.getNumberInstance(Locale.US).format(item.getProductSKU().getProduct().getPrice())).append(" VNĐ</td>");
+                htmlTable.append("<td>").append(NumberFormat.getNumberInstance(Locale.US).format(
+                    item.getProductSKU().getProduct().getDiscountPrice() == null ?
+                    item.getProductSKU().getProduct().getPrice() :
+                    item.getProductSKU().getProduct().getDiscountPrice()
+                )).append(" VNĐ</td>");
                 htmlTable.append("<td>").append(item.getQuantity()).append("</td>");
-                htmlTable.append("<td>").append(NumberFormat.getNumberInstance(Locale.US).format(item.getQuantity() * item.getProductSKU().getProduct().getPrice())).append(" VNĐ</td>");
+                htmlTable.append("<td>").append(NumberFormat.getNumberInstance(Locale.US).format(item.getQuantity() * (
+                    item.getProductSKU().getProduct().getDiscountPrice() == null ?
+                    item.getProductSKU().getProduct().getPrice() :
+                    item.getProductSKU().getProduct().getDiscountPrice()
+                ))).append(" VNĐ</td>");
                 htmlTable.append("</tr>");
             }
 
@@ -224,7 +232,7 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Transactional
-    private void saveOrderItem(List<CartItemFullDto> cartItemFullDtos, OrderFullDto orderFullDto) {
+    void saveOrderItem(List<CartItemFullDto> cartItemFullDtos, OrderFullDto orderFullDto) {
         List<OrderItemFullDto> orderItemFullDtos = new ArrayList<>();
         List<String> cartItemIds = new ArrayList<>();
         for (CartItemFullDto cartItemFullDto : cartItemFullDtos) {
