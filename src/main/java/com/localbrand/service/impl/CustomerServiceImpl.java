@@ -141,27 +141,26 @@ public class CustomerServiceImpl implements ICustomerService {
 		try {
 
 			List<Order> orders = orderRepository.getAll();
-			Set<CustomerDto> customerDtos = new HashSet<>();
-			Map<String, Integer> countCustomer = new HashMap<>();
+			List<CustomerDto> customerDtos = new ArrayList<>();
 
 			for(Order order : orders) {
-				CustomerDto customerDto = getById(order.getCustomer().getId());
-				if(customerDto != null) {
-					customerDto.setOrderQuantity(
-							customerDto.getOrderQuantity() == null ? 1 : customerDto.getOrderQuantity() + 1
-					);
+				CustomerDto customerDto = customerDtos.stream().filter(customer -> customer.getId().equals(order.getCustomer().getId())).findFirst().orElse(null);
+				if(customerDto == null) {
+					customerDto = getById(order.getCustomer().getId());
+					customerDto.setOrderQuantity(1);
+					customerDtos.add(customerDto);
+				} else {
+					customerDto.setOrderQuantity(customerDto.getOrderQuantity() + 1);
 				}
-				customerDtos.add(customerDto);
 			}
-			List<CustomerDto> customerDtoList = customerDtos.stream().toList();
-			customerDtoList.sort(new Comparator<CustomerDto>() {
+			customerDtos.sort(new Comparator<CustomerDto>() {
 				@Override
 				public int compare(CustomerDto o1, CustomerDto o2) {
 					return o1.getOrderQuantity().compareTo(o2.getOrderQuantity());
 				}
 			});
 
-			return customerDtoList.subList(0, Math.max(customerDtoList.size(), 5));
+			return customerDtos.subList(0, Math.min(customerDtos.size(), 5));
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
 			return null;
