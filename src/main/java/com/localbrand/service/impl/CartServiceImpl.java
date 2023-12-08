@@ -42,6 +42,8 @@ public class CartServiceImpl implements ICartService {
     private IOrderRepository orderRepository;
     @Autowired
     private IOrderItemRepository orderItemRepository;
+    @Autowired
+    private INotificationRepository notificationRepository;
 
     @Override
     public CartFullDto getByCustomerId(HttpServletRequest request, String customerId) {
@@ -98,8 +100,13 @@ public class CartServiceImpl implements ICartService {
             orderFullDto.setTotal(total(subtotal(cartFullDto.getItems()), discount(subtotal(cartFullDto.getItems()), cartFullDto.getCustomer())));
             orderFullDto.setNote(cartFullDto.getOrderNote());
             orderFullDto.setStatus(OrderStatusEnum.INPROGRESS);
-            orderRepository.save(IOrderDtoMapper.INSTANCE.toOrder(orderFullDto));
-
+            orderRepository.save(IOrderDtoMapper.INSTANCE.toOrder(orderFullDto)); 
+            Notification notification = new Notification();
+            notification.setId(UUID.randomUUID().toString());
+            notification.setIsRead(false);
+            notification.setCreatedDate(orderFullDto.getCreatedDate());
+            notification.setTitle("Đơn hàng "+ orderFullDto.getCode() + " đã được tạo");
+            notificationRepository.save(notification);
             saveOrderItem(cartFullDto.getItems(), orderFullDto);
 
             return cartFullDto;
