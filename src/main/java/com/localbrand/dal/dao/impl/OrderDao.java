@@ -35,6 +35,11 @@ public class OrderDao extends GenericDao implements IOrderDao {
             conditions.add("DATE(e.created_date) = :createdDate");
         }
 
+        Boolean getCancel = search.get("getCancel") != null ? (Boolean) search.get("getCancel") : null;
+        if (getCancel != null && getCancel == false) {
+            conditions.add("e.status <> 'CANCEL'");
+        }
+
         String orderWhereStr = conditions.size() > 0 ? "where " + String.join(" and ", conditions) : "";
         orderQuery = orderQuery + " " + orderWhereStr;
         Query<Order> query = session.createNativeQuery(orderQuery, Order.class);
