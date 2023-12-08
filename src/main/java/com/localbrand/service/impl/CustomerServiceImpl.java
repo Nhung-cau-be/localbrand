@@ -187,7 +187,7 @@ public class CustomerServiceImpl implements ICustomerService {
 			Customer existingCustomer = customerRepository.findById(customerDto.getId()).orElse(null);
 
 	        if (existingCustomer != null) {
-	            existingCustomer.setName(customerDto.getName());
+	            existingCustomer.setBirthdate(customerDto.getBirthdate());
 	            accountRepository.save(existingCustomer.getAccount());
 	            customerRepository.save(existingCustomer);
 
