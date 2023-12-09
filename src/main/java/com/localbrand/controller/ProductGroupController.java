@@ -66,7 +66,7 @@ public class ProductGroupController {
 	
 	@PutMapping("/update")
 	public ResponseEntity<?> update(@RequestBody ProductGroupDto productGroupDto) {
-        List<String> msg = insertValidation(productGroupDto);
+        List<String> msg = updateValidation(productGroupDto);
         if (msg.size() > 0) {
             return ResponseEntity.badRequest().body(new ResponseDto(msg, HttpStatus.BAD_REQUEST.value(), ""));
         }
